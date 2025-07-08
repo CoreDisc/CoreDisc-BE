@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class TestRepositoryImpl implements TestRepository {
+public class TestRepositoryAdaptor implements TestRepository {
 
     private final JpaTestRepository testRepository;
 
