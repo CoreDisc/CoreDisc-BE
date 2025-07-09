@@ -1,8 +1,6 @@
 package com.coredisc.domain;
 
 import com.coredisc.domain.common.BaseEntity;
-import com.coredisc.domain.Member;
-import com.coredisc.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Like extends BaseEntity {
+public class PostLike extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
