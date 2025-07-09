@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -16,10 +18,20 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int port;
 
+    @Value("${spring.data.redis.password}")
+    private String password;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        config.setHostName(host);
+        config.setPort(port);
+        config.setPassword(RedisPassword.of(password));
+
         // Lettuce 클라이언트를 사용해서 Redis 서버와의 연결을 생성
-        return new LettuceConnectionFactory(host, port); // 이 RedisConnectionFactory는 이후 RedisTemplate이 Redis에 접속할 때 사용됨
+        // 이 RedisConnectionFactory는 이후 RedisTemplate이 Redis에 접속할 때 사용됨
+        return new LettuceConnectionFactory(config);
     }
 
     @Bean
