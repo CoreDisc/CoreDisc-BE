@@ -35,4 +35,11 @@ public class MemberConverter {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    public static AuthResponseDTO.VerifyCodeResultDTO toVerifyCodeResultDTO(boolean isVerified) {
+
+        return AuthResponseDTO.VerifyCodeResultDTO.builder()
+                .isVerified(isVerified)
+                .build();
+    }
 }

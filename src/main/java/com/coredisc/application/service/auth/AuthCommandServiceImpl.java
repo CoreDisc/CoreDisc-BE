@@ -3,6 +3,7 @@ package com.coredisc.application.service.auth;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
+import com.coredisc.common.util.RedisUtil;
 import com.coredisc.domain.Member;
 import com.coredisc.infrastructure.repository.member.JpaMemberRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
@@ -19,6 +20,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final PasswordEncoder passwordEncoder;
     private final JpaMemberRepository memberRepository;
     private final MailService mailService;
+    private final RedisUtil redisUtil;
 
     // 회원가입
     @Override
@@ -50,6 +52,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     // 코드 인증
     @Override
     public boolean verifyCode(AuthRequestDTO.VerifyCodeDTO request) {
+
+        String authCode = (String) redisUtil.get("auth: " + request.getEmail());
+
+        if (authCode == null) {
+            throw new AuthHandler(ErrorStatus.EMAIL_CODE_EXPIRED);
+        }
+        if (!authCode.equals(request.getCode())) {
+            throw new AuthHandler(ErrorStatus.CODE_NOT_EQUAL);
+        }
         return true;
     }
 }
