@@ -6,7 +6,9 @@ import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.domain.Member;
 import com.coredisc.infrastructure.repository.member.JpaMemberRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private final PasswordEncoder passwordEncoder;
     private final JpaMemberRepository memberRepository;
+    private final MailService mailService;
 
     // 회원가입
     @Override
@@ -35,6 +38,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     public void sendCode(AuthRequestDTO.VerifyEmailDTO request) {
 
+        try {
+            mailService.sendEmail(request.getEmail());
+        } catch (MessagingException e) {
+            throw new AuthHandler(ErrorStatus.EMAIL_WRITE_FAILED);
+        } catch (MailException e) {
+            throw new AuthHandler(ErrorStatus.EMAIL_SEND_FAILED);
+        }
     }
 
     // 코드 인증

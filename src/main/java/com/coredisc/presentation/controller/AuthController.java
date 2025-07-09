@@ -42,7 +42,8 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping("/send-code")
     public ApiResponse<String> sendCode(@RequestBody @Valid AuthRequestDTO.VerifyEmailDTO request) {
-        return null;
+        authCommandService.sendCode(request);
+        return ApiResponse.onSuccess("인증 메일이 성공적으로 전송되었습니다.");
     }
 
     @PostMapping("/verify-code")
