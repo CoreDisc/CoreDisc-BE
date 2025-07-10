@@ -1,34 +1,29 @@
-package com.coredisc.domain;
+package com.coredisc.domain.mapping;
 
+import com.coredisc.domain.Category;
+import com.coredisc.domain.OfficialQuestion;
+import com.coredisc.domain.PersonalQuestion;
 import com.coredisc.domain.common.BaseEntity;
-import com.coredisc.domain.common.enums.QuestionType;
-import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class TodayQuestion extends BaseEntity {
+public class QuestionCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    protected LocalDateTime selectedDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10)")
-    private QuestionType questionType;
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "official_question_id")

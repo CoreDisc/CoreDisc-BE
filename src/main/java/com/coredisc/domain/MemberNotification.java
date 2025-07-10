@@ -5,20 +5,18 @@ import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalTime;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class NotificationSetting extends BaseEntity {
+public class MemberNotification extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
@@ -26,11 +24,11 @@ public class NotificationSetting extends BaseEntity {
     @JoinColumn(name = "notification_template_id", nullable = false)
     private NotificationTemplate notificationTemplate;
 
-    @Column(name = "is_enabled", nullable = false)
-    @Builder.Default
-    private boolean isEnabled = true;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
 
-    @Column(name = "send_time")
-    private LocalTime sendTime;
+    @Column(name = "is_read", nullable = false)
+    @Builder.Default
+    private boolean isRead = false;
 
 }

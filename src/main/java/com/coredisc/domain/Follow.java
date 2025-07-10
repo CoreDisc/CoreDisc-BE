@@ -1,6 +1,7 @@
 package com.coredisc.domain;
 
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,8 +16,17 @@ public class Follow extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 팔로우 요청한 주체 멤버
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "follower_id", nullable = false)
+    private Member follower;
 
-    // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
-    // - @ManyToOne Member (follower)
-    // - @ManyToOne Member (following)
+    // 팔로우 대상 멤버
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "following_id", nullable = false)
+    private Member following;
+
+    @Column(name = "is_circle", nullable = false)
+    private boolean isCircle;
+
 }

@@ -1,8 +1,14 @@
 package com.coredisc.domain;
 
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.mapping.QuestionCategory;
+import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,8 +21,20 @@ public class OfficialQuestion extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
-    // - @ManyToOne Member
-    // - @ManyToOne Category
-    // - @OneToMany TodayQuestion
+    @ColumnDefault("1")     // 0: 기본질문, 1: 공유질문
+    @Column(nullable = false)
+    private boolean isOfficial;
+
+    @Column(nullable = false)
+    private String contents;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @OneToMany(mappedBy = "officialQuestion")
+    private List<QuestionCategory> questionCategoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "officialQuestion")
+    private List<TodayQuestion> todayQuestionList = new ArrayList<>();
 }

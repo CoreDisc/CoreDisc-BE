@@ -10,20 +10,20 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class PostLike extends BaseEntity {
+public class Block extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 차단 요청한 주체 멤버
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "blocker_id", nullable = false)
+    private Member blocker;
 
+    // 차단 대상 멤버
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
-    // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
+    @JoinColumn(name = "blocked_id", nullable = false)
+    private Member blocked;
 
 }

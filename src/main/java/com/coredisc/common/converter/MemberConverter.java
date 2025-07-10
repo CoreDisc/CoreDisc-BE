@@ -1,6 +1,6 @@
 package com.coredisc.common.converter;
 
-import com.coredisc.domain.Member;
+import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 
@@ -49,6 +49,26 @@ public class MemberConverter {
                 .id(member.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .build();
+    }
+    public static AuthResponseDTO.CheckUsernameResultDTO toCheckUsernameResultDTO(boolean isDuplicated) {
+
+        return AuthResponseDTO.CheckUsernameResultDTO.builder()
+                .isDuplicated(isDuplicated)
+                .build();
+    }
+
+    public static AuthResponseDTO.CheckEmailResultDTO toCheckEmailResultDTO(boolean isDuplicated) {
+
+        return AuthResponseDTO.CheckEmailResultDTO.builder()
+                .isDuplicated(isDuplicated)
+                .build();
+    }
+
+    public static AuthResponseDTO.CheckNicknameResultDTO toCheckNicknameResultDTO(boolean isDuplicated) {
+
+        return AuthResponseDTO.CheckNicknameResultDTO.builder()
+                .isDuplicated(isDuplicated)
                 .build();
     }
 }
