@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,4 +39,7 @@ public class TodayQuestion extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_question_id")
     private PersonalQuestion personalQuestion;
+
+    @OneToMany(mappedBy = "todayQuestion")
+    private List<PostAnswer> postAnswers = new ArrayList<>();
 }

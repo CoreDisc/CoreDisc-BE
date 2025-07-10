@@ -32,7 +32,7 @@ public class Member extends BaseEntity {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Like> likes = new ArrayList<>();
+    private List<PostLike> postLikes = new ArrayList<>();
 
 
     // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
