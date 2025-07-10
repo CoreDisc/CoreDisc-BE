@@ -64,6 +64,7 @@ public class JwtProvider {
                     .and()
                 .subject(principalDetails.getUsername())
                 .claim("id", memberId)
+                .claim("tokenType", "access") // 토큰 타입 명시
                 .issuedAt(Date.from(issuedAt))
                 .expiration(Date.from(expiredAt))
                 .signWith(secretKey, Jwts.SIG.HS256)
@@ -83,6 +84,7 @@ public class JwtProvider {
                     .and()
                 .subject(principalDetails.getUsername())
                 .claim("id", memberId)
+                .claim("tokenType", "refresh") // 토큰 타입 명시
                 .issuedAt(Date.from(issuedAt))
                 .expiration(Date.from(expiredAt))
                 .signWith(secretKey, Jwts.SIG.HS256)
@@ -122,6 +124,11 @@ public class JwtProvider {
 
         try {
             Jws<Claims> claims = getClaims(token);
+
+            String tokenType = claims.getPayload().get("tokenType", String.class);
+            if(!tokenType.equals("access")) {
+                throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
+            }
             // 토큰의 만료 시간이 현재 시간보다 이후인지 확인 (만료 전이면 true)
             return claims.getPayload().getExpiration().after(Date.from(Instant.now()));
         } catch (JwtException e) {
@@ -141,10 +148,24 @@ public class JwtProvider {
     // RefreshToken 유효성 확인
     public void validateRefreshToken(String refreshToken) {
 
-        String username = getUsername(refreshToken);
+        try {
+            Jws<Claims> claims = getClaims(refreshToken);
 
-        // redis 확인
-        if(!redisUtil.exists(username)) {
+            String tokenType = claims.getPayload().get("tokenType", String.class);
+            if(!tokenType.equals("refresh")) {
+                throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
+            }
+
+            String username = getUsername(refreshToken);
+
+            // redis 확인
+            if(!redisUtil.exists(username)) {
+                throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
+            }
+        } catch (JwtException e) {
+            log.error("JWT validation error: " + e.getMessage());
+            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
+        } catch (Exception e) {
             throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
         }
     }
