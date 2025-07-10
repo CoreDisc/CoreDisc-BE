@@ -42,4 +42,13 @@ public class MemberConverter {
                 .isVerified(isVerified)
                 .build();
     }
+
+    public static AuthResponseDTO.LoginResultDTO toLoginResultDTO(Member member, String accessToken, String refreshToken) {
+
+        return AuthResponseDTO.LoginResultDTO.builder()
+                .id(member.getId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 }
