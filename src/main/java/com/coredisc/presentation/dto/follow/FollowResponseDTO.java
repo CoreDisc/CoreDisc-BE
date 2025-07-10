@@ -19,6 +19,7 @@ public class FollowResponseDTO {
         private String followerNickname;
         private String followerUsername;
         private String followerImageUrl;
+        private boolean isCircle;
     }
 
     @Getter
@@ -38,6 +39,7 @@ public class FollowResponseDTO {
         private String followingNickname;
         private String followingUsername;
         private String followingImageUrl;
+        private boolean isCircle;
     }
 
     @Getter
