@@ -42,4 +42,25 @@ public class MemberConverter {
                 .isVerified(isVerified)
                 .build();
     }
+
+    public static AuthResponseDTO.CheckUsernameResultDTO toCheckUsernameResultDTO(boolean isDuplicated) {
+
+        return AuthResponseDTO.CheckUsernameResultDTO.builder()
+                .isDuplicated(isDuplicated)
+                .build();
+    }
+
+    public static AuthResponseDTO.CheckEmailResultDTO toCheckEmailResultDTO(boolean isDuplicated) {
+
+        return AuthResponseDTO.CheckEmailResultDTO.builder()
+                .isDuplicated(isDuplicated)
+                .build();
+    }
+
+    public static AuthResponseDTO.CheckNicknameResultDTO toCheckNicknameResultDTO(boolean isDuplicated) {
+
+        return AuthResponseDTO.CheckNicknameResultDTO.builder()
+                .isDuplicated(isDuplicated)
+                .build();
+    }
 }
