@@ -65,9 +65,11 @@ public class AuthRequestDTO {
     public static class LoginDTO {
 
         @NotNull
+        @Schema(description = "username", example = "my_coredisc")
         String username;
 
         @NotNull
+        @Schema(description = "password", example = "coredisc1234!")
         String password;
     }
 }
