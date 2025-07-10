@@ -12,6 +12,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,10 +28,11 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final RedisUtil redisUtil;
     private final PrincipalDetailsService principalDetailsService;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         try {
             String accessToken = jwtProvider.resolveAccessToken(request);
@@ -58,9 +60,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 } else {
                     throw new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND);
                 }
-                // 다음 필터로 넘기기
-                filterChain.doFilter(request, response);
             }
+            // 다음 필터로 넘기기
+            filterChain.doFilter(request, response);
         } catch (GeneralException e) { // 필터 단계 예외는 전역 예외 처리기까지 도달하지 않으므로, 직접 응답 구성이 필요
             BaseErrorCode code = e.getCode();
             response.setContentType("application/json; charset=UTF-8");
