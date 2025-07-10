@@ -4,6 +4,7 @@ package com.coredisc.domain;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
+import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -68,8 +69,6 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PostLike> postLikes = new ArrayList<>();
-
-
 
 
 }
