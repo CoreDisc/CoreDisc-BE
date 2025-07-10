@@ -1,8 +1,12 @@
 package com.coredisc.domain;
 
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.mapping.QuestionCategory;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,7 +22,13 @@ public class PersonalQuestion extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
-    // - @ManyToOne Category
-    // - @OneToMany TodayQuestion
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @OneToMany(mappedBy = "personalQuestion")
+    private List<QuestionCategory> questionCategoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "personalQuestion")
+    private List<TodayQuestion> todayQuestionList = new ArrayList<>();
 }
