@@ -11,4 +11,7 @@ public interface FollowControllerDocs {
 
     @Operation(summary = "팔로우", description = "팔로우 기능입니다.")
     ApiResponse<Follow> follow(@PathVariable long followingId);
+
+    @Operation(summary = "팔로우 취소", description = "팔로우 취소(팔로윙 삭제) 기능입니다.")
+    ApiResponse<?> unfollow(@PathVariable long followingId);
 }

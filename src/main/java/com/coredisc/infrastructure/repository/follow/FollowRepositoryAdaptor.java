@@ -22,4 +22,14 @@ public class FollowRepositoryAdaptor implements FollowRepository {
         return jpaFollowRepository.existsByFollowerAndFollowing(follower, following);
     }
 
+    @Override
+    public Follow findByFollowerAndFollowing(Member follower, Member following) {
+        return jpaFollowRepository.findByFollowerAndFollowing(follower, following);
+    }
+
+    @Override
+    public void delete(Follow follow) {
+        jpaFollowRepository.delete(follow);
+    }
+
 }

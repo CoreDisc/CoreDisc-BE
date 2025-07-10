@@ -6,4 +6,6 @@ public interface FollowRepository {
 
     Follow save(Follow follow);
     boolean existsByFollowerAndFollowing(Member follower, Member following);
+    Follow findByFollowerAndFollowing(Member follower, Member following);
+    void delete(Follow follow);
 }

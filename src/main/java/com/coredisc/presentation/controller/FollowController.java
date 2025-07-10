@@ -5,6 +5,7 @@ import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.presentation.controllerdocs.FollowControllerDocs;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,13 @@ public class FollowController implements FollowControllerDocs {
         // 하드코딩
         Long followId = 1L;
         return ApiResponse.onSuccess(followCommandService.follow(followId, followingId));
+    }
+
+    @DeleteMapping("/api/followings/{followingId}")
+    public ApiResponse<?> unfollow(long followingId) {
+        // 하드코딩
+        Long followId = 1L;
+        followCommandService.unfollow(followId, followingId);
+        return ApiResponse.onSuccess(null);
     }
 }
