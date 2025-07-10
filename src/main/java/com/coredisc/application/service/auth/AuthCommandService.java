@@ -1,6 +1,6 @@
 package com.coredisc.application.service.auth;
 
-import com.coredisc.domain.Member;
+import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 
 public interface AuthCommandService {

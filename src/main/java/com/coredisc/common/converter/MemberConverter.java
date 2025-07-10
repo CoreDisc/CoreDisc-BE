@@ -1,6 +1,6 @@
 package com.coredisc.common.converter;
 
-import com.coredisc.domain.Member;
+import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 

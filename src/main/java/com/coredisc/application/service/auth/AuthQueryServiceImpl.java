@@ -1,6 +1,6 @@
 package com.coredisc.application.service.auth;
 
-import com.coredisc.infrastructure.repository.member.JpaMemberRepository;
+import com.coredisc.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthQueryServiceImpl implements AuthQueryService{
 
-    private final JpaMemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     // username 중복 검사
     @Override

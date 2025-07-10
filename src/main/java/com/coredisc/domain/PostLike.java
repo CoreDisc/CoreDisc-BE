@@ -1,6 +1,7 @@
 package com.coredisc.domain;
 
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 

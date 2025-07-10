@@ -1,5 +1,8 @@
-package com.coredisc.domain;
+package com.coredisc.domain.member;
 
+import com.coredisc.domain.Comment;
+import com.coredisc.domain.Post;
+import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.fasterxml.jackson.annotation.JsonProperty;

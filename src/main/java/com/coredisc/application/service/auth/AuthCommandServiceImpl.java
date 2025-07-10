@@ -4,8 +4,8 @@ import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.util.RedisUtil;
-import com.coredisc.domain.Member;
-import com.coredisc.infrastructure.repository.member.JpaMemberRepository;
+import com.coredisc.domain.member.Member;
+import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AuthCommandServiceImpl implements AuthCommandService {
 
     private final PasswordEncoder passwordEncoder;
-    private final JpaMemberRepository memberRepository;
+    private final MemberRepository memberRepository;
     private final MailService mailService;
     private final RedisUtil redisUtil;
 
