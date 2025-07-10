@@ -7,6 +7,7 @@ import com.coredisc.presentation.dto.jwt.JwtDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -41,4 +42,7 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "토큰 재발급", description = "accessToken이 만료 시 refreshToken을 통해 accessToken을 재발급합니다.")
     ApiResponse<JwtDTO> reissueToken(@RequestHeader("RefreshToken") String refreshToken);
+
+    @Operation(summary = "로그아웃", description = "로그아웃 기능입니다.")
+    ApiResponse<String> logout(HttpServletRequest request);
 }

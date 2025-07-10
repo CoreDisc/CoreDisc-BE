@@ -4,6 +4,7 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 import com.coredisc.presentation.dto.jwt.JwtDTO;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface AuthCommandService {
 
@@ -21,4 +22,7 @@ public interface AuthCommandService {
 
     // AccessToken 재발급
     JwtDTO reissueToken(String refreshToken);
+
+    // 로그아웃
+    void logout(HttpServletRequest request);
 }

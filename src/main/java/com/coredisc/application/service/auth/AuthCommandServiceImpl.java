@@ -13,11 +13,14 @@ import com.coredisc.security.auth.PrincipalDetails;
 import com.coredisc.security.jwt.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -118,6 +121,22 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.TOKEN_EXPIRED);
         } catch (IllegalArgumentException iae) {
             throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
+        }
+    }
+
+    @Override
+    public void logout(HttpServletRequest request) {
+
+        try {
+            String accessToken = jwtProvider.resolveAccessToken(request);
+
+            // 블랙리스트에 저장
+            redisUtil.set(accessToken, "logout");
+            redisUtil.expire(accessToken, jwtProvider.getExpTime(accessToken), TimeUnit.MILLISECONDS);
+            // RefreshToken 삭제
+            redisUtil.delete(jwtProvider.getUsername(accessToken));
+        } catch (ExpiredJwtException e) {
+            throw new AuthHandler(ErrorStatus.TOKEN_EXPIRED);
         }
     }
 }

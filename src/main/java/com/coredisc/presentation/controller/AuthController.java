@@ -8,6 +8,7 @@ import com.coredisc.presentation.controllerdocs.AuthControllerDocs;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 import com.coredisc.presentation.dto.jwt.JwtDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -89,5 +90,13 @@ public class AuthController implements AuthControllerDocs {
         return ApiResponse.onSuccess(
                 authCommandService.reissueToken(refreshToken)
         );
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ApiResponse<String> logout(HttpServletRequest request) {
+
+        authCommandService.logout(request);
+        return ApiResponse.onSuccess("로그아웃 되었습니다.");
     }
 }
