@@ -17,18 +17,18 @@ public class FollowController implements FollowControllerDocs {
     private final FollowQueryService followQueryService;
 
     //TODO: 하드코딩 수정
-    @PostMapping("/api/follow/{followingId}")
-    public ApiResponse<Follow> follow(long followingId) {
+    @PostMapping("/api/follow/{targetId}")
+    public ApiResponse<Follow> follow(@PathVariable long targetId) {
         // 하드코딩
-        Long followId = 1L;
-        return ApiResponse.onSuccess(followCommandService.follow(followId, followingId));
+        Long memberId = 1L;
+        return ApiResponse.onSuccess(followCommandService.follow(memberId, targetId));
     }
 
-    @DeleteMapping("/api/followings/{followingId}")
-    public ApiResponse<?> unfollow(long followingId) {
+    @DeleteMapping("/api/followings/{targetId}")
+    public ApiResponse<?> unfollow(@PathVariable long targetId) {
         // 하드코딩
-        Long followId = 1L;
-        followCommandService.unfollow(followId, followingId);
+        Long memberId = 1L;
+        followCommandService.unfollow(memberId, targetId);
         return ApiResponse.onSuccess(null);
     }
 

@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface FollowControllerDocs {
 
     @Operation(summary = "팔로우", description = "팔로우 기능입니다.")
-    ApiResponse<Follow> follow(@PathVariable long followingId);
+    ApiResponse<Follow> follow(@PathVariable long targetId);
 
     @Operation(summary = "팔로우 취소", description = "팔로우 취소(팔로윙 삭제) 기능입니다.")
-    ApiResponse<?> unfollow(@PathVariable long followingId);
+    ApiResponse<?> unfollow(@PathVariable long targetId);
 
     @Operation(summary = "팔로워 목록 조회", description = "팔로워 목록 조회 기능입니다.")
     ApiResponse<FollowResponseDTO.FollowerListViewDTO> getFollowers();

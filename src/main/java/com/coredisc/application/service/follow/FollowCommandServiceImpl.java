@@ -20,47 +20,47 @@ public class FollowCommandServiceImpl implements FollowCommandService {
 
     //TODO: 반환 FollowResultDTO로 수정하기
     @Override
-    public Follow follow(Long followerId, Long followingId) {
+    public Follow follow(Long memberId, Long targetId) {
 
-        if (followerId.equals(followingId)) {
+        if (memberId.equals(targetId)) {
             throw new FollowHandler(ErrorStatus.SELF_FOLLOW_NOT_ALLOWED);
         }
 
-        Member follower = memberRepository.findById(followerId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Member following = memberRepository.findById(followerId)
+        Member target = memberRepository.findById(targetId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 이미 팔로우한 이력이 있을 경우
-        if (followRepository.existsByFollowerAndFollowing(follower, following)){
+        if (followRepository.existsByFollowerAndFollowing(member, target)){
             throw new FollowHandler(ErrorStatus.ALREADY_FOLLOWING);
         }
 
-        Follow follow = FollowConverter.toFollow(follower, following);
+        Follow follow = FollowConverter.toFollow(member, target);
 
         return followRepository.save(follow);
     }
 
     @Override
-    public void unfollow(Long followerId, Long followingId) {
+    public void unfollow(Long memberId, Long targetId) {
 
-        if (followerId.equals(followingId)) {
+        if (memberId.equals(targetId)) {
             throw new FollowHandler(ErrorStatus.SELF_UNFOLLOW_NOT_ALLOWED);
         }
 
-        Member follower = memberRepository.findById(followerId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Member following = memberRepository.findById(followerId)
+        Member target = memberRepository.findById(targetId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 팔로우한 이력이 없을 경우
-        if (!followRepository.existsByFollowerAndFollowing(follower, following)){
+        if (!followRepository.existsByFollowerAndFollowing(member, target)){
             throw new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND);
         }
 
-        Follow follow = followRepository.findByFollowerAndFollowing(follower, following);
+        Follow follow = followRepository.findByFollowerAndFollowing(member, target);
 
         followRepository.delete(follow);
     }
