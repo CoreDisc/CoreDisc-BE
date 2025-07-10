@@ -1,7 +1,6 @@
 package com.coredisc.presentation.controllerdocs;
 
 import com.coredisc.common.apiPayload.ApiResponse;
-import com.coredisc.domain.follow.Follow;
 import com.coredisc.presentation.dto.follow.FollowResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface FollowControllerDocs {
 
     @Operation(summary = "팔로우", description = "팔로우 기능입니다.")
-    ApiResponse<Follow> follow(@PathVariable long targetId);
+    ApiResponse<FollowResponseDTO.FollowResultDTO> follow(@PathVariable long targetId);
 
     @Operation(summary = "팔로우 취소", description = "팔로우 취소(팔로윙 삭제) 기능입니다.")
     ApiResponse<?> unfollow(@PathVariable long targetId);

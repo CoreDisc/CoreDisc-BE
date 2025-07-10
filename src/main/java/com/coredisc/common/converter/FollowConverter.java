@@ -4,6 +4,7 @@ import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.follow.FollowResponseDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,15 @@ public class FollowConverter {
 
         return FollowResponseDTO.FollowerListViewDTO.builder()
                 .followers(dtos)
+                .build();
+    }
+
+    public static FollowResponseDTO.FollowResultDTO toFollowResultDTO(Follow follow) {
+        return FollowResponseDTO.FollowResultDTO.builder()
+                .id(follow.getId())
+                .followerId(follow.getFollower().getId())
+                .followingId(follow.getFollowing().getId())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 

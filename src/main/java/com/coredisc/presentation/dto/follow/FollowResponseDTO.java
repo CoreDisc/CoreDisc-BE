@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FollowResponseDTO {
@@ -45,6 +46,17 @@ public class FollowResponseDTO {
     @Builder
     public static class FollowingListViewDTO {
         private List<FollowingDTO> followings;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class FollowResultDTO {
+        private Long id;
+        private Long followerId;
+        private Long followingId;
+        private LocalDateTime createdAt;
     }
 
 }
