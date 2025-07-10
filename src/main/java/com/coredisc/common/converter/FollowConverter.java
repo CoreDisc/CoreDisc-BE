@@ -48,4 +48,21 @@ public class FollowConverter {
                 .build();
     }
 
+    public static FollowResponseDTO.FollowingDTO toFollowingDTO(Follow follow) {
+        return FollowResponseDTO.FollowingDTO.builder()
+                .followingId(follow.getFollowing().getId())
+                .followingNickname(follow.getFollowing().getNickname())
+                .followingUsername(follow.getFollowing().getUsername())
+                .build();
+    }
+
+    public static FollowResponseDTO.FollowingListViewDTO toFollowingListViewDTO(List<Follow> followings) {
+        List<FollowResponseDTO.FollowingDTO> dtos = followings.stream()
+                .map(FollowConverter::toFollowingDTO)
+                .collect(Collectors.toList());
+
+        return FollowResponseDTO.FollowingListViewDTO.builder()
+                .followings(dtos)
+                .build();
+    }
 }

@@ -30,4 +30,15 @@ public class FollowQueryServiceImpl implements FollowQueryService {
 
         return FollowConverter.toFollowerListViewDTO(followers);
     }
+
+    @Override
+    public FollowResponseDTO.FollowingListViewDTO getFollowings(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Follow> followings = followRepository.findAllByFollower(member);
+
+        return FollowConverter.toFollowingListViewDTO(followings);
+    }
 }

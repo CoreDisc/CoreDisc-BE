@@ -11,4 +11,5 @@ public interface FollowRepository {
     Follow findByFollowerAndFollowing(Member follower, Member following);
     void delete(Follow follow);
     List<Follow> findAllByFollowing(Member member);
+    List<Follow> findAllByFollower(Member member);
 }

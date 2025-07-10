@@ -41,4 +41,11 @@ public class FollowController implements FollowControllerDocs {
         Long memberId = 1L;
         return ApiResponse.onSuccess(followQueryService.getFollowers(memberId));
     }
+
+    @GetMapping("/api/followings")
+    public ApiResponse<FollowResponseDTO.FollowingListViewDTO> getFollowings() {
+        // 하드코딩
+        Long memberId = 1L;
+        return ApiResponse.onSuccess(followQueryService.getFollowings(memberId));
+    }
 }

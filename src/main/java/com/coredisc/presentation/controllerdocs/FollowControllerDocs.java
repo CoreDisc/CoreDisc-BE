@@ -17,4 +17,7 @@ public interface FollowControllerDocs {
 
     @Operation(summary = "팔로워 목록 조회", description = "팔로워 목록 조회 기능입니다.")
     ApiResponse<FollowResponseDTO.FollowerListViewDTO> getFollowers();
+
+    @Operation(summary = "팔로잉 목록 조회", description = "팔로잉 목록 조회 기능입니다.")
+    ApiResponse<FollowResponseDTO.FollowingListViewDTO> getFollowings();
 }

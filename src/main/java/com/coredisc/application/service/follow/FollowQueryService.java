@@ -8,6 +8,6 @@ public interface FollowQueryService {
     FollowResponseDTO.FollowerListViewDTO getFollowers(Long memberId);
 
     // 팔로잉 목록 조회
-
+    FollowResponseDTO.FollowingListViewDTO getFollowings(Long memberId);
 
 }

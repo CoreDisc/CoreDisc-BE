@@ -39,4 +39,9 @@ public class FollowRepositoryAdaptor implements FollowRepository {
         return jpaFollowRepository.findAllByFollowing(member);
     }
 
+    @Override
+    public List<Follow> findAllByFollower(Member member) {
+        return jpaFollowRepository.findAllByFollower(member);
+    }
+
 }
