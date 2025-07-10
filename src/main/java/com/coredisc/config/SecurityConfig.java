@@ -1,5 +1,11 @@
 package com.coredisc.config;
 
+import com.coredisc.common.util.RedisUtil;
+import com.coredisc.security.auth.PrincipalDetailsService;
+import com.coredisc.security.jwt.JwtFilter;
+import com.coredisc.security.jwt.JwtProvider;
+import com.coredisc.security.jwt.handler.JwtAccessDeniedHandler;
+import com.coredisc.security.jwt.handler.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,11 +15,18 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtProvider jwtProvider;
+    private final RedisUtil redisUtil;
+    private final PrincipalDetailsService principalDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     private final String[] allowUrl = {
             "/",
@@ -28,13 +41,23 @@ public class SecurityConfig {
         http
                 //crsf 보안 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
+                // Spring Security가 요청을 처리하는 도중에 CORS 정책 검사가 필요한 경우
+                .cors(cors -> cors
+                        .configurationSource(CorsConfig.corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(allowUrl).permitAll()
                         .anyRequest().authenticated())
                 //기본 폼 로그인 비활성화
-                .formLogin((form) -> form.disable())
+                .formLogin(AbstractHttpConfigurer::disable)
                 // BasicHttp 비활성화
-                .httpBasic(AbstractHttpConfigurer::disable);
+                .httpBasic(AbstractHttpConfigurer::disable)
+                //JwtFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
+                .addFilterBefore(new JwtFilter(jwtProvider, redisUtil, principalDetailsService), UsernamePasswordAuthenticationFilter.class)
+                // 예외 처리 설정
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                );
         return http.build();
     }
 
