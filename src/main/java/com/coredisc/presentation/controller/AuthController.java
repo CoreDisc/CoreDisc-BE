@@ -69,4 +69,12 @@ public class AuthController implements AuthControllerDocs {
                 authCommandService.verifyCode(request)
         ));
     }
+
+    // 일반 로그인
+    @PostMapping("/login")
+    public ApiResponse<AuthResponseDTO.LoginResultDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {
+        return ApiResponse.onSuccess(
+                authCommandService.login(request)
+        );
+    }
 }

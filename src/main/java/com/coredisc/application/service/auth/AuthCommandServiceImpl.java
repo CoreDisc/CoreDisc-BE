@@ -7,6 +7,9 @@ import com.coredisc.common.util.RedisUtil;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
+import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.security.auth.PrincipalDetails;
+import com.coredisc.security.jwt.JwtProvider;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,6 +25,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final MemberRepository memberRepository;
     private final MailService mailService;
     private final RedisUtil redisUtil;
+    private final JwtProvider jwtProvider;
 
     // 회원가입
     @Override
@@ -78,5 +82,25 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.CODE_NOT_EQUAL);
         }
         return true;
+    }
+
+    // 로그인
+    @Override
+    public AuthResponseDTO.LoginResultDTO login(AuthRequestDTO.LoginDTO request) {
+
+        Member member = memberRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if(!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new AuthHandler(ErrorStatus.PASSWORD_NOT_EQUAL);
+        }
+
+        PrincipalDetails principalDetails = new PrincipalDetails(member);
+
+        // 로그인 성공 시 토큰 생성
+        String accessToken = jwtProvider.createAccessToken(principalDetails, member.getId());
+        String refreshToken = jwtProvider.createRefreshToken(principalDetails, member.getId());
+
+        return MemberConverter.toLoginResultDTO(member, accessToken, refreshToken);
     }
 }

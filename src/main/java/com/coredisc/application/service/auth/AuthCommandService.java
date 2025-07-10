@@ -2,6 +2,7 @@ package com.coredisc.application.service.auth;
 
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
+import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 
 public interface AuthCommandService {
 
@@ -13,4 +14,7 @@ public interface AuthCommandService {
 
     // 코드 인증
     boolean verifyCode(AuthRequestDTO.VerifyCodeDTO request);
+
+    // 로그인
+    AuthResponseDTO.LoginResultDTO login(AuthRequestDTO.LoginDTO request);
 }

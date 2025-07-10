@@ -33,4 +33,7 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "이메일 코드 인증", description = "회원가입 시 이메일 코드 인증 기능입니다.")
     ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCode(@RequestBody @Valid AuthRequestDTO.VerifyCodeDTO request);
+
+    @Operation(summary = "일반 로그인", description = "일반 로그인 기능입니다.")
+    ApiResponse<AuthResponseDTO.LoginResultDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request);
 }
