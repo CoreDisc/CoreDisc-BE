@@ -7,6 +7,7 @@ import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.presentation.controllerdocs.AuthControllerDocs;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.presentation.dto.jwt.JwtDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,7 @@ public class AuthController implements AuthControllerDocs {
     // 인증코드 이메일 발송
     @PostMapping("/send-code")
     public ApiResponse<String> sendCode(@RequestBody @Valid AuthRequestDTO.VerifyEmailDTO request) {
+
         authCommandService.sendCode(request);
         return ApiResponse.onSuccess("인증 메일이 성공적으로 전송되었습니다.");
     }
@@ -65,6 +67,7 @@ public class AuthController implements AuthControllerDocs {
     // 인증코드 검증
     @PostMapping("/verify-code")
     public ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCode(@RequestBody @Valid AuthRequestDTO.VerifyCodeDTO request) {
+
         return ApiResponse.onSuccess(MemberConverter.toVerifyCodeResultDTO(
                 authCommandService.verifyCode(request)
         ));
@@ -73,8 +76,18 @@ public class AuthController implements AuthControllerDocs {
     // 일반 로그인
     @PostMapping("/login")
     public ApiResponse<AuthResponseDTO.LoginResultDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {
+
         return ApiResponse.onSuccess(
                 authCommandService.login(request)
+        );
+    }
+
+    // accessToken 재발급
+    @PostMapping("/reissue")
+    public ApiResponse<JwtDTO> reissueToken(@RequestHeader("RefreshToken") String refreshToken) {
+
+        return ApiResponse.onSuccess(
+                authCommandService.reissueToken(refreshToken)
         );
     }
 }

@@ -3,6 +3,7 @@ package com.coredisc.application.service.auth;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.presentation.dto.jwt.JwtDTO;
 
 public interface AuthCommandService {
 
@@ -17,4 +18,7 @@ public interface AuthCommandService {
 
     // 로그인
     AuthResponseDTO.LoginResultDTO login(AuthRequestDTO.LoginDTO request);
+
+    // AccessToken 재발급
+    JwtDTO reissueToken(String refreshToken);
 }

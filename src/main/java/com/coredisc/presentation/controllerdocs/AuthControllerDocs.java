@@ -3,11 +3,13 @@ package com.coredisc.presentation.controllerdocs;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.presentation.dto.jwt.JwtDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Auth", description = "회원가입 관련 API")
@@ -36,4 +38,7 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "일반 로그인", description = "일반 로그인 기능입니다.")
     ApiResponse<AuthResponseDTO.LoginResultDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request);
+
+    @Operation(summary = "토큰 재발급", description = "accessToken이 만료 시 refreshToken을 통해 accessToken을 재발급합니다.")
+    ApiResponse<JwtDTO> reissueToken(@RequestHeader("RefreshToken") String refreshToken);
 }

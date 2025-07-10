@@ -8,8 +8,10 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.presentation.dto.jwt.JwtDTO;
 import com.coredisc.security.auth.PrincipalDetails;
 import com.coredisc.security.jwt.JwtProvider;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -102,5 +104,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         String refreshToken = jwtProvider.createRefreshToken(principalDetails, member.getId());
 
         return MemberConverter.toLoginResultDTO(member, accessToken, refreshToken);
+    }
+
+    // 토큰 재발급
+    @Override
+    public JwtDTO reissueToken(String refreshToken) {
+
+        try {
+            jwtProvider.validateRefreshToken(refreshToken);
+
+            return jwtProvider.reissueToken(refreshToken);
+        } catch (ExpiredJwtException eje) {
+            throw new AuthHandler(ErrorStatus.TOKEN_EXPIRED);
+        } catch (IllegalArgumentException iae) {
+            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
+        }
     }
 }
