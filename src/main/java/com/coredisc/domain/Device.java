@@ -15,12 +15,19 @@ public class Device extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String token;
 
-    // TODO: 연관관계 설정, 속성 정의하고 todo 제거해주세요.
-    // - @ManyToOne Member
+    @Column(name = "device_type", nullable = false, length = 20)
+    @Builder.Default
+    private String deviceType = "iOS";
+
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private boolean isActive = true;
+
 }
