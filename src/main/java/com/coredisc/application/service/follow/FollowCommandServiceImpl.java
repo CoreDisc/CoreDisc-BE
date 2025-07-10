@@ -18,7 +18,6 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
-    //TODO: 반환 FollowResultDTO로 수정하기
     @Override
     public Follow follow(Long memberId, Long targetId) {
 
