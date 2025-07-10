@@ -2,7 +2,7 @@ package com.coredisc.application.service.member;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.AuthHandler;
-import com.coredisc.domain.Member;
+import com.coredisc.domain.member.Member;
 import com.coredisc.infrastructure.repository.member.JpaMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

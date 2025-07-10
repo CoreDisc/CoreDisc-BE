@@ -1,6 +1,7 @@
 package com.coredisc.security.auth;
 
-import com.coredisc.domain.Member;
+
+import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

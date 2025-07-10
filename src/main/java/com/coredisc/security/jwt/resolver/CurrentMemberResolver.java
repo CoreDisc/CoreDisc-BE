@@ -1,7 +1,7 @@
 package com.coredisc.security.jwt.resolver;
 
 import com.coredisc.application.service.member.MemberQueryService;
-import com.coredisc.domain.Member;
+import com.coredisc.domain.member.Member;
 import com.coredisc.security.auth.PrincipalDetails;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
