@@ -24,6 +24,9 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String senderEmail;
 
+    @Value("${spring.mail.auth-code-expiration-millis}")
+    private Long codeExpiration;
+
     // 인증 코드 생성
     private String createCode() {
 
@@ -59,7 +62,7 @@ public class MailService {
         // Redis에 해당 인증코드 인증 시간 설정(30분)
         String redisKey = "auth: " + email;
         redisUtil.set(redisKey, code);
-        redisUtil.expire(redisKey, 30 * 60 * 1000L, TimeUnit.MILLISECONDS);
+        redisUtil.expire(redisKey, codeExpiration, TimeUnit.MILLISECONDS);
 
         return message;
     }
