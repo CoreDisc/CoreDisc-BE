@@ -2,6 +2,10 @@ package com.coredisc.common.converter;
 
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.follow.FollowResponseDTO;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FollowConverter {
 
@@ -15,5 +19,23 @@ public class FollowConverter {
                 .build();
     }
 
+    //TODO: profileImageUrl 추후 추가
+    public static FollowResponseDTO.FollowerDTO toFollowerDTO(Follow follow) {
+        return FollowResponseDTO.FollowerDTO.builder()
+                .followerId(follow.getFollower().getId())
+                .followerNickname(follow.getFollower().getNickname())
+                .followerUsername(follow.getFollower().getUsername())
+                .build();
+    }
+
+    public static FollowResponseDTO.FollowerListViewDTO toFollowerListViewDTO(List<Follow> follows) {
+        List<FollowResponseDTO.FollowerDTO> dtos = follows.stream()
+                .map(FollowConverter::toFollowerDTO)
+                .collect(Collectors.toList());
+
+        return FollowResponseDTO.FollowerListViewDTO.builder()
+                .followers(dtos)
+                .build();
+    }
 
 }

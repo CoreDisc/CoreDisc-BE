@@ -6,6 +6,8 @@ import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class FollowRepositoryAdaptor implements FollowRepository {
@@ -30,6 +32,11 @@ public class FollowRepositoryAdaptor implements FollowRepository {
     @Override
     public void delete(Follow follow) {
         jpaFollowRepository.delete(follow);
+    }
+
+    @Override
+    public List<Follow> findAllByFollowing(Member member) {
+        return jpaFollowRepository.findAllByFollowing(member);
     }
 
 }
