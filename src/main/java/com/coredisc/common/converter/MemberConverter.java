@@ -1,5 +1,6 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
@@ -25,6 +26,7 @@ public class MemberConverter {
                 .isSocialLogin(false)
                 .oauthType(null)
                 .oauthKey(null)
+                .role(Role.USER)
                 .build();
     }
 
