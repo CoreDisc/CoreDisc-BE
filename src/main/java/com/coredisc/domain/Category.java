@@ -17,10 +17,4 @@ public class Category extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
-
-
-    // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
-    // - @ManyToOne Member
-    // - @OneToMany PersonalQuestion
-    // - @OneToMany OfficialQuestion
 }
