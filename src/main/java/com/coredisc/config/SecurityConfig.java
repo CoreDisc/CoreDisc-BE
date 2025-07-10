@@ -33,6 +33,8 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/favicon.ico",
             "/api/auth/**"
     };
 
@@ -41,9 +43,6 @@ public class SecurityConfig {
         http
                 //crsf 보안 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
-                // Spring Security가 요청을 처리하는 도중에 CORS 정책 검사가 필요한 경우
-                .cors(cors -> cors
-                        .configurationSource(CorsConfig.corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(allowUrl).permitAll()
                         .anyRequest().authenticated())
