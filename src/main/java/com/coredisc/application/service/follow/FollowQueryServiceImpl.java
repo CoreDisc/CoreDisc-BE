@@ -17,14 +17,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FollowQueryServiceImpl implements FollowQueryService {
 
-    private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
     @Override
-    public FollowResponseDTO.FollowerListViewDTO getFollowers(Long memberId) {
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public FollowResponseDTO.FollowerListViewDTO getFollowers(Member member) {
 
         List<Follow> followers = followRepository.findAllByFollowing(member);
 
@@ -32,10 +28,7 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     }
 
     @Override
-    public FollowResponseDTO.FollowingListViewDTO getFollowings(Long memberId) {
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public FollowResponseDTO.FollowingListViewDTO getFollowings(Member member) {
 
         List<Follow> followings = followRepository.findAllByFollower(member);
 

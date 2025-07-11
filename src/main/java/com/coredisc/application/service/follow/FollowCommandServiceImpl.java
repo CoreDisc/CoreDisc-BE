@@ -19,14 +19,11 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     private final FollowRepository followRepository;
 
     @Override
-    public Follow follow(Long memberId, Long targetId) {
+    public Follow follow(Member member, Long targetId) {
 
-        if (memberId.equals(targetId)) {
+        if (member.getId().equals(targetId)) {
             throw new FollowHandler(ErrorStatus.SELF_FOLLOW_NOT_ALLOWED);
         }
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Member target = memberRepository.findById(targetId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -42,14 +39,11 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     }
 
     @Override
-    public void unfollow(Long memberId, Long targetId) {
+    public void unfollow(Member member, Long targetId) {
 
-        if (memberId.equals(targetId)) {
+        if (member.getId().equals(targetId)) {
             throw new FollowHandler(ErrorStatus.SELF_UNFOLLOW_NOT_ALLOWED);
         }
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Member target = memberRepository.findById(targetId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
