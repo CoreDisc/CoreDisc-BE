@@ -11,10 +11,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryRepositoryAdaptor implements CategoryRepository {
 
-    private final JpaCategoryRepository jpaMemberRepository;
+    private final JpaCategoryRepository jpaCategoryRepository;
 
     @Override
     public Optional<Category> findById(Long id){
-        return jpaMemberRepository.findById(id);
+        return jpaCategoryRepository.findById(id);
     }
 }
