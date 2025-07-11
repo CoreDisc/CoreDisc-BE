@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -14,11 +15,11 @@ public interface DailyRandomQuestionStatRepository extends JpaRepository<DailyRa
     // 특정 월의 모든 랜덤 질문들을 날짜 순으로 조회
     @Query("SELECT d FROM DailyRandomQuestionStat d " +
             "WHERE d.memberId = :memberId " +
-            "AND YEAR(d.selectedDate) = :year " +
-            "AND MONTH(d.selectedDate) = :month " +
+            "AND d.selectedDate BETWEEN :startDate AND :endDate " +
             "ORDER BY d.selectedDate ASC")
-    List<DailyRandomQuestionStat> findByMemberIdAndYearAndMonthOrderBySelectedDate(
+    List<DailyRandomQuestionStat> findByMemberIdAndSelectedDateRange(
             @Param("memberId") Long memberId,
-            @Param("year") int year,
-            @Param("month") int month);
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

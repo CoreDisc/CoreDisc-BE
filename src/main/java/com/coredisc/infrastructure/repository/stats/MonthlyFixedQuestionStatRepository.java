@@ -21,6 +21,4 @@ public interface MonthlyFixedQuestionStatRepository extends JpaRepository<Monthl
             @Param("memberId") Long memberId,
             @Param("year") int year,
             @Param("month") int month);
-
-
 }
