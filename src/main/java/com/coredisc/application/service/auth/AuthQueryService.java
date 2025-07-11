@@ -17,4 +17,10 @@ public interface AuthQueryService {
     // 아이디(username) 찾기
     Member findUsername(AuthRequestDTO.FindUsernameDTO request);
 
+    // 비밀번호 변경을 위한 사용자 검증
+    boolean verifyUser(AuthRequestDTO.VerifyUserDTO request);
+
+    // 사용자 찾기
+    Member findMember(AuthRequestDTO.VerifyUserDTO request);
+
 }

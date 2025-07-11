@@ -39,4 +39,18 @@ public class AuthQueryServiceImpl implements AuthQueryService{
         return memberRepository.findByNameAndEmail(request.getName(), request.getEmail())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
+
+    // 비밀번호 변경을 위한 사용자 검증
+    @Override
+    public boolean verifyUser(AuthRequestDTO.VerifyUserDTO request) {
+
+        return memberRepository.existsByNameAndUsername(request.getName(), request.getUsername());
+    }
+
+    @Override
+    public Member findMember(AuthRequestDTO.VerifyUserDTO request) {
+
+        return memberRepository.findByNameAndUsername(request.getName(), request.getUsername())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
 }

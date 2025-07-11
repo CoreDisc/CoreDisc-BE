@@ -48,4 +48,7 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "아이디 찾기", description = "아이디 찾기 기능입니다. 이름과 이메일을 입력합니다.")
     ApiResponse<AuthResponseDTO.FindUsernameResultDTO> findUsername(@RequestBody @Valid AuthRequestDTO.FindUsernameDTO request);
+
+    @Operation(summary = "비밀번호 변경을 위한 사용자 검증", description = "비밀변호 변경을 위해 사용자 검증을 진행합니다. 사용자가 존재하면 인증코드 메일을 보냅니다.")
+    ApiResponse<String> verifyUser(@RequestBody @Valid AuthRequestDTO.VerifyUserDTO request);
 }
