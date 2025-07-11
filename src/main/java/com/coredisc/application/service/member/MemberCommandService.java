@@ -11,5 +11,6 @@ public interface MemberCommandService {
     // 닉네임 변경
     void resetNickname(Member member, MemberRequestDTO.ResetNicknameDTO request);
 
+    // 계정 탈퇴
     void resignMember(Member member);
 }
