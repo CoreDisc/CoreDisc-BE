@@ -21,7 +21,7 @@ public class FollowController implements FollowControllerDocs {
     @PostMapping("/api/follow/{targetId}")
     public ApiResponse<FollowResponseDTO.FollowResultDTO> follow(
             @CurrentMember Member member,
-            @PathVariable long targetId
+            @PathVariable Long targetId
     ) {
 
         return ApiResponse.onSuccess(FollowConverter.toFollowResultDTO(
@@ -32,7 +32,7 @@ public class FollowController implements FollowControllerDocs {
     @DeleteMapping("/api/followings/{targetId}")
     public ApiResponse<?> unfollow(
             @CurrentMember Member member,
-            @PathVariable long targetId
+            @PathVariable Long targetId
     ) {
 
         followCommandService.unfollow(member, targetId);
