@@ -25,7 +25,6 @@ public class MemberController implements MemberControllerDocs {
     public ApiResponse<String> resetPassword(@RequestBody @Valid MemberRequestDTO.ResetPasswordDTO request) {
 
         memberCommandService.resetPassword(request);
-
         return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
 
@@ -35,7 +34,14 @@ public class MemberController implements MemberControllerDocs {
                                              @RequestBody @Valid MemberRequestDTO.ResetNicknameDTO request) {
 
         memberCommandService.resetNickname(member, request);
-
         return ApiResponse.onSuccess("닉네임이 성공적으로 변경되었습니다.");
+    }
+
+    @Override
+    @PatchMapping("/resign")
+    public ApiResponse<String> resignMember(Member member) {
+
+        memberCommandService.resignMember(member);
+        return ApiResponse.onSuccess("계정이 탈퇴되었습니다.");
     }
 }

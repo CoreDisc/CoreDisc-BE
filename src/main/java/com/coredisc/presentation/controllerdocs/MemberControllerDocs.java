@@ -17,4 +17,7 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "닉네임 변경", description = "닉네임 변경 기능입니다.")
     ApiResponse<String> resetNickname(@CurrentMember Member member, @RequestBody @Valid MemberRequestDTO.ResetNicknameDTO request);
+
+    @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
+    ApiResponse<String> resignMember(@CurrentMember Member member);
 }
