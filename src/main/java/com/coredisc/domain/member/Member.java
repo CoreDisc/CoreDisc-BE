@@ -41,6 +41,7 @@ public class Member extends BaseEntity {
     @Column(length = 16, nullable = false)
     private String name;
 
+    @Setter
     @ColumnDefault("1")
     @Column(nullable = false)
     private Boolean status;
