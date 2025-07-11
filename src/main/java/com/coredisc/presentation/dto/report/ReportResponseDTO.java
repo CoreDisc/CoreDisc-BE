@@ -1,6 +1,7 @@
 package com.coredisc.presentation.dto.report;
 
 import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.common.enums.TimeZoneType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,8 @@ public class ReportResponseDTO {
     public static class PeakHourResultDTO{ //최다 답변 시간대
         private int year;
         private int month;
-        private List<HourlyAnswerCountDTO> topHours;
+        private HourlyAnswerCountDTO topHours;
+        private List<TimeZoneCountDTO> timeZoneStats;
     }
 
     @Builder
@@ -49,14 +51,24 @@ public class ReportResponseDTO {
         private int year;
         private int month;
         private List<DailyOptionDTO> dailyList;
+        private List<String> textResponses; // 게시글 테이블에서 가져와서 서비스 로직에서 처리
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class HourlyAnswerCountDTO{ //시간대 별 응답수
+    public static class HourlyAnswerCountDTO{ //시간대별 응답수 -> 시간 단위
         private int hour;
+        private int answerCount;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TimeZoneCountDTO{ //시간대별 응답수 -> 단어 단위
+        private TimeZoneType timeZone;
         private int answerCount;
     }
 
@@ -75,7 +87,7 @@ public class ReportResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DailyOptionDTO{ //선택형 일기 옵션
-        private String OptionContent;
+        private String optionContent;
         private int selectionCount;
     }
 }
