@@ -3,6 +3,7 @@ package com.coredisc.presentation.dto.member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 public class MemberRequestDTO {
@@ -10,9 +11,9 @@ public class MemberRequestDTO {
     @Getter
     public static class ResetPasswordDTO {
 
-        @NotBlank(message = "아이디 입력은 필수 입니다.")
+        @NotBlank(message = "아이디 입력은 필수입니다.")
         @Schema(example = "my_coredisc")
-        String username;
+        private String username;
 
         @NotBlank(message = "변경할 비밀번호 입력은 필수입니다.")
         @Pattern(
@@ -25,5 +26,13 @@ public class MemberRequestDTO {
         @NotBlank(message = "비밀번호 재확인은 필수입니다.")
         @Schema(example = "coredisc123")
         private String passwordCheck;
+    }
+
+    @Getter
+    public static class ResetNicknameDTO {
+
+        @NotBlank(message = "변경할 닉네임 입력은 필수입니다.")
+        @Size(max = 16, message = "닉네임은 16자 이내로 입력해주세요.")
+        private String newNickname;
     }
 }
