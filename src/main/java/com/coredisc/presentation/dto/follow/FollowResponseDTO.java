@@ -27,6 +27,7 @@ public class FollowResponseDTO {
     @NoArgsConstructor
     @Builder
     public static class FollowerListViewDTO {
+        private int totalFollowerCount;
         private List<FollowerDTO> followers;
     }
 
@@ -47,6 +48,7 @@ public class FollowResponseDTO {
     @NoArgsConstructor
     @Builder
     public static class FollowingListViewDTO {
+        private int totalFollowingCount;
         private List<FollowingDTO> followings;
     }
 

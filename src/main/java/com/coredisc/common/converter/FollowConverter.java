@@ -29,12 +29,13 @@ public class FollowConverter {
                 .build();
     }
 
-    public static FollowResponseDTO.FollowerListViewDTO toFollowerListViewDTO(List<Follow> follows) {
-        List<FollowResponseDTO.FollowerDTO> dtos = follows.stream()
+    public static FollowResponseDTO.FollowerListViewDTO toFollowerListViewDTO(List<Follow> followers) {
+        List<FollowResponseDTO.FollowerDTO> dtos = followers.stream()
                 .map(FollowConverter::toFollowerDTO)
                 .collect(Collectors.toList());
 
         return FollowResponseDTO.FollowerListViewDTO.builder()
+                .totalFollowerCount(followers.size())
                 .followers(dtos)
                 .build();
     }
@@ -62,6 +63,7 @@ public class FollowConverter {
                 .collect(Collectors.toList());
 
         return FollowResponseDTO.FollowingListViewDTO.builder()
+                .totalFollowingCount(followings.size())
                 .followings(dtos)
                 .build();
     }
