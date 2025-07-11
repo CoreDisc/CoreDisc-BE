@@ -55,4 +55,17 @@ public class AuthResponseDTO {
 
         private boolean isVerified;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class LoginResultDTO {
+
+        private Long id;
+
+        private String accessToken;
+
+        private String refreshToken;
+    }
 }

@@ -5,6 +5,7 @@ import com.coredisc.domain.Post;
 import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
+import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.follow.Follow;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -43,6 +44,10 @@ public class Member extends BaseEntity {
     @ColumnDefault("1")
     @Column(nullable = false)
     private Boolean status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
+    private Role role;
 
     @ColumnDefault("0")
     @Column(nullable = false)
