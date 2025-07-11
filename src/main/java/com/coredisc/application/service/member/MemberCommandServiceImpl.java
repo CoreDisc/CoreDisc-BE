@@ -27,7 +27,13 @@ public class MemberCommandServiceImpl implements MemberCommandService{
         }
 
         member.encodePassword(passwordEncoder.encode(request.getNewPassword()));
+        memberRepository.save(member);
+    }
 
+    @Override
+    public void resetNickname(Member member, MemberRequestDTO.ResetNicknameDTO request) {
+
+        member.setNickname(request.getNewNickname());
         memberRepository.save(member);
     }
 }
