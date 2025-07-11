@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 public class ReportResponseDTO {
@@ -51,7 +53,10 @@ public class ReportResponseDTO {
         private int year;
         private int month;
         private List<DailyOptionDTO> dailyList;
-        private List<String> textResponses; // 게시글 테이블에서 가져와서 서비스 로직에서 처리
+    }
+
+    public static class DailyDetailListDTO{
+        private HashMap<LocalDate, String> dailyDetails;
     }
 
     @Builder

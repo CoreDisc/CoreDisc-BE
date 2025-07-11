@@ -12,31 +12,38 @@ import java.time.LocalDate;
 @Tag(name = "리포트 세부 통계", description = "사용자별 세부 통계 API")
 public interface ReportStatControllerDocs {
 
-    @Operation(summary = "기간별 전체 질문 목록 조회", description = "사용자가 특정 기간 동안 답변한 고정 질문 3개와 랜덤 질문 목록을 조회합니다.")
+    @Operation(summary = "기간별 전체 질문 목록 조회", description = "사용자가 특정 달에 선택한 고정 질문 3개와 랜덤 질문 목록을 조회합니다.")
     ApiResponse<ReportResponseDTO.QuestionListDTO> getMonthlyQuestionList(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Long memberId
+            @RequestParam("year") int year,
+            @RequestParam("month") int month,
+            @RequestParam("memberId") Long memberId
     );
 
-    @Operation(summary = "기간별 최다 선택된 랜덤 질문 조회", description = "특정 기간 동안 사용자가 가장 많이 선택한 랜덤 질문 3가지를 조회합니다.")
+    @Operation(summary = "기간별 최다 선택된 랜덤 질문 조회", description = "사용자가 특정 달 동안 가장 많이 선택한 랜덤 질문 3개를 조회합니다.")
     ApiResponse<ReportResponseDTO.MostSelectedQuestionDTO> getMostSelectedQuestions(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Long memberId
+            @RequestParam("memberId") Long memberId
     );
 
-    @Operation(summary = "기간별 최다 답변 시간대 조회", description = "특정 기간 동안 사용자가 가장 많이 답변한 시간대를 조회합니다.")
+    @Operation(summary = "기간별 응답 시간대 횟수 조회", description = "사용자가 특정 달에 시간대 별로 응답한 횟수를 조회합니다.")
     ApiResponse<ReportResponseDTO.PeakHourDTO> getPeakHour(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Long memberId
+            @RequestParam("memberId") Long memberId
     );
 
-    @Operation(summary = "기간별 게시글의 daily_ 항목 최다 답변 조회", description = "특정 기간 동안 일기 게시글의 daily_ 항목 중 가장 많이 선택된 옵션을 조회합니다.")
+    @Operation(summary = "기간별 게시글의 daily_ 항목 최다 답변 조회", description = "사용자가 선택형 일기에서 특정 달에 가장 많이 선택한 옵션을 조회합니다.")
     ApiResponse<ReportResponseDTO.TopDailySelectionDTO> getMostSelectedDaily(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Long memberId
+            @RequestParam("year") int year,
+            @RequestParam("month") int month,
+            @RequestParam("memberId") Long memberId
+    );
+
+    @Operation(summary = "사용자가 특정 달에 작성한 일기 내용 전체 출력", description = "특정 기간 동안 일기 게시글의 daily_ 항목 중 가장 많이 선택된 옵션을 조회합니다.")
+    ApiResponse<ReportResponseDTO.DailyDetailListDTO> getDailyDetail(
+            @RequestParam("year") int year,
+            @RequestParam("month") int month,
+            @RequestParam("memberId") Long memberId
     );
 }
