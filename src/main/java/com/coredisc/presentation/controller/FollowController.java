@@ -44,7 +44,9 @@ public class FollowController implements FollowControllerDocs {
             @CurrentMember Member member
     ) {
 
-        return ApiResponse.onSuccess(followQueryService.getFollowers(member));
+        return ApiResponse.onSuccess(FollowConverter.toFollowerListViewDTO(
+                followQueryService.getFollowers(member)
+        ));
     }
 
     @GetMapping("/api/followings")
@@ -52,6 +54,8 @@ public class FollowController implements FollowControllerDocs {
             @CurrentMember Member member
     ) {
 
-        return ApiResponse.onSuccess(followQueryService.getFollowings(member));
+        return ApiResponse.onSuccess(FollowConverter.toFollowingListViewDTO(
+                followQueryService.getFollowings(member)
+        ));
     }
 }

@@ -20,18 +20,14 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     private final FollowRepository followRepository;
 
     @Override
-    public FollowResponseDTO.FollowerListViewDTO getFollowers(Member member) {
+    public List<Follow> getFollowers(Member member) {
 
-        List<Follow> followers = followRepository.findAllByFollowing(member);
-
-        return FollowConverter.toFollowerListViewDTO(followers);
+        return followRepository.findAllByFollowing(member);
     }
 
     @Override
-    public FollowResponseDTO.FollowingListViewDTO getFollowings(Member member) {
+    public List<Follow> getFollowings(Member member) {
 
-        List<Follow> followings = followRepository.findAllByFollower(member);
-
-        return FollowConverter.toFollowingListViewDTO(followings);
+        return followRepository.findAllByFollower(member);
     }
 }
