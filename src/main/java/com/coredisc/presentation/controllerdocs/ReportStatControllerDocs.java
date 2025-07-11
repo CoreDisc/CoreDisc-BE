@@ -8,13 +8,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "리포트 세부 통계", description = "사용자별 세부 통계 API")
-public interface ReportControllerDocs {
+public interface ReportStatControllerDocs {
 
     @Operation(summary = "월별 전체 질문 목록 조회", description = "사용자가 한 달동안 답변한 고정 질문 3개와 랜덤 질문 목록을 조회합니다.")
     ApiResponse<ReportResponseDTO.QuestionListDTO> getMonthlyQuestionList(
             @RequestParam("year") int year,
             @RequestParam("month") int month,
-            Member member  //@CurrentMember로 주입 예정
+            Member member
     );
 
     @Operation(summary = "최다 선택된 랜덤 질문 조회", description = "한 달 동안 사용자가 가장 많이 선택한 랜덤 질문 3가지를 조회합니다.")
@@ -25,7 +25,7 @@ public interface ReportControllerDocs {
     );
 
     @Operation(summary = "최다 답변 시간대 조회", description = "한 달 동안 사용자가 가장 많이 답변한 시간대를 조회합니다.")
-    ApiResponse<ReportResponseDTO.PeakHourResultDTO> getPeakHour(
+    ApiResponse<ReportResponseDTO.PeakHourDTO> getPeakHour(
             @RequestParam("year") int year,
             @RequestParam("month") int month,
             Member member
