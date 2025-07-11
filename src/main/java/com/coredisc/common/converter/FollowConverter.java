@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class FollowConverter {
 
-    //TODO : isCircle -> false 디폴트로 수정
     public static Follow toFollow(Member follower, Member following){
 
         return Follow.builder()

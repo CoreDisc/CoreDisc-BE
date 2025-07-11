@@ -18,7 +18,6 @@ public class FollowController implements FollowControllerDocs {
     private final FollowCommandService followCommandService;
     private final FollowQueryService followQueryService;
 
-    //TODO: 하드코딩 수정
     @PostMapping("/api/follow/{targetId}")
     public ApiResponse<FollowResponseDTO.FollowResultDTO> follow(
             @CurrentMember Member member,
