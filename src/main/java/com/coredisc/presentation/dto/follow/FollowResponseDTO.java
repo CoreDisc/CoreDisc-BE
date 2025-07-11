@@ -19,7 +19,6 @@ public class FollowResponseDTO {
         private String followerNickname;
         private String followerUsername;
         private String followerImageUrl;
-        private boolean isCircle;
     }
 
     @Getter
