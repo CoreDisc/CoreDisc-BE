@@ -21,10 +21,6 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PublicityType publicity;  // PUBLIC, PRIVATE, CIRCLE
@@ -34,7 +30,7 @@ public class Post extends BaseEntity {
     @Builder.Default
     private PostStatus status = PostStatus.TEMP;  // TEMP, PUBLISHED
 
-    // 선택형 일기
+    // 선택형 일기 -> enum 타입으로 관리
     @Column(name = "daily_who", length = 50)
     private String dailyWho;
 
@@ -47,7 +43,7 @@ public class Post extends BaseEntity {
     @Column(name = "daily_detail", length = 50)
     private String dailyDetail;  // mood로 변경 고려
 
-    // 통계 (반정규화)
+    // 통계
     @Column(name = "like_count")
     @Builder.Default
     private Integer likeCount = 0;
@@ -61,14 +57,18 @@ public class Post extends BaseEntity {
     private Integer viewCount = 0;
 
     // 연관관계
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostAnswer> answers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<PostLike> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<PostLike> postLikes = new ArrayList<>();
 
 
 }

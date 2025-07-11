@@ -17,15 +17,11 @@ public class PostAnswerImage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "post_answer_id", nullable = false)
-    private Long postAnswerId;
-
     @Column(name = "img_url", nullable = false)
     private String imgUrl;
 
-    @Column(name = "thumbnail_url")
-    private String thumbnailUrl;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_answer_id",nullable = false)
+    private PostAnswer postAnswer;
 
-
-    // - @OneToOne PostAnswer
 }
