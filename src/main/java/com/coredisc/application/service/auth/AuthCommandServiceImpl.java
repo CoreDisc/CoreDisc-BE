@@ -132,7 +132,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
             // 블랙리스트에 저장
             redisUtil.set(accessToken, "logout");
-            redisUtil.expire(accessToken, jwtProvider.getExpTime(accessToken), TimeUnit.MILLISECONDS);
+            redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
             // RefreshToken 삭제
             redisUtil.delete(jwtProvider.getUsername(accessToken));
         } catch (ExpiredJwtException e) {
