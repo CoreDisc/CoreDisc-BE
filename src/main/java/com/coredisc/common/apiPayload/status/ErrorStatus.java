@@ -36,6 +36,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
 
+    // 이용 약관 관련 에러
+    TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "TERMS4001", "이용 약관이 없습니다."),
+
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");
 
