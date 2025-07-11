@@ -7,6 +7,8 @@ import lombok.*;
 
 @Entity
 @Getter
+@Table(name = "post_like"
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -23,7 +25,5 @@ public class PostLike extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
-
-    // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
 
 }
