@@ -36,7 +36,7 @@ public class FollowController implements FollowControllerDocs {
     ) {
 
         followCommandService.unfollow(member, targetId);
-        return ApiResponse.onSuccess(null);
+        return ApiResponse.onSuccess("성공적으로 언팔로우되었습니다.");
     }
 
     @GetMapping("/api/followers")
