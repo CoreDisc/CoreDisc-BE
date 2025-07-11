@@ -37,4 +37,9 @@ public class MemberRepositoryAdaptor implements MemberRepository {
     public Optional<Member> findByUsername(String username) {
         return jpaMemberRepository.findByUsername(username);
     }
+
+    @Override
+    public Optional<Member> findByNameAndEmail(String name, String email) {
+        return jpaMemberRepository.findByNameAndEmail(name, email);
+    }
 }
