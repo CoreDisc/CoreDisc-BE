@@ -19,7 +19,7 @@ public interface MonthlySelectionDiaryStatRepository extends JpaRepository<Month
             "AND p.dailyDetail IS NOT NULL " +
             "AND p.dailyDetail != '' " +
             "AND p.status = 'PUBLISHED' " +
-            "ORDER BY p.createdAt DESC")
+            "ORDER BY p.createdAt ASC")
     List<String> findDailyDetailsByYearMonth(@Param("memberId") Long memberId,
                                              @Param("year") int year,
                                              @Param("month") int month);

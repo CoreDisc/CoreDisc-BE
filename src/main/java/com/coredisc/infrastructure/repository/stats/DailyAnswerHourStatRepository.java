@@ -15,38 +15,17 @@ import java.util.List;
 @Repository
 public interface DailyAnswerHourStatRepository extends JpaRepository<DailyAnswerHourStat, Long> {
 
-    // 특정 회원이 특정 월에 가장 많이 답변한 시간대+횟수를 출력
-    @Query("SELECT new com.coredisc.presentation.dto.report.ReportResponseDTO.HourlyAnswerCountDTO(" +
-            "d.hourOfDay, CAST(SUM(d.answerCount) AS int)) " +
-            "FROM DailyAnswerHourStat d " +
+    //특정 사용자가 한 달동안 특정 시간 사이에 답변한 횟수 조회
+    @Query("SELECT SUM(d.answerCount) FROM DailyAnswerHourStat d " +
             "WHERE d.memberId = :memberId " +
-            "AND YEAR(d.answerDate) = :year " +
-            "AND MONTH(d.answerDate) = :month " +
-            "GROUP BY d.hourOfDay " +
-            "ORDER BY SUM(d.answerCount) DESC")
-    List<ReportResponseDTO.HourlyAnswerCountDTO> findPeakHoursByMemberIdAndYearMonth(
+            "AND d.answerDate BETWEEN :startDate AND :endDate " +
+            "AND d.hourOfDay BETWEEN :startHour AND :endHour")
+    Integer findAnswerCountByMemberIdAndDateRangeAndHourRange(
             @Param("memberId") Long memberId,
-            @Param("year") int year,
-            @Param("month") int month,
-            Pageable pageable);
-
-    // 지정한 시간 범위(3-5시 등) 내 답변수 합계를 timeZoneType 이름과 함께 반환
-    @Query("SELECT new com.coredisc.presentation.dto.report.ReportResponseDTO.TimeZoneCountDTO(" +
-            ":timeZoneType, CAST(SUM(d.answerCount) AS int)) " +
-            "FROM DailyAnswerHourStat d " +
-            "WHERE d.memberId = :memberId " +
-            "AND YEAR(d.answerDate) = :year " +
-            "AND MONTH(d.answerDate) = :month " +
-            "AND d.hourOfDay >= :start " +
-            "AND d.hourOfDay <= :end")
-    List<ReportResponseDTO.TimeZoneCountDTO> findTimeZoneCountByMemberIdAndYearMonthAndHourRange(
-            @Param("memberId") Long memberId,
-            @Param("year") int year,
-            @Param("month") int month,
-            @Param("start") int start,
-            @Param("end") int end,
-            @Param("timeZoneType") TimeZoneType timeZoneType
-    );
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("startHour") int startHour,
+            @Param("endHour") int endHour);
 
     //데이터 중복 체크용
     boolean existsByMemberIdAndAnswerDateAndHourOfDay(Long memberId, LocalDate answerDate, int hourOfDay);
