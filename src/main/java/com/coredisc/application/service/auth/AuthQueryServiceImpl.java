@@ -1,6 +1,10 @@
 package com.coredisc.application.service.auth;
 
+import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.exception.handler.AuthHandler;
+import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +30,13 @@ public class AuthQueryServiceImpl implements AuthQueryService{
     @Override
     public boolean checkNickname(String nickname) {
         return memberRepository.existsByNickname(nickname);
+    }
+
+    // 아이디(username) 찾기
+    @Override
+    public Member findUsername(AuthRequestDTO.FindUsernameDTO request) {
+
+        return memberRepository.findByNameAndEmail(request.getName(), request.getEmail())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 }

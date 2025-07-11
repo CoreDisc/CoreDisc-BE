@@ -45,4 +45,7 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "로그아웃", description = "로그아웃 기능입니다.")
     ApiResponse<String> logout(HttpServletRequest request);
+
+    @Operation(summary = "아이디 찾기", description = "아이디 찾기 기능입니다. 이름과 이메일을 입력합니다.")
+    ApiResponse<AuthResponseDTO.FindUsernameResultDTO> findUsername(@RequestBody @Valid AuthRequestDTO.FindUsernameDTO request);
 }

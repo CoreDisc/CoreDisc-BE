@@ -99,4 +99,13 @@ public class AuthController implements AuthControllerDocs {
         authCommandService.logout(request);
         return ApiResponse.onSuccess("로그아웃 되었습니다.");
     }
+
+    // 아이디(username) 찾기
+    @PostMapping("/find-username")
+    public ApiResponse<AuthResponseDTO.FindUsernameResultDTO> findUsername(@RequestBody @Valid AuthRequestDTO.FindUsernameDTO request) {
+
+        return ApiResponse.onSuccess(MemberConverter.toFindUsernameResultDTO(
+                        authQueryService.findUsername(request)
+        ));
+    }
 }
