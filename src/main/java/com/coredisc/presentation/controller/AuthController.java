@@ -109,7 +109,7 @@ public class AuthController implements AuthControllerDocs {
     }
 
     // 아이디(username) 찾기
-    @PostMapping("/find-username")
+    @PostMapping("/username")
     public ApiResponse<AuthResponseDTO.FindUsernameResultDTO> findUsername(@RequestBody @Valid AuthRequestDTO.FindUsernameDTO request) {
 
         return ApiResponse.onSuccess(MemberConverter.toFindUsernameResultDTO(

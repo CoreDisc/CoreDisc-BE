@@ -97,6 +97,4 @@ public class AuthRequestDTO {
         @NotBlank(message = "아이디 입력은 필수입니다.")
         private String username;
     }
-
-
 }
