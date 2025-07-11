@@ -191,4 +191,13 @@ public class JwtProvider {
     public Long getExpTime(String token) {
         return getClaims(token).getPayload().getExpiration().getTime();
     }
+
+    // 토큰의 남은 유효시간 반환
+    public Long getRemainingExpiration(String token) {
+
+        Jws<Claims> claims = getClaims(token);
+        Date expiration = claims.getPayload().getExpiration();
+
+        return expiration.getTime() - System.currentTimeMillis();
+    }
 }
