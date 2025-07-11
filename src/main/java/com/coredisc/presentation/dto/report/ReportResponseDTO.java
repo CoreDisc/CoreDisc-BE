@@ -15,7 +15,7 @@ public class ReportResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PeakHourResultDTO{ //최다 답변 시간대
+    public static class PeakHourDTO{ //최다 답변 시간대
         private int year;
         private int month;
         private HourlyAnswerCountDTO topHours;
