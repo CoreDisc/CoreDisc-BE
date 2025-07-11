@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "Auth", description = "회원가입 관련 API")
+@Tag(name = "Auth", description = "회원가입/로그인/로그아웃/인증 관련 API")
 public interface AuthControllerDocs {
 
     @Operation(summary = "회원가입", description = "회원가입 기능입니다.")
