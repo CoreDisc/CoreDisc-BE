@@ -1,6 +1,7 @@
-package com.coredisc.domain;
+package com.coredisc.domain.post;
 
 
+import com.coredisc.domain.Comment;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
@@ -70,5 +71,22 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PostLike> postLikes = new ArrayList<>();
 
+    // 비지니스 로직
+
+    // 발행
+    public void publish()
+    {
+        this.status = PostStatus.PUBLISHED;
+    }
+
+    // 임시 저장 여부확인
+    public boolean isTemp() {
+        return this.status == PostStatus.TEMP;
+    }
+
+    // 발행 여부 확인
+    public boolean isPublished() {
+        return this.status == PostStatus.PUBLISHED;
+    }
 
 }

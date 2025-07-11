@@ -1,4 +1,4 @@
-package com.coredisc.domain;
+package com.coredisc.domain.post;
 
 
 import com.coredisc.domain.common.BaseEntity;

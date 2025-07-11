@@ -3,6 +3,7 @@ package com.coredisc.domain;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.PostAnswer;
 import jakarta.persistence.*;
 import lombok.*;
 
