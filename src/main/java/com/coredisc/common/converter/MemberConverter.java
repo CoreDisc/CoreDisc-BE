@@ -1,5 +1,6 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
@@ -19,7 +20,7 @@ public class MemberConverter {
         return Member.builder()
                 .email(request.getEmail())
                 .name(request.getName())
-                .nickname(request.getNickname())
+                .nickname(RandomNicknameGenerator.generateRandomNickname())
                 .username(request.getUsername())
                 .password(request.getPassword())
                 .status(true)

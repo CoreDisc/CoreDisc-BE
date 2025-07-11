@@ -20,11 +20,6 @@ public class AuthRequestDTO {
         @Schema(description = "name", example = "한소희")
         private String name;
 
-        @NotBlank(message = "닉네임 입력은 필수입니다.")
-        @Size(max = 16, message = "닉네임은 16자 이내로 입력해주세요.")
-        @Schema(description = "nickname", example = "코어디스크")
-        private String nickname;
-
         @NotBlank(message = "계정명 입력은 필수입니다.")
         @Size(max = 16, message = "계정명은 16자 이내로 입력해주세요.")
         @Schema(description = "username", example = "my_coredisc")

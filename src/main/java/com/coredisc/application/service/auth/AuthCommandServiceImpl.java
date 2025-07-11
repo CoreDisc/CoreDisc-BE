@@ -47,9 +47,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if(memberRepository.existsByEmail(request.getEmail())) {
             throw new AuthHandler(ErrorStatus.EMAIL_ALREADY_EXISTS);
         }
-        if(memberRepository.existsByNickname(request.getNickname())) {
-            throw new AuthHandler(ErrorStatus.NICKNAME_ALREADY_EXISTS);
-        }
 
         Member newMember = MemberConverter.toMember(request);
         newMember.encodePassword(passwordEncoder.encode(request.getPassword()));
