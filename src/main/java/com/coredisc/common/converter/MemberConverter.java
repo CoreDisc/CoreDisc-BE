@@ -73,4 +73,11 @@ public class MemberConverter {
                 .isDuplicated(isDuplicated)
                 .build();
     }
+
+    public static AuthResponseDTO.FindUsernameResultDTO toFindUsernameResultDTO(Member member) {
+
+        return AuthResponseDTO.FindUsernameResultDTO.builder()
+                .username(member.getUsername())
+                .build();
+    }
 }

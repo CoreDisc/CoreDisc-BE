@@ -1,5 +1,6 @@
 package com.coredisc.application.service.auth;
 
+import com.coredisc.domain.common.enums.EmailRequestType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
@@ -12,7 +13,7 @@ public interface AuthCommandService {
     Member signup(AuthRequestDTO.SignupDTO request);
 
     // 이메일 코드 전송
-    void sendCode(AuthRequestDTO.VerifyEmailDTO request);
+    void sendCode(AuthRequestDTO.VerifyEmailDTO request, EmailRequestType requestType);
 
     // 코드 인증
     boolean verifyCode(AuthRequestDTO.VerifyCodeDTO request);
