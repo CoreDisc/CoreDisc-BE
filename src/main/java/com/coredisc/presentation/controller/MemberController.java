@@ -39,7 +39,7 @@ public class MemberController implements MemberControllerDocs {
 
     @Override
     @PatchMapping("/resign")
-    public ApiResponse<String> resignMember(Member member) {
+    public ApiResponse<String> resignMember(@CurrentMember Member member) {
 
         memberCommandService.resignMember(member);
         return ApiResponse.onSuccess("계정이 탈퇴되었습니다.");
@@ -47,8 +47,16 @@ public class MemberController implements MemberControllerDocs {
 
     @Override
     @GetMapping("/my-home")
-    public ApiResponse<MemberResponseDTO.MyHomeUserInfoDTO> getMyHomeUserInfo(Member member) {
+    public ApiResponse<MemberResponseDTO.MyHomeInfoOfMeDTO> getMyHomeInfoOfMe(@CurrentMember Member member) {
 
-        return ApiResponse.onSuccess(memberQueryService.getMyHomeUserInfo(member));
+        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfoOfMe(member));
+    }
+
+    @Override
+    @GetMapping("/my-home/{targetUsername}")
+    public ApiResponse<MemberResponseDTO.MyHomeInfoOfOtherDTO> getMyHomeInfoOfOther(@CurrentMember Member member,
+                                                                                 @PathVariable String targetUsername) {
+
+        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfoOfOther(member, targetUsername));
     }
 }
