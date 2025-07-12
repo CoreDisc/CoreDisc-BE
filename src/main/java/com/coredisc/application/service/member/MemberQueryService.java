@@ -10,5 +10,8 @@ public interface MemberQueryService {
     Member getMemberByUsername(String username);
 
     // 마이홈(본인) 사용자 정보 확인
-    MemberResponseDTO.MyHomeUserInfoDTO getMyHomeUserInfo(Member member);
+    MemberResponseDTO.MyHomeInfoOfMeDTO getMyHomeInfoOfMe(Member member);
+
+    // 마이홈(타사용자) 사용자 정보 확인
+    MemberResponseDTO.MyHomeInfoOfOtherDTO getMyHomeInfoOfOther(Member member, String targetUsername);
 }
