@@ -19,14 +19,12 @@ public class ReportStatConverter {
 
     public static ReportResponseDTO.PeakHourDTO toPeakHourDTO(ReportRawData.HourlyAnswerRawData rawData) {
         // 최다 응답 시간대 찾기
-        int topHour = -1;
-        int maxCount = -1;
-        for (Map.Entry<Integer, Integer> entry : rawData.getHourCountMap().entrySet()) {
-            if (entry.getValue() > maxCount) {
-                topHour = entry.getKey();
-                maxCount = entry.getValue();
-            }
-        }
+        Map.Entry<Integer, Integer> maxEntry = rawData.getHourCountMap().entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElse(null);
+
+        int topHour = (maxEntry != null) ? maxEntry.getKey() : -1;
+        int maxCount = (maxEntry != null) ? maxEntry.getValue() : -1;
 
         ReportResponseDTO.HourlyAnswerCountDTO topHours = ReportResponseDTO.HourlyAnswerCountDTO.builder()
                 .hour(topHour)
