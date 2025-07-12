@@ -2,10 +2,7 @@ package com.coredisc.presentation.dto.report;
 
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.common.enums.TimeZoneType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -31,7 +28,7 @@ public class ReportResponseDTO {
     public static class MostSelectedQuestionDTO{ //최다 선택한 랜덤 질문
         private int year;
         private int month;
-        private List<QuestionDTO> questions;
+        private List<SeletedQuestionDTO> questions;
     }
 
     @Builder
@@ -55,6 +52,11 @@ public class ReportResponseDTO {
         private List<DailyOptionDTO> dailyList;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Setter
     public static class DailyDetailListDTO{
         private HashMap<LocalDate, String> dailyDetails;
     }
@@ -85,6 +87,16 @@ public class ReportResponseDTO {
         private Long id;
         private QuestionType questionType;
         private String questionContent;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SeletedQuestionDTO{
+        private Long id;
+        private String questionContent;
+        private int selectedCount;
     }
 
     @Builder

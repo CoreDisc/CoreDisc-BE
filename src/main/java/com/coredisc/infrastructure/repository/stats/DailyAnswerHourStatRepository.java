@@ -15,17 +15,16 @@ import java.util.List;
 @Repository
 public interface DailyAnswerHourStatRepository extends JpaRepository<DailyAnswerHourStat, Long> {
 
-    //특정 사용자가 한 달동안 특정 시간 사이에 답변한 횟수 조회
-    @Query("SELECT SUM(d.answerCount) FROM DailyAnswerHourStat d " +
+    //특정 사용자가 한 달동안 시간대별로 답변한 횟수 조회
+    @Query("SELECT d.hourOfDay, SUM(d.answerCount) " +
+            "FROM DailyAnswerHourStat d " +
             "WHERE d.memberId = :memberId " +
             "AND d.answerDate BETWEEN :startDate AND :endDate " +
-            "AND d.hourOfDay BETWEEN :startHour AND :endHour")
-    Integer findAnswerCountByMemberIdAndDateRangeAndHourRange(
+            "GROUP BY d.hourOfDay")
+    List<Object[]> findHourlyAnswerCountsByMemberIdAndDateRange(
             @Param("memberId") Long memberId,
             @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("startHour") int startHour,
-            @Param("endHour") int endHour);
+            @Param("endDate") LocalDate endDate);
 
     //데이터 중복 체크용
     boolean existsByMemberIdAndAnswerDateAndHourOfDay(Long memberId, LocalDate answerDate, int hourOfDay);

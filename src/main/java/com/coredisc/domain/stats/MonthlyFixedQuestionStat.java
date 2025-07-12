@@ -30,7 +30,7 @@ public class MonthlyFixedQuestionStat extends BaseEntity {
     private int month;
 
     @Column(nullable = false)
-    @Min(1) @Max(3)
+    @Min(0) @Max(3)
     private int questionOrder;
 
     @Column(nullable = false, length = 100)

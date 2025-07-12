@@ -1,6 +1,7 @@
 package com.coredisc.infrastructure.repository.stats;
 
 import com.coredisc.domain.stats.DailyRandomQuestionStat;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +23,18 @@ public interface DailyRandomQuestionStatRepository extends JpaRepository<DailyRa
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    //특정 기간 동안 선택횟수가 가장 많은 3개의 랜덤 질문 내용과 선택된 횟수를 조회
+    @Query("SELECT d.questionId, d.questionContent, COUNT(d) as selectionCount " +
+            "FROM DailyRandomQuestionStat d " +
+            "WHERE d.memberId = :memberId " +
+            "AND d.selectedDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY d.questionId, d.questionContent " +
+            "ORDER BY selectionCount DESC")
+    List<Object[]> findTop3QuestionsByMemberAndDateRange(
+            @Param("memberId") Long memberId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            Pageable pageable);
+
 }
