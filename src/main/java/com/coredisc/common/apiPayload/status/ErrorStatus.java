@@ -29,6 +29,23 @@ public enum ErrorStatus implements BaseErrorCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4009", "토큰이 만료되었습니다."),
     TOKEN_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "AUTH4010", "이 토큰은 로그아웃되어 더 이상 유효하지 않습니다."),
 
+    // 게시글 관련 에러
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "게시글을 찾을 수 없습니다."),
+    POST_ALREADY_EXISTS(HttpStatus.CONFLICT, "POST4002", "이미 해당 날짜에 게시글이 존재합니다."),
+    POST_ALREADY_PUBLISHED(HttpStatus.CONFLICT, "POST4003", "이미 발행된 게시글입니다."),
+    POST_NOT_READY_TO_PUBLISH(HttpStatus.BAD_REQUEST, "POST4004", "발행할 수 없는 상태입니다."),
+    NOT_POST_OWNER(HttpStatus.FORBIDDEN, "POST4005", "게시글 작성자가 아닙니다."),
+    INCOMPLETE_TODAY_QUESTIONS(HttpStatus.BAD_REQUEST, "POST4006", "오늘의 질문이 4개가 설정되지 않았습니다."),
+    INVALID_QUESTION_ORDER(HttpStatus.BAD_REQUEST, "POST4007", "잘못된 질문 순서입니다."),
+    INVALID_DATE(HttpStatus.BAD_REQUEST, "POST4008", "잘못된 날짜입니다."),
+
+    // 이미지 파일 관련 에러
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5001", "파일 업로드에 실패했습니다."),
+    EMPTY_FILE(HttpStatus.BAD_REQUEST, "FILE4001", "빈 파일입니다."),
+    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "FILE4002", "파일 크기가 너무 큽니다. (최대 10MB)"),
+    INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FILE4003", "잘못된 파일명입니다."),
+    INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE4004", "지원하지 않는 파일 형식입니다. (jpg, jpeg, png, gif, webp만 허용)"),
+
 
 
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "메일 발송 중 오류가 발생했습니다."),
