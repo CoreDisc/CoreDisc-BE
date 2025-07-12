@@ -9,6 +9,7 @@ import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,6 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PublicityType publicity;  // PUBLIC, PRIVATE, CIRCLE
 

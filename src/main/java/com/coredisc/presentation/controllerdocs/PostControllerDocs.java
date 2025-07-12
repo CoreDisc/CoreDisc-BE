@@ -1,8 +1,10 @@
 package com.coredisc.presentation.controllerdocs;
 
 import com.coredisc.common.apiPayload.ApiResponse;
+import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
+import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -18,6 +20,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 생성 (임시저장)", description = "오늘의 질문에 대한 게시글을 생성합니다. (임시저장 상태)")
     ApiResponse<PostResponseDTO.CreatePostResultDto> createPost(
+            @CurrentMember Member member,
             @Parameter(description = "게시글 생성 요청") @RequestBody PostRequestDTO.CreatePostDto request
     );
 
@@ -47,7 +50,7 @@ public interface PostControllerDocs {
     ApiResponse<PostResponseDTO.AnswerResultDto> createOrUpdateAnswer(
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long postId,
             @Parameter(description = "질문 타입 (0-3)", required = true) @PathVariable Integer answerType,
-            @Parameter(description = "답변 요청") @RequestBody PostRequestDTO.AnswerDto request
+            @Parameter(description = "답변 요청") @RequestBody PostRequestDTO.TextAnswerDto request
     );
 
     @Operation(summary = "답변 삭제", description = "특정 답변을 삭제합니다.")
