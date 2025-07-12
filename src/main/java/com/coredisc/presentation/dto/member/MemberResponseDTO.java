@@ -24,8 +24,7 @@ public class MemberResponseDTO {
 
         private Long followingCount;
 
-        // TODO: 총 디스크 수
-//        private Integer discCount;
+        private Long discCount;
 
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
@@ -46,8 +45,7 @@ public class MemberResponseDTO {
 
         private Long followingCount;
 
-        // TODO: 총 디스크 수
-//        private Integer discCount;
+        private Long discCount;
 
         private Boolean isFollowing;
 
