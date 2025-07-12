@@ -1,6 +1,8 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.application.service.report.ReportRawData;
+import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.exception.handler.ReportStatsHandler;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.common.enums.TimeZoneType;
 import com.coredisc.presentation.dto.report.ReportResponseDTO;
@@ -18,7 +20,7 @@ public class ReportStatConverter {
     }
 
     public static ReportResponseDTO.PeakHourDTO toPeakHourDTO(ReportRawData.HourlyAnswerRawData rawData) {
-        // 최다 응답 시간대 찾기
+        // 최다 응답 시간대 찾기 -> 이 부분 고민 중...
         Map.Entry<Integer, Integer> maxEntry = rawData.getHourCountMap().entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .orElse(null);

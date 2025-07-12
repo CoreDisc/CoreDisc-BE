@@ -73,9 +73,9 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
 
         Map<Integer, Integer> hourCountMap = new HashMap<>();
         for (Object[] row : results) {
-            Integer hour = (Integer) row[0];
-            Long count = (Long) row[1];
-            hourCountMap.put(hour, count.intValue());
+            int hour = ((Number) row[0]).intValue();
+            int count = ((Number) row[1]).intValue();
+            hourCountMap.put(hour, count);
         }
 
         for (int i = 0; i < 24; i++) {
@@ -85,16 +85,20 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         return new ReportRawData.HourlyAnswerRawData(startDate.getYear(), startDate.getMonthValue(), hourCountMap);
     }
 
-    //여기부터는 아직 미정, 추후 수정 예정
+    // TODO: 여기부터는 아직 미정, 추후 수정 예정
     @Override
     public List<ReportRawData.DailyOptionRawData> getTopDailyOptions(int year, int month, Long memberId) {
         List<ReportRawData.DailyOptionRawData> resultList = new ArrayList<>();
 
         for (int dailyType = 1; dailyType <= 3; dailyType++) {
             List<Object[]> rawList = monthlySelectionDiaryStatRepository.findTopOptionByMemberYearMonthAndDailyType(memberId, year, month, dailyType);
+            if (rawList.isEmpty()) {
+                throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
+            }
+
             for (Object[] row : rawList) {
                 String optionContent = (String) row[0];
-                Integer selectionCount = ((Number) row[1]).intValue();
+                int selectionCount = ((Number) row[1]).intValue();
 
                 resultList.add(new ReportRawData.DailyOptionRawData(year, month, dailyType, optionContent, selectionCount));
             }

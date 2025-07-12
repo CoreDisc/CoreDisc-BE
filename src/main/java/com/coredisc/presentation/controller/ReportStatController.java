@@ -38,12 +38,13 @@ public class ReportStatController implements ReportStatControllerDocs {
     }
 
     // 사용자가 선택형 일기에서 특정 달에 가장 많이 선택한 옵션 조회
-    @GetMapping("/daily")
+    @GetMapping("/daily/top-selection")
     public ApiResponse<ReportResponseDTO.TopDailySelectionDTO> getMostSelectedDaily(int year, int month, Long memberId) {
         return ApiResponse.onSuccess(null);
     }
 
     // 사용자가 특정 달에 작성한 일기 내용 전체 출력
+    @GetMapping("/daily/details")
     public ApiResponse<ReportResponseDTO.DailyDetailListDTO> getDailyDetail(int year, int month, Long memberId) {
         return ApiResponse.onSuccess(null);
     }
