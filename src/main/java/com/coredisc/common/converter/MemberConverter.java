@@ -88,7 +88,8 @@ public class MemberConverter {
     }
 
     public static MemberResponseDTO.MyHomeInfoOfMeDTO toMyHomeInfoOfMeDTO(Member member, Long followerCount,
-                                                                          Long followingCount, ProfileImg profileImg) {
+                                                                          Long followingCount, Long discCount,
+                                                                          ProfileImg profileImg) {
         // 가입 시기 M.d.yyyy 형태로 변환
         String formattedDate = formatJoinDate(member);
 
@@ -98,15 +99,14 @@ public class MemberConverter {
                 .joinDate(formattedDate)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
-                // TODO: 총 디스크 수
-//                .discCount(discCount)
+                .discCount(discCount)
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
     }
 
     public static MemberResponseDTO.MyHomeInfoOfOtherDTO toMyHomeInfoOfOtherDTO(Member targetMember, Long followerCount,
-                                                                                Long followingCount, ProfileImg profileImg,
-                                                                                Boolean isFollowing) {
+                                                                                Long followingCount, Long discCount,
+                                                                                ProfileImg profileImg, Boolean isFollowing) {
         // 가입 시기 M.d.yyyy 형태로 변환
         String formattedDate = formatJoinDate(targetMember);
 
@@ -116,8 +116,7 @@ public class MemberConverter {
                 .joinDate(formattedDate)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
-                // TODO: 총 디스크 수
-//                .discCount(discCount)
+                .discCount(discCount)
                 .isFollowing(isFollowing)
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
