@@ -26,7 +26,7 @@ public interface ReportStatControllerDocs {
             @RequestParam("memberId") Long memberId
     );
 
-    @Operation(summary = "기간별 응답 시간대 횟수 조회", description = "사용자가 특정 달에 시간대 별로 응답한 횟수를 조회합니다.")
+    @Operation(summary = "기간별 응답 시간대 횟수 조회", description = "사용자의 특정 월(startDate~endDate)에 가장 많이 답변한 시간대와 시간대별 응답 수 리스트를 조회합니다.")
     ApiResponse<ReportResponseDTO.PeakHourDTO> getPeakHour(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
