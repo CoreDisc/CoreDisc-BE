@@ -7,6 +7,7 @@ import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.mapping.MemberTerms;
+import com.coredisc.domain.profileImg.ProfileImg;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -62,6 +63,10 @@ public class Member extends BaseEntity {
     private String oauthKey;
 
     // 연관관계 매핑
+    @Setter
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProfileImg profileImg;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 

@@ -1,6 +1,7 @@
-package com.coredisc.domain;
+package com.coredisc.domain.profileImg;
 
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,12 @@ public class ProfileImg extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: 연관관계 설정, 엔티티 정의하고 todo 제거해주세요.
-    // - @OneToOne Member
+    @Lob
+    @Column(nullable = false, length = 256)
+    private String imgUrl;
+
+    // 연관 관계
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

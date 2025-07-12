@@ -1,4 +1,4 @@
-package com.coredisc.domain;
+package com.coredisc.domain.follow;
 
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.member.Member;
