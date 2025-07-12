@@ -3,13 +3,17 @@ package com.coredisc.application.service.auth;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.converter.MemberTermsConverter;
+import com.coredisc.common.converter.ProfileImgConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
+import com.coredisc.common.exception.handler.ProfileImgHandler;
 import com.coredisc.common.exception.handler.TermsHandler;
 import com.coredisc.common.util.RedisUtil;
 import com.coredisc.domain.common.enums.EmailRequestType;
 import com.coredisc.domain.mapping.MemberTerms;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import com.coredisc.domain.profileImg.ProfileImg;
+import com.coredisc.domain.profileImg.ProfileImgRepository;
 import com.coredisc.domain.terms.Terms;
 import com.coredisc.domain.terms.TermsRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
@@ -39,6 +43,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final TermsRepository termsRepository;
+    private final ProfileImgRepository profileImgRepository;
     private final MailService mailService;
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
@@ -91,11 +96,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         }
 
         Member newMember = MemberConverter.toMember(request);
+        newMember.encodePassword(passwordEncoder.encode(request.getPassword()));
 
+        // 사용자 이용약관 저장
         List<MemberTerms> memberTermsList = MemberTermsConverter.toMemberTermsList(agreedTermsList);
         memberTermsList.forEach(memberTerms -> {memberTerms.setMember(newMember);});
 
-        newMember.encodePassword(passwordEncoder.encode(request.getPassword()));
+        // 사용자 기본 프로필 이미지 설정 (기본 프로필 이미지는 DB에 pk 1로 넣어놓고 사용할 예정)
+        ProfileImg defaultImg = profileImgRepository.findById(1L)
+                .orElseThrow(() -> new ProfileImgHandler(ErrorStatus.DEFAULT_PROFILE_IMG_NOT_FOUND));
+
+        ProfileImg profileImg = ProfileImgConverter.toProfileImg(newMember, defaultImg);
+        newMember.setProfileImg(profileImg);
 
         try {
             return memberRepository.save(newMember);
