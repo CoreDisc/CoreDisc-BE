@@ -12,7 +12,7 @@ public class MemberResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class MyHomeUserInfoDTO {
+    public static class MyHomeInfoOfMeDTO {
 
         private Long memberId;
 
@@ -26,6 +26,30 @@ public class MemberResponseDTO {
 
         // TODO: 총 디스크 수
 //        private Integer discCount;
+
+        private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MyHomeInfoOfOtherDTO {
+
+        private Long memberId;
+
+        private String nickname;
+
+        private String joinDate;
+
+        private Long followerCount;
+
+        private Long followingCount;
+
+        // TODO: 총 디스크 수
+//        private Integer discCount;
+
+        private Boolean isFollowing;
 
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }

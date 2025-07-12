@@ -87,22 +87,47 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeUserInfoDTO toMyHomeUserInfoDTO(Member member, Long follwerCount,
+    public static MemberResponseDTO.MyHomeInfoOfMeDTO toMyHomeInfoOfMeDTO(Member member, Long followerCount,
                                                                           Long followingCount, ProfileImg profileImg) {
-
         // 가입 시기 M.d.yyyy 형태로 변환
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M.d.yyyy");
-        String formattedDate = member.getCreatedAt().format(formatter);
+        String formattedDate = formatJoinDate(member);
 
-        return MemberResponseDTO.MyHomeUserInfoDTO.builder()
+        return MemberResponseDTO.MyHomeInfoOfMeDTO.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
                 .joinDate(formattedDate)
-                .followerCount(follwerCount)
+                .followerCount(followerCount)
                 .followingCount(followingCount)
                 // TODO: 총 디스크 수
 //                .discCount(discCount)
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
+    }
+
+    public static MemberResponseDTO.MyHomeInfoOfOtherDTO toMyHomeInfoOfOtherDTO(Member targetMember, Long followerCount,
+                                                                                Long followingCount, ProfileImg profileImg,
+                                                                                Boolean isFollowing) {
+        // 가입 시기 M.d.yyyy 형태로 변환
+        String formattedDate = formatJoinDate(targetMember);
+
+        return MemberResponseDTO.MyHomeInfoOfOtherDTO.builder()
+                .memberId(targetMember.getId())
+                .nickname(targetMember.getNickname())
+                .joinDate(formattedDate)
+                .followerCount(followerCount)
+                .followingCount(followingCount)
+                // TODO: 총 디스크 수
+//                .discCount(discCount)
+                .isFollowing(isFollowing)
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
+                .build();
+    }
+
+    // 날짜 M.d.yyyy 형태로 변환
+    private static String formatJoinDate(Member member) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M.d.yyyy");
+
+        return member.getCreatedAt().format(formatter);
     }
 }
