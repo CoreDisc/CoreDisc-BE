@@ -1,4 +1,4 @@
-package com.coredisc.domain;
+package com.coredisc.domain.category;
 
 import com.coredisc.domain.common.BaseEntity;
 import jakarta.persistence.*;
