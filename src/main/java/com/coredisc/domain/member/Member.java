@@ -6,6 +6,7 @@ import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
+import com.coredisc.domain.mapping.MemberTerms;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -69,6 +70,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<PostLike> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<MemberTerms> memberTermsList = new ArrayList<>();
 
     // 메서드
     public void encodePassword(String password) {
