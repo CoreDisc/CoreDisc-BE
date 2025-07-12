@@ -7,6 +7,7 @@ import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class MemberConverter {
 
@@ -28,6 +29,7 @@ public class MemberConverter {
                 .oauthType(null)
                 .oauthKey(null)
                 .role(Role.USER)
+                .memberTermsList(new ArrayList<>())
                 .build();
     }
 

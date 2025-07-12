@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 
+import java.util.List;
+
 public class AuthRequestDTO {
 
     @Getter
@@ -36,6 +38,9 @@ public class AuthRequestDTO {
         @NotBlank(message = "비밀번호 재확인 입력은 필수입니다.")
         @Schema(description = "passwordCheck", example = "coredisc1234!")
         private String passwordCheck;
+
+        @NotNull
+        private List<Long> agreedTermsIds;
     }
 
     @Getter
