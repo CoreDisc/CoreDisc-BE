@@ -1,17 +1,16 @@
 package com.coredisc.presentation.controller;
 
 import com.coredisc.application.service.member.MemberCommandService;
+import com.coredisc.application.service.member.MemberQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.MemberControllerDocs;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/members")
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController implements MemberControllerDocs {
 
     private final MemberCommandService memberCommandService;
+    private final MemberQueryService memberQueryService;
 
     @Override
     @PatchMapping("/password")
@@ -43,5 +43,12 @@ public class MemberController implements MemberControllerDocs {
 
         memberCommandService.resignMember(member);
         return ApiResponse.onSuccess("계정이 탈퇴되었습니다.");
+    }
+
+    @Override
+    @GetMapping("/my-home")
+    public ApiResponse<MemberResponseDTO.MyHomeUserInfoDTO> getMyHomeUserInfo(Member member) {
+
+        return ApiResponse.onSuccess(memberQueryService.getMyHomeUserInfo(member));
     }
 }

@@ -3,6 +3,7 @@ package com.coredisc.presentation.controllerdocs;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,4 +21,7 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
     ApiResponse<String> resignMember(@CurrentMember Member member);
+
+    @Operation(summary = "마이홈 사용자 정보 확인", description = "마이홈 사용자 정보 확인 기능입니다.")
+    ApiResponse<MemberResponseDTO.MyHomeUserInfoDTO> getMyHomeUserInfo(@CurrentMember Member member);
 }
