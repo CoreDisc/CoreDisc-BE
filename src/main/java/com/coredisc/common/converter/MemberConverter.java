@@ -3,10 +3,13 @@ package com.coredisc.common.converter;
 import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class MemberConverter {
@@ -81,6 +84,25 @@ public class MemberConverter {
 
         return AuthResponseDTO.FindUsernameResultDTO.builder()
                 .username(member.getUsername())
+                .build();
+    }
+
+    public static MemberResponseDTO.MyHomeUserInfoDTO toMyHomeUserInfoDTO(Member member, Long follwerCount,
+                                                                          Long followingCount, ProfileImg profileImg) {
+
+        // 가입 시기 M.d.yyyy 형태로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M.d.yyyy");
+        String formattedDate = member.getCreatedAt().format(formatter);
+
+        return MemberResponseDTO.MyHomeUserInfoDTO.builder()
+                .memberId(member.getId())
+                .nickname(member.getNickname())
+                .joinDate(formattedDate)
+                .followerCount(follwerCount)
+                .followingCount(followingCount)
+                // TODO: 총 디스크 수
+//                .discCount(discCount)
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
     }
 }
