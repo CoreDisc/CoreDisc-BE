@@ -7,6 +7,7 @@ import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import com.coredisc.domain.monthlyReport.MonthlyReportRepository;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.domain.profileImg.ProfileImgRepository;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
@@ -20,6 +21,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final ProfileImgRepository profileImgRepository;
+    private final MonthlyReportRepository monthlyReportRepository;
 
 
     @Override
@@ -37,12 +39,13 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         // 사용자의 팔로잉 수
         Long followingCount = followRepository.countByFollowerId(member.getId());
 
-        // TODO: 총 디스크(월별 리포트 수)
+        // 총 디스크 수(월별 리포트 수)
+        Long discCount = monthlyReportRepository.countByMember(member);
 
         // 사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(member);
 
-        return MemberConverter.toMyHomeInfoOfMeDTO(member, followerCount, followingCount, profileImg);
+        return MemberConverter.toMyHomeInfoOfMeDTO(member, followerCount, followingCount, discCount, profileImg);
     }
 
     @Override
@@ -58,7 +61,8 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         // 타사용자의 팔로잉 수
         Long followingCount = followRepository.countByFollowerId(targetMember.getId());
 
-        // TODO: 총 디스크(월별 리포트 수)
+        // 총 디스크 수(월별 리포트 수)
+        Long discCount = monthlyReportRepository.countByMember(targetMember);
 
         // 타사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(targetMember);
@@ -66,6 +70,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         // 팔로우 여부
         Boolean isFollowing = followRepository.existsByFollowerAndFollowing(member, targetMember);
 
-        return MemberConverter.toMyHomeInfoOfOtherDTO(targetMember, followerCount, followingCount, profileImg, isFollowing);
+        return MemberConverter.toMyHomeInfoOfOtherDTO(targetMember, followerCount, followingCount, discCount, profileImg, isFollowing);
     }
 }
