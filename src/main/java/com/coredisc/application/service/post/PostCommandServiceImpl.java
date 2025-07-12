@@ -25,10 +25,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class PostService {
+public class PostCommandServiceImpl implements PostCommandService {
     private final PostRepository postRepository;
 
     //  빈 게시글 생성
+    @Override
     public PostResponseDTO.CreatePostResultDto createEmptyPost(Member member, PostRequestDTO.CreatePostDto req) {
 
         LocalDate selectedDate = req.getSelectedDate();
@@ -86,12 +87,10 @@ public class PostService {
                 build()
         );
 
-
 //        if (todayQuestions.size() != 4) {
 //            throw new PostHandler(ErrorStatus.INCOMPLETE_TODAY_QUESTIONS);
 //
 //        }
-
         return todayQuestions;
     }
 }

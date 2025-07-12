@@ -1,6 +1,6 @@
 package com.coredisc.presentation.controller;
 
-import com.coredisc.application.service.post.PostService;
+import com.coredisc.application.service.post.PostCommandService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.PostControllerDocs;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/posts")
 public class PostController implements PostControllerDocs {
 
-    private final PostService postService;
+    private final PostCommandService postCommandService;
 
     @PostMapping
     public ApiResponse<PostResponseDTO.CreatePostResultDto> createPost(@CurrentMember Member member,
                                                                        @Valid @RequestBody PostRequestDTO.CreatePostDto request) {
-        PostResponseDTO.CreatePostResultDto response = postService.createEmptyPost(member,request);
+        PostResponseDTO.CreatePostResultDto response = postCommandService.createEmptyPost(member,request);
         return ApiResponse.onSuccess(response);
     }
 
