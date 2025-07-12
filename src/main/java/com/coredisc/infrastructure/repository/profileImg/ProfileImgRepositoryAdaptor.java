@@ -6,6 +6,8 @@ import com.coredisc.domain.profileImg.ProfileImgRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class ProfileImgRepositoryAdaptor implements ProfileImgRepository {
@@ -15,5 +17,10 @@ public class ProfileImgRepositoryAdaptor implements ProfileImgRepository {
     @Override
     public ProfileImg findByMember(Member member) {
         return jpaProfileImgRepository.findByMember(member);
+    }
+
+    @Override
+    public Optional<ProfileImg> findById(Long profileImgId) {
+        return jpaProfileImgRepository.findById(profileImgId);
     }
 }
