@@ -34,6 +34,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "메일 발송 중 오류가 발생했습니다."),
     EMAIL_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "메일 작성 중 문제가 발생했습니다."),
 
+    STATS_NOT_FOUND(HttpStatus.NOT_FOUND, "STATS4001","요청한 통계 데이터를 찾을 수 없습니다."),
+
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
 

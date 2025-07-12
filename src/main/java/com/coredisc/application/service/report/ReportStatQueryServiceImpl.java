@@ -1,5 +1,7 @@
 package com.coredisc.application.service.report;
 
+import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.exception.handler.ReportStatsHandler;
 import com.coredisc.common.util.DateUtil;
 import com.coredisc.domain.stats.DailyRandomQuestionStat;
 import com.coredisc.domain.stats.MonthlyFixedQuestionStat;
@@ -30,6 +32,9 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     public ReportRawData.QuestionListRawData getQuestionList(int year, int month, Long memberId) {
         List<MonthlyFixedQuestionStat> fixedQuestions = fixedQuestionRepository.findByMemberIdAndYearAndMonthOrderByQuestionOrder(
                 memberId, year, month);
+        if(fixedQuestions.isEmpty()) {
+            throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
+        }
 
         LocalDate start = DateUtil.getStartDate(year, month);
         LocalDate end = DateUtil.getEndDate(year, month);
@@ -44,6 +49,9 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     public ReportRawData.MostSelectedQuestionRawData getMostSelectedQuestions(LocalDate startDate, LocalDate endDate, Long memberId) {
         Pageable top3 = PageRequest.of(0, 3);
         List<Object[]> results = randomQuestionRepository.findTop3QuestionsByMemberAndDateRange(memberId, startDate, endDate, top3);
+        if(results.isEmpty()) {
+            throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
+        }
 
         List<ReportRawData.MostSelectedQuestionItem> topQuestions = new ArrayList<>();
         for (Object[] row : results) {
@@ -59,6 +67,9 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     @Override
     public ReportRawData.HourlyAnswerRawData getHourlyAnswerCountMap(LocalDate startDate, LocalDate endDate, Long memberId) {
         List<Object[]> results = answerHourStatRepository.findHourlyAnswerCountsByMemberIdAndDateRange(memberId, startDate, endDate);
+        if(results.isEmpty()) {
+            throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
+        }
 
         Map<Integer, Integer> hourCountMap = new HashMap<>();
         for (Object[] row : results) {
@@ -74,11 +85,12 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         return new ReportRawData.HourlyAnswerRawData(startDate.getYear(), startDate.getMonthValue(), hourCountMap);
     }
 
+    //여기부터는 아직 미정, 추후 수정 예정
     @Override
     public List<ReportRawData.DailyOptionRawData> getTopDailyOptions(int year, int month, Long memberId) {
         List<ReportRawData.DailyOptionRawData> resultList = new ArrayList<>();
 
-        for (int dailyType = 1; dailyType <= 3; dailyType++) { // 예: dailyType 1~3
+        for (int dailyType = 1; dailyType <= 3; dailyType++) {
             List<Object[]> rawList = monthlySelectionDiaryStatRepository.findTopOptionByMemberYearMonthAndDailyType(memberId, year, month, dailyType);
             for (Object[] row : rawList) {
                 String optionContent = (String) row[0];
