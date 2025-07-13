@@ -3,6 +3,7 @@ package com.coredisc.common.converter;
 import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.postAnswerImage.PostAnswerImage;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
@@ -121,6 +122,18 @@ public class MemberConverter {
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
     }
+
+    public static MemberResponseDTO.MyHomeImageAnswerDTO toMyHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.MyHomeImageAnswerDTO.builder()
+                .postId(postAnswerImage.getPostAnswer().getPost().getId())
+                .postAnswerImageId(postAnswerImage.getId())
+                .imgUrl(postAnswerImage.getImgUrl())
+                .publicityType(postAnswerImage.getPostAnswer().getPost().getPublicity())
+                .build();
+    }
+
+
 
     // 날짜 M.d.yyyy 형태로 변환
     private static String formatJoinDate(Member member) {
