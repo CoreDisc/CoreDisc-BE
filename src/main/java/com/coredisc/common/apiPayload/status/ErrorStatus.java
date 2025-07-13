@@ -41,6 +41,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 이용 약관 관련 에러
     TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "TERMS4001", "존재하지 않는 이용 약관 항목입니다."),
 
+    // 프로필 이미지 관련 에러
+    DEFAULT_PROFILE_IMG_NOT_FOUND(HttpStatus.NOT_FOUND, "PROFILE_IMG4001", "기본 프로필 이미지가 존재하지 않습니다."),
+
     // 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "헤딩 카테고리가 없습니다."),
 

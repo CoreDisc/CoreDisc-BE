@@ -8,6 +8,8 @@ import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.mapping.MemberTerms;
+import com.coredisc.domain.monthlyReport.MonthlyReport;
+import com.coredisc.domain.profileImg.ProfileImg;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -64,6 +66,10 @@ public class Member extends BaseEntity {
 
 
     // 연관관계 매핑
+    @Setter
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProfileImg profileImg;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
@@ -75,6 +81,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<MemberTerms> memberTermsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MonthlyReport> monthlyReportList = new ArrayList<>();
 
     // 이 사용자가 팔로우하는 다른 사용자들과의 관계 목록
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
