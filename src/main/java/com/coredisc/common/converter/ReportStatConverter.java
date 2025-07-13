@@ -1,14 +1,10 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.application.service.report.ReportRawData;
-import com.coredisc.common.apiPayload.status.ErrorStatus;
-import com.coredisc.common.exception.handler.ReportStatsHandler;
-import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.common.enums.TimeZoneType;
 import com.coredisc.presentation.dto.report.ReportResponseDTO;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +46,6 @@ public class ReportStatConverter {
     public static ReportResponseDTO.MostSelectedQuestionDTO toMostSelectedQuestionDTO(ReportRawData.MostSelectedQuestionRawData rawData) {
         List<ReportResponseDTO.SeletedQuestionDTO> questions = rawData.getQuestions().stream()
                 .map(data -> ReportResponseDTO.SeletedQuestionDTO.builder()
-                        .id(data.getQuestionId())
                         .questionContent(data.getQuestionContent())
                         .selectedCount(data.getSelectionCount())
                         .build()
@@ -66,17 +61,13 @@ public class ReportStatConverter {
     public static ReportResponseDTO.QuestionListDTO toQuestionListDTO(ReportRawData.QuestionListRawData rawData) {
         List<ReportResponseDTO.QuestionDTO> fixed = rawData.getFixedQuestions().stream()
                 .map(stat -> ReportResponseDTO.QuestionDTO.builder()
-                        .id(stat.getQuestionId())
                         .questionContent(stat.getQuestionContent())
-                        .questionType(QuestionType.FIXED)
                         .build()
                 ).toList();
 
         List<ReportResponseDTO.QuestionDTO> random = rawData.getRandomQuestions().stream()
                 .map(stat -> ReportResponseDTO.QuestionDTO.builder()
-                        .id(stat.getQuestionId())
                         .questionContent(stat.getQuestionContent())
-                        .questionType(QuestionType.RANDOM)
                         .build()
                 ).toList();
 
@@ -88,25 +79,28 @@ public class ReportStatConverter {
                 .build();
     }
 
-    public static ReportResponseDTO.TopDailySelectionDTO toTopDailySelectionDTO(int year, int month, List<ReportRawData.DailyOptionRawData> rawDataList) {
-        List<ReportResponseDTO.DailyOptionDTO> dailyList = rawDataList.stream()
-                .map(data -> ReportResponseDTO.DailyOptionDTO.builder()
-                        .optionContent(data.getOptionContent())
-                        .selectionCount(data.getSelectionCount())
-                        .build()
-                ).toList();
+    public static ReportResponseDTO.TopDailySelectionDTO toTopDailySelectionDTO(ReportRawData.DailyOptionRawData rawData) {
+        List<ReportResponseDTO.DailyOptionDTO> optionDTOList = rawData.getTopSelectedOption().entrySet().stream()
+                .map(entry -> {
+                    int dailyType = entry.getKey();
+                    int selectedOption = entry.getValue().getSelectedOption();
+                    int selectionCount = entry.getValue().getSelectionCount();
+
+                    String optionContent = String.valueOf(selectedOption);
+
+                    return ReportResponseDTO.DailyOptionDTO.builder()
+                            .dailyType(dailyType)
+                            .optionContent(optionContent)
+                            .selectionCount(selectionCount)
+                            .build();
+                })
+                .toList();
 
         return ReportResponseDTO.TopDailySelectionDTO.builder()
-                .year(year)
-                .month(month)
-                .dailyList(dailyList)
+                .year(rawData.getYear())
+                .month(rawData.getMonth())
+                .dailyList(optionDTOList)
                 .build();
-    }
-
-    public static ReportResponseDTO.DailyDetailListDTO toDailyDetailListDTO(ReportRawData.DailyDetailRawData rawData) {
-        ReportResponseDTO.DailyDetailListDTO dto = new ReportResponseDTO.DailyDetailListDTO();
-        dto.setDailyDetails(new HashMap<>(rawData.getDailyDetails()));
-        return dto;
     }
 
     private static int getTimeZoneCount(TimeZoneType type, Map<Integer, Integer> hourCountMap) {

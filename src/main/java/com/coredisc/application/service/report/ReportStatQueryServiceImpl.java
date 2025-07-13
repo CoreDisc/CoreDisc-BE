@@ -26,7 +26,6 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     private final DailyRandomQuestionStatRepository randomQuestionRepository;
     private final MonthlyFixedQuestionStatRepository fixedQuestionRepository;
     private final MonthlySelectionDiaryStatRepository monthlySelectionDiaryStatRepository;
-//    private final PostRepository postRepository;
 
     @Override
     public ReportRawData.QuestionListRawData getQuestionList(int year, int month, Long memberId) {
@@ -55,11 +54,10 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
 
         List<ReportRawData.MostSelectedQuestionItem> topQuestions = new ArrayList<>();
         for (Object[] row : results) {
-            Long questionId = (Long) row[0];
-            String questionContent = (String) row[1];
-            int selectionCount = ((Number) row[2]).intValue();
+            String questionContent = (String) row[0];
+            int selectionCount = ((Number) row[1]).intValue();
 
-            topQuestions.add(new ReportRawData.MostSelectedQuestionItem(questionId, questionContent, selectionCount));
+            topQuestions.add(new ReportRawData.MostSelectedQuestionItem(questionContent, selectionCount));
         }
         return new ReportRawData.MostSelectedQuestionRawData(startDate.getYear(), startDate.getMonthValue(), topQuestions);
     }
@@ -85,29 +83,24 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         return new ReportRawData.HourlyAnswerRawData(startDate.getYear(), startDate.getMonthValue(), hourCountMap);
     }
 
-    // TODO: 여기부터는 아직 미정, 추후 수정 예정
+
     @Override
-    public List<ReportRawData.DailyOptionRawData> getTopDailyOptions(int year, int month, Long memberId) {
-        List<ReportRawData.DailyOptionRawData> resultList = new ArrayList<>();
+    public ReportRawData.DailyOptionRawData getMostSelectedDaily(int year, int month, Long memberId) {
+        Map<Integer, ReportRawData.SelectedOptionWithCount> topOptionMap = new HashMap<>();
 
         for (int dailyType = 1; dailyType <= 3; dailyType++) {
-            List<Object[]> rawList = monthlySelectionDiaryStatRepository.findTopOptionByMemberYearMonthAndDailyType(memberId, year, month, dailyType);
-            if (rawList.isEmpty()) {
-                throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
-            }
+            List<Object[]> result = monthlySelectionDiaryStatRepository
+                    .findTopOptionByMemberYearMonthAndDailyType(memberId, year, month, dailyType);
 
-            for (Object[] row : rawList) {
-                String optionContent = (String) row[0];
-                int selectionCount = ((Number) row[1]).intValue();
+            if (!result.isEmpty()) {
+                Object[] row = result.get(0);
+                int selectedOption = ((Number) row[0]).intValue();
+                int selectedCount = ((Number) row[1]).intValue();
 
-                resultList.add(new ReportRawData.DailyOptionRawData(year, month, dailyType, optionContent, selectionCount));
+                topOptionMap.put(dailyType, new ReportRawData.SelectedOptionWithCount(selectedOption, selectedCount));
             }
         }
-        return resultList;
-    }
 
-    @Override
-    public ReportRawData.DailyDetailRawData getDailyDetails(int year, int month, Long memberId) {
-        return null;
+        return new ReportRawData.DailyOptionRawData(year, month, topOptionMap);
     }
 }
