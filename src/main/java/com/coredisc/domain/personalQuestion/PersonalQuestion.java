@@ -1,7 +1,8 @@
-package com.coredisc.domain;
+package com.coredisc.domain.personalQuestion;
 
+import com.coredisc.domain.TodayQuestion;
 import com.coredisc.domain.common.BaseEntity;
-import com.coredisc.domain.mapping.QuestionCategory;
+import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
