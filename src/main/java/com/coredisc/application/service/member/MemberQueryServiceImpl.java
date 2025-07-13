@@ -4,6 +4,7 @@ import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
+import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
@@ -50,6 +51,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     public MemberResponseDTO.MyHomeInfoOfOtherDTO getMyHomeInfoOfOther(Member member, String targetUsername) {
+
+        // targetUsername이 로그인한 사용자 본인의 username일 때 예외 처리
+        if(member.getUsername().equals(targetUsername)) {
+            throw new MyHomeHandler(ErrorStatus.SELF_PROFILE_REQUEST);
+        }
 
         // 타사용자
         Member targetMember = memberRepository.findByUsername(targetUsername)
