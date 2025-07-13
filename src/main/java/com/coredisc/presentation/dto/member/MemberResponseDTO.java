@@ -67,4 +67,17 @@ public class MemberResponseDTO {
 
         private PublicityType publicityType;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserHomeImageAnswerDTO {
+
+        private Long postAnswerImageId;
+
+        private Long postId;
+
+        private String imgUrl;
+    }
 }

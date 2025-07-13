@@ -133,6 +133,15 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.UserHomeImageAnswerDTO toUserHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.UserHomeImageAnswerDTO.builder()
+                .postId(postAnswerImage.getPostAnswer().getPost().getId())
+                .postAnswerImageId(postAnswerImage.getId())
+                .imgUrl(postAnswerImage.getImgUrl())
+                .build();
+    }
+
 
 
     // 날짜 M.d.yyyy 형태로 변환
