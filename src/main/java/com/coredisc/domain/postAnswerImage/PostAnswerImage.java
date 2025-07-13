@@ -1,6 +1,7 @@
-package com.coredisc.domain;
+package com.coredisc.domain.postAnswerImage;
 
 
+import com.coredisc.domain.PostAnswer;
 import com.coredisc.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,5 +24,4 @@ public class PostAnswerImage extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_answer_id",nullable = false)
     private PostAnswer postAnswer;
-
 }
