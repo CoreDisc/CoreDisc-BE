@@ -10,6 +10,8 @@ import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
+import com.coredisc.infrastructure.file.FileInfo;
+import com.coredisc.infrastructure.file.FileStore;
 import com.coredisc.infrastructure.repository.answer.TodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
@@ -34,6 +36,8 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostAnswerRepository postAnswerRepository;
     private final PostAnswerImageRepository postAnswerImageRepository;
     private final TodayQuestionRepository todayQuestionRepository;
+    private final FileStore fileStore;
+
     //  빈 게시글 생성
     @Override
     @Transactional
@@ -114,17 +118,9 @@ public class PostCommandServiceImpl implements PostCommandService {
 
             log.info("questioinContent:{}",questionContent);
 
-            // 임시 저장용 temp -> 실제 TodayQuestion 으로 대체
-            TodayQuestion tempTodayQuestion = TodayQuestion.builder().questionType(QuestionType.RANDOM)
-                    .member(member)
-                    .selectedDate(LocalDateTime.now())
-                    .build();
-
-            todayQuestionRepository.save(tempTodayQuestion); // 영속화
-
             answer = PostAnswer.builder()
                     .post(post)
-                    .todayQuestion(tempTodayQuestion)
+                    .todayQuestion(todayQuestion)
                     .type(AnswerType.TEXT)
                     .textContent(request.getContent())
                     .questionContent(questionContent)
@@ -134,20 +130,123 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         PostAnswer savedAnswer = postAnswerRepository.save(answer);
 
+        return PostConverter.toAnswerResultDto(savedAnswer);
+    }
 
+    /**
+     * 이미지 작성 및 수정 로직 구현
+     */
+
+    @Override
+    @Transactional
+    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postId, Integer questionType, MultipartFile image) {
+
+        log.info("이미지 답변 수정 시작 - 회원ID: {}, 게시글ID: {}, 질문타입: {}, 파일: {}",
+                member.getId(), postId, questionType, image.getOriginalFilename());
+
+        // 1. 게시글 및 권한 확인
+        Post post = validatePostOwnership(member, postId);
+
+        // 2. 질문 조회 및 검증
+        TodayQuestion todayQuestion = getTodayQuestion(member, questionType);
+
+        // 3. 이미지 파일 저장
+        FileInfo fileInfo = fileStore.storeFile(image, "post-answers");
+
+        // 4. 기존 답변 조회
+        Optional<PostAnswer> existingAnswer = postAnswerRepository
+                .findByPostAndTodayQuestion(post, todayQuestion);
+
+        PostAnswer answer;
+
+        if (existingAnswer.isPresent()) {
+            // 기존 답변 수정
+            answer = existingAnswer.get();
+
+            // 기존 이미지 파일 삭제
+            deleteExistingImageIfPresent(answer);
+
+            // 새 이미지로 교체
+            PostAnswerImage newImage = createPostAnswerImage(answer, fileInfo);
+            answer.updateToImageAnswer(newImage);
+
+            log.info("기존 이미지 답변 수정 완료 - 답변ID: {}", answer.getId());
+
+        } else {
+            // 새로운 이미지 답변 생성
+            String questionContent = extractQuestionContent(todayQuestion);
+
+            answer = PostAnswer.builder()
+                    .post(post)
+                    .todayQuestion(todayQuestion)
+                    .type(AnswerType.IMAGE)
+                    .questionContent(questionContent)
+                    .build();
+
+            // 이미지 엔티티 생성 및 연결
+            PostAnswerImage answerImage = createPostAnswerImage(answer, fileInfo);
+            answer.updateToImageAnswer(answerImage);
+
+            log.info("새 이미지 답변 생성 완료");
+        }
+
+        PostAnswer savedAnswer = postAnswerRepository.save(answer);
+
+        log.info("이미지 답변 처리 완료 - 답변ID: {}, 이미지URL: {}",
+                savedAnswer.getId(), fileInfo.getFileUrl());
 
         return PostConverter.toAnswerResultDto(savedAnswer);
     }
 
-    @Override
-    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postID, Integer questionId, MultipartFile image) {
-        return null;
 
+    private PostAnswerImage createPostAnswerImage(PostAnswer answer, FileInfo fileInfo) {
+        return PostAnswerImage.builder()
+                .postAnswer(answer)
+                .imgUrl(fileInfo.getFileUrl())
+                .thumbnailUrl(fileInfo.getThumbnailUrl())
+                .originalFileName(fileInfo.getOriginalFileName())
+                .storedFileName(fileInfo.getStoredFileName())
+                .filePath(fileInfo.getFilePath())
+                .fileSize(fileInfo.getFileSize())
+                .build();
+    }
+
+    /**
+     * 기존 이미지 파일 삭제
+     */
+    private void deleteExistingImageIfPresent(PostAnswer answer) {
+        if (answer.getType() == AnswerType.IMAGE && answer.getPostAnswerImage() != null) {
+            PostAnswerImage existingImage = answer.getPostAnswerImage();
+
+            // 실제 파일 삭제
+            if (existingImage.getFilePath() != null) {
+                fileStore.deleteFile(existingImage.getFilePath());
+            }
+
+            // DB에서 이미지 엔티티 삭제
+            postAnswerImageRepository.delete(existingImage);
+
+            log.info("기존 이미지 파일 삭제 완료 - 경로: {}", existingImage.getFilePath());
+        }
+    }
+
+    /**
+     * 질문 내용 추출
+     */
+    private String extractQuestionContent(TodayQuestion todayQuestion) {
+        if (todayQuestion.getOfficialQuestion() != null) {
+            return todayQuestion.getOfficialQuestion().getContents();
+        } else if (todayQuestion.getPersonalQuestion() != null) {
+            return todayQuestion.getPersonalQuestion().getContent();
+        } else {
+            return "질문 내용을 찾을 수 없습니다.";
+        }
     }
 
 
+
     private void validatePostNotExists(Member member, LocalDate selectedDate) {
-        // 게시글이 이미 있다면 예외를 던짐. - 오늘 날짜 기준 published 인 게시글이 있다면?
+        // TODO : 게시글이 이미 있다면 예외를 던짐. - 오늘 날짜 기준 published 인 게시글이 있다면?
     }
 
     //TODO : 나중에 respository 와 연결하기
