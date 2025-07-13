@@ -40,7 +40,10 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_DATE(HttpStatus.BAD_REQUEST, "POST4008", "잘못된 날짜입니다."),
 
     // 이미지 파일 관련 에러
-    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5001", "파일 업로드에 실패했습니다."),
+    FILE_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5001", "파일 저장에 실패했습니다."),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "FILE404", "파일을 찾을 수 없습니다."),
+    THUMBNAIL_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5002", "썸네일 생성에 실패했습니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5003", "파일 업로드에 실패했습니다."),
     EMPTY_FILE(HttpStatus.BAD_REQUEST, "FILE4001", "빈 파일입니다."),
     FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "FILE4002", "파일 크기가 너무 큽니다. (최대 10MB)"),
     INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FILE4003", "잘못된 파일명입니다."),
