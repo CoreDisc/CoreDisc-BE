@@ -1,6 +1,7 @@
 package com.coredisc.application.service.question;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.converter.QuestionCategoryConverter;
 import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.category.Category;
@@ -37,10 +38,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 Category category = categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
-                QuestionCategory questionCategory = QuestionCategory.builder()
-                        .category(category)
-                        .personalQuestion(newPersonalQuestion)
-                        .build();
+                QuestionCategory questionCategory = QuestionCategoryConverter.toQuestionCategoryByPersonalQuestion(category, newPersonalQuestion);
 
                 questionCategoryRepository.save(questionCategory);
             }
