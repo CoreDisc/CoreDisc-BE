@@ -29,10 +29,9 @@ public enum ErrorStatus implements BaseErrorCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4009", "토큰이 만료되었습니다."),
     TOKEN_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "AUTH4010", "이 토큰은 로그아웃되어 더 이상 유효하지 않습니다."),
 
-
-
-    EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "메일 발송 중 오류가 발생했습니다."),
-    EMAIL_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "메일 작성 중 문제가 발생했습니다."),
+    // 인증코드 메일 전송 관련 에러
+    EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
+    EMAIL_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5002", "메일 작성에 실패했습니다."),
 
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
@@ -40,6 +39,11 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "헤딩 카테고리가 없습니다."),
 
+    // Follow 관련 에러
+    SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
+    ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우한 이력이 있습니다."),
+    FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW4003", "팔로우한 이력이 없습니다."),
+    SELF_UNFOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4004", "자기 자신은 언팔로우할 수 없습니다."),
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");

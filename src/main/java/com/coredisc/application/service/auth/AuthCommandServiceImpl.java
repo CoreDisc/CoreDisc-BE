@@ -4,6 +4,7 @@ import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.util.RedisUtil;
+import com.coredisc.domain.common.enums.EmailRequestType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
@@ -63,10 +64,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     // 이메일 코드 전송
     @Override
-    public void sendCode(AuthRequestDTO.VerifyEmailDTO request) {
+    public void sendCode(AuthRequestDTO.VerifyEmailDTO request, EmailRequestType emailRequestType) {
 
         try {
-            mailService.sendEmail(request.getEmail());
+            mailService.sendEmail(request.getEmail(), emailRequestType);
         } catch (MessagingException e) {
             throw new AuthHandler(ErrorStatus.EMAIL_WRITE_FAILED);
         } catch (MailException e) {
@@ -78,7 +79,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     public boolean verifyCode(AuthRequestDTO.VerifyCodeDTO request) {
 
-        String authCode = (String) redisUtil.get("auth: " + request.getEmail());
+        String authCode = (String) redisUtil.get("auth:" + request.getUsername() + ":" + request.getEmailRequestType());
 
         if (authCode == null) {
             throw new AuthHandler(ErrorStatus.EMAIL_CODE_EXPIRED);
