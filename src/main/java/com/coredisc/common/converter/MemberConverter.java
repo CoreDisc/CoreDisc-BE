@@ -88,13 +88,13 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeInfoOfMeDTO toMyHomeInfoOfMeDTO(Member member, Long followerCount,
-                                                                          Long followingCount, Long discCount,
-                                                                          ProfileImg profileImg) {
+    public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, Long followerCount,
+                                                                  Long followingCount, Long discCount,
+                                                                  ProfileImg profileImg) {
         // 가입 시기 M.d.yyyy 형태로 변환
         String formattedDate = formatJoinDate(member);
 
-        return MemberResponseDTO.MyHomeInfoOfMeDTO.builder()
+        return MemberResponseDTO.MyHomeInfoDTO.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
                 .joinDate(formattedDate)
@@ -105,13 +105,13 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeInfoOfOtherDTO toMyHomeInfoOfOtherDTO(Member targetMember, Long followerCount,
-                                                                                Long followingCount, Long discCount,
-                                                                                ProfileImg profileImg, boolean isFollowing) {
+    public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, Long followerCount,
+                                                                      Long followingCount, Long discCount,
+                                                                      ProfileImg profileImg, boolean isFollowing) {
         // 가입 시기 M.d.yyyy 형태로 변환
         String formattedDate = formatJoinDate(targetMember);
 
-        return MemberResponseDTO.MyHomeInfoOfOtherDTO.builder()
+        return MemberResponseDTO.UserHomeInfoDTO.builder()
                 .memberId(targetMember.getId())
                 .nickname(targetMember.getNickname())
                 .joinDate(formattedDate)

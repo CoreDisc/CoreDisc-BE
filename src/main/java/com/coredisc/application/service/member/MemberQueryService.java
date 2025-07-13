@@ -12,10 +12,10 @@ public interface MemberQueryService {
     Member getMemberByUsername(String username);
 
     // 마이홈(본인) 사용자 정보 조회
-    MemberResponseDTO.MyHomeInfoOfMeDTO getMyHomeInfoOfMe(Member member);
+    MemberResponseDTO.MyHomeInfoDTO getMyHomeInfo(Member member);
 
     // 마이홈(타사용자) 사용자 정보 조회
-    MemberResponseDTO.MyHomeInfoOfOtherDTO getMyHomeInfoOfOther(Member member, String targetUsername);
+    MemberResponseDTO.UserHomeInfoDTO getUserHomeInfo(Member member, String targetUsername);
 
     // 마이홈(본인) 사진 답변 리스트 조회
     CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO> getMyHomeImageAnswers(Member member, Long cursorId, Pageable page);

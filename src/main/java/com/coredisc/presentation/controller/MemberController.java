@@ -51,16 +51,16 @@ public class MemberController implements MemberControllerDocs {
 
     @Override
     @GetMapping("/my-home")
-    public ApiResponse<MemberResponseDTO.MyHomeInfoOfMeDTO> getMyHomeInfoOfMe(@CurrentMember Member member) {
+    public ApiResponse<MemberResponseDTO.MyHomeInfoDTO> getMyHomeInfo(@CurrentMember Member member) {
 
-        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfoOfMe(member));
+        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfo(member));
     }
 
     @Override
     @GetMapping("/my-home/{targetUsername}")
-    public ApiResponse<MemberResponseDTO.MyHomeInfoOfOtherDTO> getMyHomeInfoOfOther(@CurrentMember Member member,
-                                                                                 @PathVariable String targetUsername) {
-        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfoOfOther(member, targetUsername));
+    public ApiResponse<MemberResponseDTO.UserHomeInfoDTO> getUserHomeInfo(@CurrentMember Member member,
+                                                                          @PathVariable String targetUsername) {
+        return ApiResponse.onSuccess(memberQueryService.getUserHomeInfo(member, targetUsername));
     }
 
     @Override

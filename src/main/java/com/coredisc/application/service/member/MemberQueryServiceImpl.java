@@ -39,7 +39,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    public MemberResponseDTO.MyHomeInfoOfMeDTO getMyHomeInfoOfMe(Member member) {
+    public MemberResponseDTO.MyHomeInfoDTO getMyHomeInfo(Member member) {
 
         // 사용자의 팔로워 수
         Long followerCount = followRepository.countByFollowingId(member.getId());
@@ -53,11 +53,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         // 사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(member);
 
-        return MemberConverter.toMyHomeInfoOfMeDTO(member, followerCount, followingCount, discCount, profileImg);
+        return MemberConverter.toMyHomeInfoDTO(member, followerCount, followingCount, discCount, profileImg);
     }
 
     @Override
-    public MemberResponseDTO.MyHomeInfoOfOtherDTO getMyHomeInfoOfOther(Member member, String targetUsername) {
+    public MemberResponseDTO.UserHomeInfoDTO getUserHomeInfo(Member member, String targetUsername) {
 
         // targetUsername이 로그인한 사용자 본인의 username일 때 예외 처리
         if(member.getUsername().equals(targetUsername)) {
@@ -83,7 +83,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         // 팔로우 여부
         boolean isFollowing = followRepository.existsByFollowerAndFollowing(member, targetMember);
 
-        return MemberConverter.toMyHomeInfoOfOtherDTO(targetMember, followerCount, followingCount, discCount, profileImg, isFollowing);
+        return MemberConverter.toUserHomeInfoDTO(targetMember, followerCount, followingCount, discCount, profileImg, isFollowing);
     }
 
     @Override
