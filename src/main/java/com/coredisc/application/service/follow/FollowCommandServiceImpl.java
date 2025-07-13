@@ -8,11 +8,13 @@ import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FollowCommandServiceImpl implements FollowCommandService {
 
     private final MemberRepository memberRepository;
