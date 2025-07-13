@@ -25,9 +25,11 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH4005", "이미 사용 중인 이메일입니다."),
     NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "AUTH4006", "이미 사용 중인 닉네임입니다."),
     DUPLICATED_RESOURCE(HttpStatus.CONFLICT, "AUTH4007", "이미 사용 중인 값이 있습니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4008", "유효하지 않은 토큰입니다."),
-    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4009", "토큰이 만료되었습니다."),
-    TOKEN_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "AUTH4010", "이 토큰은 로그아웃되어 더 이상 유효하지 않습니다."),
+    REQUIRED_TERMS_NOT_AGREED(HttpStatus.BAD_REQUEST, "AUTH4008", "필수 동의 약관 항목에 동의하지 않았습니다."),
+    INVALID_TERMS_INCLUDED(HttpStatus.BAD_REQUEST, "AUTH4009", "유효하지 않은 이용 약관 향목에 동의하였습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4010", "유효하지 않은 토큰입니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4011", "토큰이 만료되었습니다."),
+    TOKEN_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "AUTH4012", "이 토큰은 로그아웃되어 더 이상 유효하지 않습니다."),
 
     // 인증코드 메일 전송 관련 에러
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
@@ -35,6 +37,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
+
+    // 이용 약관 관련 에러
+    TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "TERMS4001", "존재하지 않는 이용 약관 항목입니다."),
 
     // 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "헤딩 카테고리가 없습니다."),

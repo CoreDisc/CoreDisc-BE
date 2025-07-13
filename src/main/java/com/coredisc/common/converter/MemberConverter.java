@@ -1,11 +1,13 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class MemberConverter {
 
@@ -19,7 +21,7 @@ public class MemberConverter {
         return Member.builder()
                 .email(request.getEmail())
                 .name(request.getName())
-                .nickname(request.getNickname())
+                .nickname(RandomNicknameGenerator.generateRandomNickname())
                 .username(request.getUsername())
                 .password(request.getPassword())
                 .status(true)
@@ -27,6 +29,7 @@ public class MemberConverter {
                 .oauthType(null)
                 .oauthKey(null)
                 .role(Role.USER)
+                .memberTermsList(new ArrayList<>())
                 .build();
     }
 
