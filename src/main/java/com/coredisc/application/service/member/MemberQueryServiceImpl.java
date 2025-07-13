@@ -97,13 +97,36 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         Long lastIdOfList = postAnswerImages.isEmpty() ?
                 null : postAnswerImages.get(postAnswerImages.size() - 1).getId();
 
-        return new CursorDTO<>(myHomeImageAnswerDTOS, hasNext(lastIdOfList));
+        return new CursorDTO<>(myHomeImageAnswerDTOS, hasNext(member, lastIdOfList));
+    }
+
+    @Override
+    public CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO> getUserHomeImageAnswers(Member member, String targetUsername,
+                                                                                       Long cursorId, Pageable page) {
+        // targetUsername이 로그인한 사용자 본인의 username일 때 예외 처리
+        if(member.getUsername().equals(targetUsername)) {
+            throw new MyHomeHandler(ErrorStatus.SELF_PROFILE_REQUEST);
+        }
+
+        // 타사용자
+        Member targetMember = memberRepository.findByUsername(targetUsername)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<PostAnswerImage> postAnswerImages = postAnswerImageRepository.findImageAnswersByMember(targetMember, cursorId, page);
+        List<MemberResponseDTO.UserHomeImageAnswerDTO> userHomeImageAnswerDTOS = postAnswerImages.stream()
+                .map(MemberConverter::toUserHomeImageAnswerDTO)
+                .toList();
+
+        Long lastIdOfList = postAnswerImages.isEmpty() ?
+                null : postAnswerImages.get(postAnswerImages.size() - 1).getId();
+
+        return new CursorDTO<>(userHomeImageAnswerDTOS, hasNext(targetMember, lastIdOfList));
     }
 
 
-    private Boolean hasNext(Long id) {
+    private Boolean hasNext(Member member, Long id) {
 
         if(id == null) { return false; }
-        return postAnswerImageRepository.existsByLessId(id);
+        return postAnswerImageRepository.existsByMemberAndIdLessThan(member, id);
     }
 }
