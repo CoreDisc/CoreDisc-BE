@@ -24,6 +24,9 @@ public class PostAnswer extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String questionContent;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AnswerType type;  // IMAGE, TEXT
 
@@ -45,5 +48,31 @@ public class PostAnswer extends BaseEntity {
 
 
 
+    // 비지니스 로직
+
+    // 텍스트 답변 업데이트
+    public void updateTextAnswer(String content) {
+        this.type = AnswerType.TEXT;
+        this.textContent = content;
+        // 기존 이미지 제거
+        this.postAnswerImage =null;
+    }
+
+    // 이미지 답변 업데이트
+    public void updateToImageAnswer(PostAnswerImage image) {
+        this.type = AnswerType.IMAGE;
+        this.textContent = null;
+        this.postAnswerImage = image;
+    }
+
+    //이미지 답변인지 확인
+    public boolean isImageAnswer() {
+        return this.type == AnswerType.IMAGE;
+    }
+
+    //텍스트 답변인지 확인
+    public boolean isTextAnswer() {
+        return this.type == AnswerType.TEXT;
+    }
 
 }

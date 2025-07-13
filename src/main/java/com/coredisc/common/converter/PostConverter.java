@@ -1,7 +1,9 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.domain.TodayQuestion;
+import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 
 import java.time.LocalDate;
@@ -35,4 +37,32 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .build();
     }
+
+    public static PostResponseDTO.AnswerResultDto toAnswerResultDto(PostAnswer answer) {
+        PostResponseDTO.ImageAnswerDto imageAnswer = null;
+        PostResponseDTO.TextAnswerDto textAnswer = null;
+
+        if (answer.getType() == AnswerType.IMAGE && answer.getPostAnswerImage() != null) {
+            imageAnswer = PostResponseDTO.ImageAnswerDto.builder()
+                    .imageUrl(answer.getPostAnswerImage().getImgUrl())
+                    .thumbnailUrl(answer.getPostAnswerImage().getThumbnailUrl())
+                    .build();
+        }
+
+        if (answer.getType() == AnswerType.TEXT) {
+            textAnswer = PostResponseDTO.TextAnswerDto.builder()
+                    .content(answer.getTextContent())
+                    .build();
+        }
+
+        return PostResponseDTO.AnswerResultDto.builder()
+                .answerId(answer.getId())
+                .questionType(answer.getTodayQuestion().getId().intValue()) // TODO: 실제 질문 순서로 변경
+                .answerType(answer.getType())
+                .imageAnswer(imageAnswer)
+                .textAnswer(textAnswer)
+                .build();
+    }
+
+
 }
