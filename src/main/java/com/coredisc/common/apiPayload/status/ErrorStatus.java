@@ -46,7 +46,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FILE4003", "잘못된 파일명입니다."),
     INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE4004", "지원하지 않는 파일 형식입니다. (jpg, jpeg, png, gif, webp만 허용)"),
 
-
+    // 답변 관련 예외
+    ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "ANSWER4004", "답변을 찾을 수 없습니다."),
 
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "메일 발송 중 오류가 발생했습니다."),
     EMAIL_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5002", "메일 작성 중 문제가 발생했습니다."),
