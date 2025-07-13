@@ -35,12 +35,14 @@ public class Member extends BaseEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @Setter
     @Column(length = 16, nullable = false, unique = true)
     private String nickname;
 
     @Column(length = 16, nullable = false)
     private String name;
 
+    @Setter
     @ColumnDefault("1")
     @Column(nullable = false)
     private Boolean status;
@@ -79,5 +81,4 @@ public class Member extends BaseEntity {
     public void encodePassword(String password) {
         this.password = password;
     }
-
 }

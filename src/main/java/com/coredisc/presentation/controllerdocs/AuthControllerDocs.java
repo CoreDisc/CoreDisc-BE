@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "Auth", description = "회원가입 관련 API")
+@Tag(name = "Auth", description = "회원가입/로그인/로그아웃/인증 관련 API")
 public interface AuthControllerDocs {
 
     @Operation(summary = "회원가입", description = "회원가입 기능입니다.")
@@ -45,4 +45,10 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "로그아웃", description = "로그아웃 기능입니다.")
     ApiResponse<String> logout(HttpServletRequest request);
+
+    @Operation(summary = "아이디 찾기", description = "아이디 찾기 기능입니다. 이름과 이메일을 입력합니다.")
+    ApiResponse<AuthResponseDTO.FindUsernameResultDTO> findUsername(@RequestBody @Valid AuthRequestDTO.FindUsernameDTO request);
+
+    @Operation(summary = "비밀번호 변경을 위한 사용자 검증", description = "비밀변호 변경을 위해 사용자 검증을 진행합니다. 사용자가 존재하면 인증코드 메일을 보냅니다.")
+    ApiResponse<String> verifyUser(@RequestBody @Valid AuthRequestDTO.VerifyUserDTO request);
 }

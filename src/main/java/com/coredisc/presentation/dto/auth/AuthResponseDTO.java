@@ -68,4 +68,13 @@ public class AuthResponseDTO {
 
         private String refreshToken;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class FindUsernameResultDTO {
+
+        private String username;
+    }
 }
