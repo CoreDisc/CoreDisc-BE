@@ -6,6 +6,7 @@ import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
+import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.mapping.MemberTerms;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -61,6 +62,7 @@ public class Member extends BaseEntity {
 
     private String oauthKey;
 
+
     // 연관관계 매핑
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
@@ -73,6 +75,15 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<MemberTerms> memberTermsList = new ArrayList<>();
+
+    // 이 사용자가 팔로우하는 다른 사용자들과의 관계 목록
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    private List<Follow> followSentList = new ArrayList<>();
+
+    // 이 사용자를 팔로우하는 다른 사용자들과의 관계 목록
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    private List<Follow> followReceivedList = new ArrayList<>();
+
 
     // 메서드
     public void encodePassword(String password) {
