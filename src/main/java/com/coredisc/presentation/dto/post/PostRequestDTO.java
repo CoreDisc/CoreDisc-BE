@@ -3,6 +3,7 @@ package com.coredisc.presentation.dto.post;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
@@ -51,10 +52,11 @@ public class PostRequestDTO {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
     public static class TextAnswerDto {
-        @NotNull(message = "답변 타입은 필수입니다.")
-        private AnswerType answerType;
 
+        @NotNull(message = "답변 작성은 필수입니다.")
         private String content; // TEXT 타입일 때만 적용
     }
 

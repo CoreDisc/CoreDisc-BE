@@ -93,19 +93,9 @@ public class PostResponseDTO {
                 private String content;
             }
 
-            @Getter
-            @Builder
-            public static class ImageAnswerDto {
-                private String imageUrl;
-                private String thumbnailUrl;
-            }
-
-            @Getter
-            @Builder
-            public static class TextAnswerDto {
-                private String content;
-            }
         }
+
+
 
         @Getter
         @Builder
@@ -123,6 +113,19 @@ public class PostResponseDTO {
             private Integer commentCount;
             private Integer viewCount;
         }
+    }
+
+    @Getter
+    @Builder
+    public static class ImageAnswerDto {
+        private String imageUrl;
+        private String thumbnailUrl;
+    }
+
+    @Getter
+    @Builder
+    public static class TextAnswerDto {
+        private String content;
     }
 
     @Getter
@@ -159,8 +162,8 @@ public class PostResponseDTO {
         private Long answerId;
         private Integer questionType;
         private AnswerType answerType;
-        private PostDetailDto.AnswerDto.ImageAnswerDto imageAnswer;
-        private PostDetailDto.AnswerDto.TextAnswerDto textAnswer;
+        private ImageAnswerDto imageAnswer;
+        private TextAnswerDto textAnswer;
     }
 
     @Getter
