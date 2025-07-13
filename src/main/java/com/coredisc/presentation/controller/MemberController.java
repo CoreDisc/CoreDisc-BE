@@ -72,4 +72,15 @@ public class MemberController implements MemberControllerDocs {
 
         return ApiResponse.onSuccess(memberQueryService.getMyHomeImageAnswers(member, cursorId, PageRequest.of(0, size)));
     }
+
+    @Override
+    @GetMapping("/my-home/post-images/{targetUsername}")
+    public ApiResponse<CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO>> getUserHomeImageAnswers(@CurrentMember Member member,
+                                                                                                    @PathVariable String targetUsername,
+                                                                                                    @RequestParam(required = false) Long cursorId,
+                                                                                                    @RequestParam(required = false) Integer size) {
+        if(size == null) { size = DEFAULT_SIZE; }
+
+        return ApiResponse.onSuccess(memberQueryService.getUserHomeImageAnswers(member, targetUsername, cursorId, PageRequest.of(0, size)));
+    }
 }

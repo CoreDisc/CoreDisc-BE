@@ -36,10 +36,21 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "마이홈 본인 사진 답변 리스트 조회", description = "마이홈 본인 사진 답변 조회입니다. 커서 기반 페이징입니다.")
     @Parameters({
-            @Parameter(name = "cursorId", description = "마지막으로 조회한 postAnswerImgId, 첫 요청 때는 null"),
-            @Parameter(name = "size", description = "기본값 10")
+            @Parameter(name = "cursorId", description = "마지막으로 조회한 postAnswerImgId, 첫 요청 때는 null, queryString입니다."),
+            @Parameter(name = "size", description = "기본값 10, queryString입니다.")
     })
     ApiResponse<CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO>> getMyHomeImageAnswers(@CurrentMember Member member,
                                                                                          @RequestParam(required = false) Long cursorId,
                                                                                          @RequestParam(required = false) Integer size);
+
+    @Operation(summary = "마이홈 타사용자 사진 답변 리스트 조회", description = "마이홈 타사용자 사진 답변 리스트 조회 기능입니다.")
+    @Parameters({
+            @Parameter(name = "targetUsername", description = "타사용자의 username(로그인 아이디), pathVariable입니다."),
+            @Parameter(name = "cursorId", description = "마지막으로 조회한 postAnswerImgId, 첫 요청 때는 null, queryString입니다."),
+            @Parameter(name = "size", description = "기본값 10, queryString입니다.")
+    })
+    ApiResponse<CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO>> getUserHomeImageAnswers(@CurrentMember Member member,
+                                                                   @PathVariable String targetUsername,
+                                                                   @RequestParam(required = false) Long cursorId,
+                                                                   @RequestParam(required = false) Integer size);
 }
