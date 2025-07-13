@@ -27,6 +27,7 @@ public class Follow extends BaseEntity {
     private Member following;
 
     @Column(name = "is_circle", nullable = false)
-    private boolean isCircle;
+    @Builder.Default
+    private boolean isCircle = false;
 
 }

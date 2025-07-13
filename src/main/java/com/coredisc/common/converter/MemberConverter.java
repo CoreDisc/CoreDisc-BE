@@ -106,7 +106,7 @@ public class MemberConverter {
 
     public static MemberResponseDTO.MyHomeInfoOfOtherDTO toMyHomeInfoOfOtherDTO(Member targetMember, Long followerCount,
                                                                                 Long followingCount, Long discCount,
-                                                                                ProfileImg profileImg, Boolean isFollowing) {
+                                                                                ProfileImg profileImg, boolean isFollowing) {
         // 가입 시기 M.d.yyyy 형태로 변환
         String formattedDate = formatJoinDate(targetMember);
 

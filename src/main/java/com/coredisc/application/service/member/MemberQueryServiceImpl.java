@@ -68,7 +68,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         ProfileImg profileImg = profileImgRepository.findByMember(targetMember);
 
         // 팔로우 여부
-        Boolean isFollowing = followRepository.existsByFollowerAndFollowing(member, targetMember);
+        boolean isFollowing = followRepository.existsByFollowerAndFollowing(member, targetMember);
 
         return MemberConverter.toMyHomeInfoOfOtherDTO(targetMember, followerCount, followingCount, discCount, profileImg, isFollowing);
     }

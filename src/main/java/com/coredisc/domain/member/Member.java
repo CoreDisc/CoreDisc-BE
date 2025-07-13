@@ -6,6 +6,7 @@ import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
+import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.mapping.MemberTerms;
 import com.coredisc.domain.monthlyReport.MonthlyReport;
 import com.coredisc.domain.profileImg.ProfileImg;
@@ -63,6 +64,7 @@ public class Member extends BaseEntity {
 
     private String oauthKey;
 
+
     // 연관관계 매핑
     @Setter
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -82,6 +84,15 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MonthlyReport> monthlyReportList = new ArrayList<>();
+
+    // 이 사용자가 팔로우하는 다른 사용자들과의 관계 목록
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    private List<Follow> followSentList = new ArrayList<>();
+
+    // 이 사용자를 팔로우하는 다른 사용자들과의 관계 목록
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    private List<Follow> followReceivedList = new ArrayList<>();
+
 
     // 메서드
     public void encodePassword(String password) {
