@@ -1,8 +1,8 @@
-package com.coredisc.domain.mapping;
+package com.coredisc.domain.mapping.questionCategory;
 
-import com.coredisc.domain.Category;
+import com.coredisc.domain.category.Category;
 import com.coredisc.domain.OfficialQuestion;
-import com.coredisc.domain.PersonalQuestion;
+import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,9 +17,6 @@ public class QuestionCategory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
