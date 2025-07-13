@@ -1,8 +1,6 @@
 package com.coredisc.domain.stats;
 
 import com.coredisc.domain.common.BaseEntity;
-import com.coredisc.domain.common.enums.PublicityType;
-import com.coredisc.domain.common.enums.QuestionType;
 import jakarta.persistence.*;
 import lombok.*;
 

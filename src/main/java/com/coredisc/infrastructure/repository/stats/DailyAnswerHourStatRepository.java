@@ -1,12 +1,9 @@
 package com.coredisc.infrastructure.repository.stats;
 
-import com.coredisc.domain.common.enums.TimeZoneType;
 import com.coredisc.domain.stats.DailyAnswerHourStat;
-import com.coredisc.presentation.dto.report.ReportResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;

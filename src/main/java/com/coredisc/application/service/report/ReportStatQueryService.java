@@ -1,6 +1,5 @@
 package com.coredisc.application.service.report;
 
-
 import java.time.LocalDate;
 
 public interface ReportStatQueryService {
