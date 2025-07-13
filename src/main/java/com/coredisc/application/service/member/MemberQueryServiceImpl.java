@@ -9,11 +9,17 @@ import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.domain.monthlyReport.MonthlyReportRepository;
+import com.coredisc.domain.postAnswerImage.PostAnswerImage;
+import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.domain.profileImg.ProfileImgRepository;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final FollowRepository followRepository;
     private final ProfileImgRepository profileImgRepository;
     private final MonthlyReportRepository monthlyReportRepository;
+    private final PostAnswerImageRepository postAnswerImageRepository;
 
 
     @Override
@@ -77,5 +84,26 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         boolean isFollowing = followRepository.existsByFollowerAndFollowing(member, targetMember);
 
         return MemberConverter.toMyHomeInfoOfOtherDTO(targetMember, followerCount, followingCount, discCount, profileImg, isFollowing);
+    }
+
+    @Override
+    public CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO> getMyHomeImageAnswers(Member member, Long cursorId, Pageable page) {
+
+        List<PostAnswerImage> postAnswerImages = postAnswerImageRepository.findImageAnswersByMember(member, cursorId, page);
+        List<MemberResponseDTO.MyHomeImageAnswerDTO> myHomeImageAnswerDTOS = postAnswerImages.stream()
+                .map(MemberConverter::toMyHomeImageAnswerDTO)
+                .toList();
+
+        Long lastIdOfList = postAnswerImages.isEmpty() ?
+                null : postAnswerImages.get(postAnswerImages.size() - 1).getId();
+
+        return new CursorDTO<>(myHomeImageAnswerDTOS, hasNext(lastIdOfList));
+    }
+
+
+    private Boolean hasNext(Long id) {
+
+        if(id == null) { return false; }
+        return postAnswerImageRepository.existsByLessId(id);
     }
 }
