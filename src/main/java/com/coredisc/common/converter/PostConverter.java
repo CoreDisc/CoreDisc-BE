@@ -1,5 +1,6 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.common.util.FileUtil;
 import com.coredisc.domain.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.post.Post;
@@ -43,26 +44,35 @@ public class PostConverter {
         PostResponseDTO.TextAnswerDto textAnswer = null;
 
         if (answer.getType() == AnswerType.IMAGE && answer.getPostAnswerImage() != null) {
+            var image = answer.getPostAnswerImage();
             imageAnswer = PostResponseDTO.ImageAnswerDto.builder()
-                    .imageUrl(answer.getPostAnswerImage().getImgUrl())
-                    .thumbnailUrl(answer.getPostAnswerImage().getThumbnailUrl())
+                    .imageUrl(image.getImgUrl())
+                    .thumbnailUrl(image.getThumbnailUrl())
+                    .originalFileName(image.getOriginalFileName())
+                    .fileSize(image.getFileSize())
+                    .fileSizeFormatted(FileUtil.formatFileSize(image.getFileSize() != null ? image.getFileSize() : 0))
+                    .hasThumbnail(image.hasThumbnail())
                     .build();
         }
 
         if (answer.getType() == AnswerType.TEXT) {
             textAnswer = PostResponseDTO.TextAnswerDto.builder()
                     .content(answer.getTextContent())
+                    .characterCount(answer.getTextContent() != null ? answer.getTextContent().length() : 0)
                     .build();
         }
 
         return PostResponseDTO.AnswerResultDto.builder()
                 .answerId(answer.getId())
-                .questionType(answer.getTodayQuestion().getId().intValue()) // TODO: 실제 질문 순서로 변경
+                .questionId(answer.getTodayQuestion().getId().intValue())
                 .answerType(answer.getType())
                 .imageAnswer(imageAnswer)
                 .textAnswer(textAnswer)
+                .createdAt(answer.getCreatedAt())
+                .updatedAt(answer.getUpdatedAt())
                 .build();
     }
-
-
 }
+
+
+
