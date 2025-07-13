@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface PostAnswerImageRepository {
 
-    Boolean existsByLessId(Long id);
-
     // QueryDsl
     List<PostAnswerImage> findImageAnswersByMember(Member member, Long cursorId, Pageable pageable);
-
+    boolean existsByMemberAndIdLessThan(Member member, Long id);
 }

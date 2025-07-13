@@ -41,4 +41,27 @@ public class QueryPostAnswerImageRepositoryImpl implements QueryPostAnswerImageR
                 .limit(pageable.getPageSize())
                 .fetch();
     }
+
+    @Override
+    public boolean existsByMemberAndIdLessThan(Member member, Long id) {
+
+        QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
+        QPostAnswer pa = QPostAnswer.postAnswer;
+        QPost p = QPost.post;
+
+        Integer fetchOne = jpaQueryFactory
+                .selectOne()
+                .from(pai)
+                .join(pai.postAnswer, pa)
+                .join(pa.post, p)
+                .where(
+                        p.member.eq(member),
+                        p.status.ne(PostStatus.TEMP),
+                        pa.type.eq(AnswerType.IMAGE),
+                        pai.id.lt(id)
+                )
+                .fetchFirst();
+
+        return fetchOne != null;
+    }
 }

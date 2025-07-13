@@ -14,17 +14,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostAnswerImageRepositoryAdaptor implements PostAnswerImageRepository {
 
-    private final JpaPostAnswerImageRepository jpaPostAnswerImageRepository;
     private final QueryPostAnswerImageRepository queryRepository;
-
-
-    @Override
-    public Boolean existsByLessId(Long id) {
-        return jpaPostAnswerImageRepository.existsByIdLessThan(id);
-    }
 
     @Override
     public List<PostAnswerImage> findImageAnswersByMember(Member member, Long cursorId, Pageable pageable) {
         return queryRepository.findImageAnswersByMember(member, cursorId, pageable);
+    }
+
+    @Override
+    public boolean existsByMemberAndIdLessThan(Member member, Long id) {
+        return queryRepository.existsByMemberAndIdLessThan(member, id);
     }
 }
