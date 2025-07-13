@@ -57,4 +57,7 @@ public class MemberRepositoryAdaptor implements MemberRepository {
     public Optional<Member> findByEmail(String email) {
         return jpaMemberRepository.findByEmail(email);
     }
+
+    @Override
+    public Optional<Member> findById(Long memberId) { return jpaMemberRepository.findById(memberId); }
 }

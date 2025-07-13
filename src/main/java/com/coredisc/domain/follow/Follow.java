@@ -1,4 +1,4 @@
-package com.coredisc.domain;
+package com.coredisc.domain.follow;
 
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.member.Member;
@@ -27,6 +27,7 @@ public class Follow extends BaseEntity {
     private Member following;
 
     @Column(name = "is_circle", nullable = false)
-    private boolean isCircle;
+    @Builder.Default
+    private boolean isCircle = false;
 
 }

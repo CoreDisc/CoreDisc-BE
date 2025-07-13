@@ -6,6 +6,7 @@ import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
+import com.coredisc.domain.follow.Follow;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -69,6 +70,14 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<PostLike> likes = new ArrayList<>();
+
+    // 이 사용자가 팔로우하는 다른 사용자들과의 관계 목록
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    private List<Follow> followSentList = new ArrayList<>();
+
+    // 이 사용자를 팔로우하는 다른 사용자들과의 관계 목록
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    private List<Follow> followReceivedList = new ArrayList<>();
 
     // 메서드
     public void encodePassword(String password) {
