@@ -19,7 +19,7 @@ public interface ReportStatControllerDocs {
             @RequestParam("memberId") Long memberId
     );
 
-    @Operation(summary = "기간별 최다 선택된 랜덤 질문 조회", description = "사용자가 특정 달 동안 가장 많이 선택한 랜덤 질문 3개를 조회합니다.")
+    @Operation(summary = "기간별 최다 선택된 랜덤 질문 3순위 조회", description = "사용자가 특정 달 동안 가장 많이 선택한 랜덤 질문 3개를 조회합니다.")
     ApiResponse<ReportResponseDTO.MostSelectedQuestionDTO> getMostSelectedQuestions(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,

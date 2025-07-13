@@ -5,8 +5,7 @@ public enum TimeZoneType {
     MORNING,    // 6~10시
     DAY,        // 11~13시
     AFTERNOON,  // 14~17시
-    EVENING,    // 18~20시
-    NIGHT;      // 21~23시
+    EVENING;    // 18~23시
 
     public boolean containsHour(int hour) {
         return switch (this) {
@@ -14,8 +13,7 @@ public enum TimeZoneType {
             case MORNING -> hour >= 6 && hour <= 10;
             case DAY -> hour >= 11 && hour <= 13;
             case AFTERNOON -> hour >= 14 && hour <= 17;
-            case EVENING -> hour >= 18 && hour <= 20;
-            case NIGHT -> hour >= 21 && hour <= 23;
+            case EVENING -> hour >= 18 && hour <= 23;
         };
     }
 

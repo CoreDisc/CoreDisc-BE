@@ -1,6 +1,7 @@
 package com.coredisc.domain.stats;
 
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.common.enums.QuestionType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,13 +25,6 @@ public class DailyRandomQuestionStat extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate selectedDate;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private QuestionType questionType;
-
-    @Column(nullable = false)
-    private Long questionId;
 
     @Column(nullable = false, length = 100) //질문 길이 얼마지??
     private String questionContent;

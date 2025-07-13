@@ -1,7 +1,6 @@
 package com.coredisc.domain.stats;
 
 import com.coredisc.domain.common.BaseEntity;
-import com.coredisc.domain.common.enums.QuestionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -35,12 +34,4 @@ public class MonthlyFixedQuestionStat extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private String questionContent;
-
-    //타입 + 아이디로 저장
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private QuestionType questionType;
-
-    @Column(nullable = false)
-    private Long questionId;
 }

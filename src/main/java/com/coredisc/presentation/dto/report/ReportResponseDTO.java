@@ -1,6 +1,5 @@
 package com.coredisc.presentation.dto.report;
 
-import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.common.enums.TimeZoneType;
 import lombok.*;
 
@@ -38,7 +37,7 @@ public class ReportResponseDTO {
     public static class QuestionListDTO{ //월별 전체 질문 리스트
         private int year;
         private int month;
-        private List<QuestionDTO> fixedQuestions;
+        private List<QuestionDTO> fixedQuestions; // 혹시 추가로 필요한 내용 있을까봐 따로 dto 만들었는데, 없으면 String으로 수정할 예정
         private List<QuestionDTO> randomQuestions;
     }
 
@@ -84,8 +83,6 @@ public class ReportResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class QuestionDTO{ //질문
-        private Long id;
-        private QuestionType questionType;
         private String questionContent;
     }
 
@@ -93,8 +90,7 @@ public class ReportResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SeletedQuestionDTO{
-        private Long id;
+    public static class SeletedQuestionDTO{ //선택된 질문
         private String questionContent;
         private int selectedCount;
     }
@@ -104,6 +100,7 @@ public class ReportResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DailyOptionDTO{ //선택형 일기 옵션
+        private int dailyType;
         private String optionContent;
         private int selectionCount;
     }

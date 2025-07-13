@@ -6,27 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface MonthlySelectionDiaryStatRepository extends JpaRepository<MonthlySelectionDiaryStat, Long> {
 
-    //dailyDetail에 입력한 내용들을 모두 출력
-    @Query("SELECT p.dailyDetail FROM Post p " +
-            "WHERE p.member.id = :memberId " +
-            "AND p.createdAt BETWEEN :startDate AND :endDate " +
-            "AND p.dailyDetail IS NOT NULL " +
-            "AND p.dailyDetail != '' " +
-            "AND p.status = 'PUBLISHED' " +
-            "ORDER BY p.createdAt ASC")
-    List<String> findDailyDetailsByDateRange(
-            @Param("memberId") Long memberId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
-    );
-
-    //선택형 일기에서 질문 타입에 따라 사용자가 한 달동안 가장 많이 선택된 항목 조회
+    //선택형 일기에서 질문 타입에 따라 사용자가 한 달동안 가장 많이 선택된 옵션과 횟수 조회
     @Query("SELECT m.selectedOption, m.selectionCount " +
             "FROM MonthlySelectionDiaryStat m " +
             "WHERE m.memberId = :memberId AND m.year = :year AND m.month = :month AND m.dailyType = :dailyType " +

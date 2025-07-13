@@ -5,7 +5,6 @@ import com.coredisc.domain.stats.MonthlyFixedQuestionStat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -41,24 +40,20 @@ public class ReportRawData {
     public static class DailyOptionRawData {
         private int year;
         private int month;
-        private int dailyType;
-        private String optionContent;
+        private Map<Integer, SelectedOptionWithCount> topSelectedOption;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class SelectedOptionWithCount {
+        private int selectedOption;
         private int selectionCount;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class DailyDetailRawData {
-        private int year;
-        private int month;
-        private Map<LocalDate, String> dailyDetails;
-    }
-
-    @Getter
-    @AllArgsConstructor
     public static class MostSelectedQuestionItem {
-        private Long questionId;
         private String questionContent;
-        private int selectionCount; // 집계된 선택 횟수
+        private int selectionCount;
     }
 }
