@@ -16,4 +16,7 @@ public interface QuestionControllerDocs {
     @Operation(summary = "내가 작성한 질문 저장하기", description = "내가 커스텀한 질문을 저장하는 기능입니다.")
     public ApiResponse<QuestionResponseDTO.savePersonalQuestionResultDTO> savePersonalQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SavePersonalQuestionDTO request);
 
+    @Operation(summary = "내가 작성한 질문 공유하기", description = "내가 커스텀한 질문을 공유하는 기능입니다.")
+    public ApiResponse<QuestionResponseDTO.saveOfficialQuestionResultDTO> saveOfficialQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveOfficialQuestionDTO request);
+
 }

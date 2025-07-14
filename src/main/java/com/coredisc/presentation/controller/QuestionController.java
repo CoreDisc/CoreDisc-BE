@@ -28,4 +28,11 @@ public class QuestionController implements QuestionControllerDocs {
 
         return ApiResponse.onSuccess(QuestionConverter.toSavePersonalQuestionResultDTO(questionCommandService.savePersonalQuestion(request, member)));
     }
+
+    // 내가 작성한 질문 공유
+    @PostMapping("/official")
+    public ApiResponse<QuestionResponseDTO.saveOfficialQuestionResultDTO> saveOfficialQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveOfficialQuestionDTO request) {
+
+        return ApiResponse.onSuccess(QuestionConverter.toSaveOfficialQuestionResultDTO(questionCommandService.saveOfficialQuestion(request, member)));
+    }
 }
