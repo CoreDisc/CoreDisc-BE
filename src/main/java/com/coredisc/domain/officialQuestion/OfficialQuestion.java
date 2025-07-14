@@ -1,5 +1,6 @@
-package com.coredisc.domain;
+package com.coredisc.domain.officialQuestion;
 
+import com.coredisc.domain.TodayQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
@@ -21,9 +22,9 @@ public class OfficialQuestion extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ColumnDefault("1")     // 0: 기본질문, 1: 공유질문
     @Column(nullable = false)
-    private boolean isOfficial;
+    @Builder.Default    // false: 기본질문, true: 공유질문
+    private boolean isOfficial = true;
 
     @Column(nullable = false)
     private String contents;

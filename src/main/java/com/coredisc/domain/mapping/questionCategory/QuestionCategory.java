@@ -1,7 +1,7 @@
 package com.coredisc.domain.mapping.questionCategory;
 
 import com.coredisc.domain.category.Category;
-import com.coredisc.domain.OfficialQuestion;
+import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import jakarta.persistence.*;
