@@ -9,4 +9,10 @@ public interface BlockRepository {
 
     // 차단 정보 저장
     Block save(Block block);
+
+    // 차단 정보 삭제
+    void delete(Block block);
+
+    Block findByBlockerAndBlocked(Member blocker, Member blocked);
+
 }

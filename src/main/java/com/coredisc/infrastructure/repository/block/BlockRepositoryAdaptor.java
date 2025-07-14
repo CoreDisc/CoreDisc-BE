@@ -20,4 +20,14 @@ public class BlockRepositoryAdaptor implements BlockRepository {
     public Block save(Block block) {
         return jpaBlockRepository.save(block);
     }
+
+    @Override
+    public void delete(Block block) {
+        jpaBlockRepository.delete(block);
+    }
+
+    @Override
+    public Block findByBlockerAndBlocked(Member blocker, Member blocked) {
+        return jpaBlockRepository.findByBlockerAndBlocked(blocker, blocked);
+    }
 }

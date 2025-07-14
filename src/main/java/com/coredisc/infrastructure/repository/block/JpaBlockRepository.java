@@ -8,4 +8,5 @@ public interface JpaBlockRepository extends JpaRepository<Block, Long> {
 
     boolean existsByBlockerAndBlocked(Member blocker, Member blocked);
 
+    Block findByBlockerAndBlocked(Member blocker, Member blocked);
 }

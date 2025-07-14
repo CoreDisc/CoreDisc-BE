@@ -42,6 +42,20 @@ public class BlockCommandServiceImpl implements BlockCommandService {
 
     @Override
     public void unblock(Member member, Long targetId) {
+        if (member.getId().equals(targetId)) {
+            throw new BlockHandler(ErrorStatus.SELF_UNBLOCK_NOT_ALLOWED);
+        }
 
+        Member target = memberRepository.findById(targetId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 차단한 이력이 없을 경우
+        if (!blockRepository.existsByBlockerAndBlocked(member, target)) {
+            throw new BlockHandler(ErrorStatus.BLOCK_NOT_FOUND);
+        }
+
+        Block block = blockRepository.findByBlockerAndBlocked(member, target);
+
+        blockRepository.delete(block);
     }
 }
