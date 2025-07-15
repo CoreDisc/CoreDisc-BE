@@ -5,10 +5,15 @@ import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.MyHomeHandler;
+import com.coredisc.common.util.DateUtil;
+import com.coredisc.domain.PostAnswer;
+import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.domain.monthlyReport.MonthlyReportRepository;
+import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImage;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.domain.profileImg.ProfileImg;
@@ -19,7 +24,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +37,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final ProfileImgRepository profileImgRepository;
     private final MonthlyReportRepository monthlyReportRepository;
     private final PostAnswerImageRepository postAnswerImageRepository;
+    private final PostRepository postRepository;
 
 
     @Override
@@ -87,17 +95,40 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    public CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO> getMyHomeImageAnswers(Member member, Long cursorId, Pageable page) {
+    public CursorDTO<MemberResponseDTO.MyHomePostDTO> getMyHomePosts(Member member, Long cursorId, Pageable page) {
 
-        List<PostAnswerImage> postAnswerImages = postAnswerImageRepository.findImageAnswersByMember(member, cursorId, page);
-        List<MemberResponseDTO.MyHomeImageAnswerDTO> myHomeImageAnswerDTOS = postAnswerImages.stream()
-                .map(MemberConverter::toMyHomeImageAnswerDTO)
-                .toList();
+        // 1. Post 리스트 페이징 조회
+        List<Post> posts = postRepository.findMyPostsWithAnswers(member,cursorId, page);
 
-        Long lastIdOfList = postAnswerImages.isEmpty() ?
-                null : postAnswerImages.get(postAnswerImages.size() - 1).getId();
+        List<MemberResponseDTO.MyHomePostDTO> result = new ArrayList<>();
+        for (Post p : posts) {
+            List<PostAnswer> answers = p.getAnswers();
 
-        return new CursorDTO<>(myHomeImageAnswerDTOS, hasNext(member, lastIdOfList));
+            // 2. 이미지 답변 있는지 우선 검사
+            Optional<PostAnswer> imageAnswerOpt = answers.stream()
+                    .filter(a -> a.getType() == AnswerType.IMAGE && a.getPostAnswerImage().getThumbnailUrl() != null)
+                    .findFirst();
+
+            // 3-1. 이미지 답변이 존재하는 경우
+            if(imageAnswerOpt.isPresent()) {
+                PostAnswerImage pai = imageAnswerOpt.get().getPostAnswerImage();
+                MemberResponseDTO.PostImageThumbnailDTO imageDto = MemberConverter.toPostImageThumbnailDTO(pai);
+
+                result.add(MemberConverter.toMyHomePostDTO(p, imageDto, null));
+            }
+            else { // 3-2. 텍스트 답변만 존재하는 경우
+                String weekday = DateUtil.getWeekdayShort(p.getCreatedAt());
+                String createdDate = DateUtil.getYYMMDD(p.getCreatedAt());
+                // TODO: 답변들의 질문 카테고리 구하기
+
+               MemberResponseDTO.PostTextThumbnailDTO textDto = MemberConverter.toPostTextThumbnailDTO(weekday, createdDate);
+
+               result.add(MemberConverter.toMyHomePostDTO(p, null, textDto));
+            }
+        }
+
+        Long lastId = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
+        return new CursorDTO<>(result, hasNext(member, lastId));
     }
 
     @Override
@@ -127,6 +158,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private Boolean hasNext(Member member, Long id) {
 
         if(id == null) { return false; }
-        return postAnswerImageRepository.existsByMemberAndIdLessThan(member, id);
+        return postRepository.existsByMemberAndIdLessThan(member, id);
     }
 }

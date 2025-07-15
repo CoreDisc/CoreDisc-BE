@@ -17,8 +17,8 @@ public interface MemberQueryService {
     // 마이홈(타사용자) 사용자 정보 조회
     MemberResponseDTO.UserHomeInfoDTO getUserHomeInfo(Member member, String targetUsername);
 
-    // 마이홈(본인) 사진 답변 리스트 조회
-    CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO> getMyHomeImageAnswers(Member member, Long cursorId, Pageable page);
+    // 마이홈(본인) 게시글 리스트 조회
+    CursorDTO<MemberResponseDTO.MyHomePostDTO> getMyHomePosts(Member member, Long cursorId, Pageable page);
 
     // 마이홈(타사용자) 사진 답변 리스트 조회
     CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO> getUserHomeImageAnswers(Member member, String targetUsername, Long cursorId, Pageable page);
