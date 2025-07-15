@@ -3,6 +3,7 @@ package com.coredisc.common.converter;
 import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.postAnswerImage.PostAnswerImage;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
@@ -87,13 +88,13 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeInfoOfMeDTO toMyHomeInfoOfMeDTO(Member member, Long followerCount,
-                                                                          Long followingCount, Long discCount,
-                                                                          ProfileImg profileImg) {
+    public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, Long followerCount,
+                                                                  Long followingCount, Long discCount,
+                                                                  ProfileImg profileImg) {
         // 가입 시기 M.d.yyyy 형태로 변환
         String formattedDate = formatJoinDate(member);
 
-        return MemberResponseDTO.MyHomeInfoOfMeDTO.builder()
+        return MemberResponseDTO.MyHomeInfoDTO.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
                 .joinDate(formattedDate)
@@ -104,13 +105,13 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeInfoOfOtherDTO toMyHomeInfoOfOtherDTO(Member targetMember, Long followerCount,
-                                                                                Long followingCount, Long discCount,
-                                                                                ProfileImg profileImg, boolean isFollowing) {
+    public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, Long followerCount,
+                                                                      Long followingCount, Long discCount,
+                                                                      ProfileImg profileImg, boolean isFollowing) {
         // 가입 시기 M.d.yyyy 형태로 변환
         String formattedDate = formatJoinDate(targetMember);
 
-        return MemberResponseDTO.MyHomeInfoOfOtherDTO.builder()
+        return MemberResponseDTO.UserHomeInfoDTO.builder()
                 .memberId(targetMember.getId())
                 .nickname(targetMember.getNickname())
                 .joinDate(formattedDate)
@@ -121,6 +122,27 @@ public class MemberConverter {
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
     }
+
+    public static MemberResponseDTO.MyHomeImageAnswerDTO toMyHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.MyHomeImageAnswerDTO.builder()
+                .postId(postAnswerImage.getPostAnswer().getPost().getId())
+                .postAnswerImageId(postAnswerImage.getId())
+                .imgUrl(postAnswerImage.getImgUrl())
+                .publicityType(postAnswerImage.getPostAnswer().getPost().getPublicity())
+                .build();
+    }
+
+    public static MemberResponseDTO.UserHomeImageAnswerDTO toUserHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.UserHomeImageAnswerDTO.builder()
+                .postId(postAnswerImage.getPostAnswer().getPost().getId())
+                .postAnswerImageId(postAnswerImage.getId())
+                .imgUrl(postAnswerImage.getImgUrl())
+                .build();
+    }
+
+
 
     // 날짜 M.d.yyyy 형태로 변환
     private static String formatJoinDate(Member member) {

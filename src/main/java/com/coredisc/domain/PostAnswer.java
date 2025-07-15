@@ -1,9 +1,9 @@
 package com.coredisc.domain;
 
 
-
-import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.common.enums.AnswerType;
+import com.coredisc.domain.postAnswerImage.PostAnswerImage;
 import jakarta.persistence.*;
 import lombok.*;
 

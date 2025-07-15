@@ -2,15 +2,18 @@ package com.coredisc.presentation.controllerdocs;
 
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Member", description = "멤버 관련 API")
 public interface MemberControllerDocs {
@@ -24,10 +27,30 @@ public interface MemberControllerDocs {
     @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
     ApiResponse<String> resignMember(@CurrentMember Member member);
 
-    @Operation(summary = "마이홈 사용자 본인 정보 확인", description = "마이홈 사용자 본인 정보 확인 기능입니다.")
-    ApiResponse<MemberResponseDTO.MyHomeInfoOfMeDTO> getMyHomeInfoOfMe(@CurrentMember Member member);
+    @Operation(summary = "마이홈 본인 정보 조회", description = "마이홈 사용자 본인 정보 조회 기능입니다.")
+    ApiResponse<MemberResponseDTO.MyHomeInfoDTO> getMyHomeInfo(@CurrentMember Member member);
 
-    @Operation(summary = "마이홈 타사용자 정보 확인", description = "마이홈 타사용자 정보 확인 기능입니다.")
+    @Operation(summary = "마이홈 타사용자 정보 조회", description = "마이홈 타사용자 정보 조회 기능입니다.")
     @Parameter(name = "targetUsername", description = "타사용자의 username(로그인 아이디)")
-    ApiResponse<MemberResponseDTO.MyHomeInfoOfOtherDTO> getMyHomeInfoOfOther(@CurrentMember Member member, @PathVariable String targetUsername);
+    ApiResponse<MemberResponseDTO.UserHomeInfoDTO> getUserHomeInfo(@CurrentMember Member member, @PathVariable String targetUsername);
+
+    @Operation(summary = "마이홈 본인 사진 답변 리스트 조회", description = "마이홈 본인 사진 답변 조회입니다. 커서 기반 페이징입니다.")
+    @Parameters({
+            @Parameter(name = "cursorId", description = "마지막으로 조회한 postAnswerImgId, 첫 요청 때는 null, queryString입니다."),
+            @Parameter(name = "size", description = "기본값 10, queryString입니다.")
+    })
+    ApiResponse<CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO>> getMyHomeImageAnswers(@CurrentMember Member member,
+                                                                                         @RequestParam(required = false) Long cursorId,
+                                                                                         @RequestParam(required = false) Integer size);
+
+    @Operation(summary = "마이홈 타사용자 사진 답변 리스트 조회", description = "마이홈 타사용자 사진 답변 리스트 조회 기능입니다.")
+    @Parameters({
+            @Parameter(name = "targetUsername", description = "타사용자의 username(로그인 아이디), pathVariable입니다."),
+            @Parameter(name = "cursorId", description = "마지막으로 조회한 postAnswerImgId, 첫 요청 때는 null, queryString입니다."),
+            @Parameter(name = "size", description = "기본값 10, queryString입니다.")
+    })
+    ApiResponse<CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO>> getUserHomeImageAnswers(@CurrentMember Member member,
+                                                                   @PathVariable String targetUsername,
+                                                                   @RequestParam(required = false) Long cursorId,
+                                                                   @RequestParam(required = false) Integer size);
 }

@@ -1,5 +1,6 @@
 package com.coredisc.presentation.dto.member;
 
+import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,7 @@ public class MemberResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class MyHomeInfoOfMeDTO {
+    public static class MyHomeInfoDTO {
 
         private Long memberId;
 
@@ -33,7 +34,7 @@ public class MemberResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class MyHomeInfoOfOtherDTO {
+    public static class UserHomeInfoDTO {
 
         private Long memberId;
 
@@ -50,5 +51,33 @@ public class MemberResponseDTO {
         private Boolean isFollowing;
 
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MyHomeImageAnswerDTO {
+
+        private Long postAnswerImageId;
+
+        private Long postId;
+
+        private String imgUrl;
+
+        private PublicityType publicityType;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserHomeImageAnswerDTO {
+
+        private Long postAnswerImageId;
+
+        private Long postId;
+
+        private String imgUrl;
     }
 }

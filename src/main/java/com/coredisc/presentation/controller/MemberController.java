@@ -5,17 +5,21 @@ import com.coredisc.application.service.member.MemberQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.MemberControllerDocs;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController implements MemberControllerDocs {
+
+    private static final int DEFAULT_SIZE = 10;
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
@@ -47,16 +51,36 @@ public class MemberController implements MemberControllerDocs {
 
     @Override
     @GetMapping("/my-home")
-    public ApiResponse<MemberResponseDTO.MyHomeInfoOfMeDTO> getMyHomeInfoOfMe(@CurrentMember Member member) {
+    public ApiResponse<MemberResponseDTO.MyHomeInfoDTO> getMyHomeInfo(@CurrentMember Member member) {
 
-        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfoOfMe(member));
+        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfo(member));
     }
 
     @Override
     @GetMapping("/my-home/{targetUsername}")
-    public ApiResponse<MemberResponseDTO.MyHomeInfoOfOtherDTO> getMyHomeInfoOfOther(@CurrentMember Member member,
-                                                                                 @PathVariable String targetUsername) {
+    public ApiResponse<MemberResponseDTO.UserHomeInfoDTO> getUserHomeInfo(@CurrentMember Member member,
+                                                                          @PathVariable String targetUsername) {
+        return ApiResponse.onSuccess(memberQueryService.getUserHomeInfo(member, targetUsername));
+    }
 
-        return ApiResponse.onSuccess(memberQueryService.getMyHomeInfoOfOther(member, targetUsername));
+    @Override
+    @GetMapping("/my-home/post-images")
+    public ApiResponse<CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO>> getMyHomeImageAnswers(@CurrentMember Member member,
+                                                                                                @RequestParam(required = false) Long cursorId,
+                                                                                                @RequestParam(required = false) Integer size) {
+        if(size == null) { size = DEFAULT_SIZE; }
+
+        return ApiResponse.onSuccess(memberQueryService.getMyHomeImageAnswers(member, cursorId, PageRequest.of(0, size)));
+    }
+
+    @Override
+    @GetMapping("/my-home/post-images/{targetUsername}")
+    public ApiResponse<CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO>> getUserHomeImageAnswers(@CurrentMember Member member,
+                                                                                                    @PathVariable String targetUsername,
+                                                                                                    @RequestParam(required = false) Long cursorId,
+                                                                                                    @RequestParam(required = false) Integer size) {
+        if(size == null) { size = DEFAULT_SIZE; }
+
+        return ApiResponse.onSuccess(memberQueryService.getUserHomeImageAnswers(member, targetUsername, cursorId, PageRequest.of(0, size)));
     }
 }
