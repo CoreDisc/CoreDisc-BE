@@ -1,4 +1,4 @@
-package com.coredisc.application.service.report;
+package com.coredisc.application.service.reportStat;
 
 import java.time.LocalDate;
 

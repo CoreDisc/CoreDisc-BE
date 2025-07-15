@@ -1,4 +1,4 @@
-package com.coredisc.domain.stats;
+package com.coredisc.domain.reportStats;
 
 import com.coredisc.domain.common.BaseEntity;
 import jakarta.persistence.*;

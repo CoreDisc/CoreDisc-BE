@@ -1,7 +1,7 @@
-package com.coredisc.application.service.report;
+package com.coredisc.application.service.reportStat;
 
-import com.coredisc.domain.stats.DailyRandomQuestionStat;
-import com.coredisc.domain.stats.MonthlyFixedQuestionStat;
+import com.coredisc.domain.reportStats.DailyRandomQuestionStat;
+import com.coredisc.domain.reportStats.MonthlyFixedQuestionStat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

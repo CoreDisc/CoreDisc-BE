@@ -1,6 +1,6 @@
-package com.coredisc.infrastructure.repository.stats;
+package com.coredisc.infrastructure.repository.reportStat;
 
-import com.coredisc.domain.stats.DailyAnswerHourStat;
+import com.coredisc.domain.reportStats.DailyAnswerHourStat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
