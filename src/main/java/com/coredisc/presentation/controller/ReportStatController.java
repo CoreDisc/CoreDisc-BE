@@ -29,14 +29,14 @@ public class ReportStatController implements ReportStatControllerDocs {
 
     // 사용자가 특정 달 동안 가장 많이 선택한 랜덤 질문 3개 조회
     @GetMapping("/most-selected")
-    public ApiResponse<ReportStatResponseDTO.MostSelectedQuestionDTO> getMostSelectedQuestions(LocalDate startDate, LocalDate endDate, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toMostSelectedQuestionDTO(reportStatQueryServiceImpl.getMostSelectedQuestions(startDate, endDate, member.getId())));
+    public ApiResponse<ReportStatResponseDTO.MostSelectedQuestionDTO> getMostSelectedQuestions(int year, int month, @CurrentMember Member member) {
+        return ApiResponse.onSuccess(ReportStatConverter.toMostSelectedQuestionDTO(reportStatQueryServiceImpl.getMostSelectedQuestions(year, month, member.getId())));
     }
 
     // 사용자가 특정 달에 시간대 별로 응답한 횟수 조회
     @GetMapping("/peak-hours")
-    public ApiResponse<ReportStatResponseDTO.PeakHourDTO> getPeakHour(LocalDate startDate, LocalDate endDate, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toPeakHourDTO(reportStatQueryServiceImpl.getHourlyAnswerCountMap(startDate, endDate, member.getId())));
+    public ApiResponse<ReportStatResponseDTO.PeakHourDTO> getPeakHour(int year, int month, @CurrentMember Member member) {
+        return ApiResponse.onSuccess(ReportStatConverter.toPeakHourDTO(reportStatQueryServiceImpl.getHourlyAnswerCountMap(year, month, member.getId())));
     }
 
     // 사용자가 선택형 일기에서 특정 달에 가장 많이 선택한 옵션 조회

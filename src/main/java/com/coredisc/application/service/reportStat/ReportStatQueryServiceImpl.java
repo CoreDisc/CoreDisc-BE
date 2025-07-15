@@ -45,8 +45,12 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     }
 
     @Override
-    public ReportRawData.MostSelectedQuestionRawData getMostSelectedQuestions(LocalDate startDate, LocalDate endDate, Long memberId) {
+    public ReportRawData.MostSelectedQuestionRawData getMostSelectedQuestions(int year, int month, Long memberId) {
         Pageable top3 = PageRequest.of(0, 3);
+
+        LocalDate startDate = DateUtil.getStartDate(year, month);
+        LocalDate endDate = DateUtil.getEndDate(year, month);
+
         List<Object[]> results = randomQuestionRepository.findTop3QuestionsByMemberAndDateRange(memberId, startDate, endDate, top3);
         if(results.isEmpty()) {
             throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
@@ -63,7 +67,10 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     }
 
     @Override
-    public ReportRawData.HourlyAnswerRawData getHourlyAnswerCountMap(LocalDate startDate, LocalDate endDate, Long memberId) {
+    public ReportRawData.HourlyAnswerRawData getHourlyAnswerCountMap(int year, int month,  Long memberId) {
+        LocalDate startDate = DateUtil.getStartDate(year, month);
+        LocalDate endDate = DateUtil.getEndDate(year, month);
+
         List<Object[]> results = answerHourStatRepository.findHourlyAnswerCountsByMemberIdAndDateRange(memberId, startDate, endDate);
         if(results.isEmpty()) {
             throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);

@@ -7,7 +7,6 @@ import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
@@ -24,15 +23,15 @@ public interface ReportStatControllerDocs {
 
     @Operation(summary = "기간별 최다 선택된 랜덤 질문 3순위 조회", description = "사용자가 특정 달 동안 가장 많이 선택한 랜덤 질문 3개를 조회합니다.")
     ApiResponse<ReportStatResponseDTO.MostSelectedQuestionDTO> getMostSelectedQuestions(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month,
             @Parameter(hidden = true) @CurrentMember Member member
     );
 
     @Operation(summary = "기간별 응답 시간대 횟수 조회", description = "사용자의 특정 월(startDate~endDate)에 가장 많이 답변한 시간대와 시간대별 응답 수 리스트를 조회합니다.")
     ApiResponse<ReportStatResponseDTO.PeakHourDTO> getPeakHour(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month,
             @Parameter(hidden = true) @CurrentMember Member member
     );
 
