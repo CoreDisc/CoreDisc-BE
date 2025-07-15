@@ -146,12 +146,24 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.UserHomeImageAnswerDTO toUserHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+    public static MemberResponseDTO.UserHomePostDTO toUserHomePostDTO(Post post,
+                                                                      MemberResponseDTO.PostImageThumbnailDTO imageDto,
+                                                                      MemberResponseDTO.PostTextThumbnailDTO textDto) {
 
-        return MemberResponseDTO.UserHomeImageAnswerDTO.builder()
-                .postId(postAnswerImage.getPostAnswer().getPost().getId())
-                .postAnswerImageId(postAnswerImage.getId())
-                .imgUrl(postAnswerImage.getImgUrl())
+        // 이미지 답변이 있는 게시글일 때
+        if(imageDto != null) {
+            return MemberResponseDTO.UserHomePostDTO.builder()
+                    .postId(post.getId())
+                    .postImageThumbnailDTO(imageDto)
+                    .postTextThumbnailDTO(null)
+                    .build();
+        }
+
+        // 텍스트 답변만 있는 게시글일 때
+        return MemberResponseDTO.UserHomePostDTO.builder()
+                .postId(post.getId())
+                .postImageThumbnailDTO(null)
+                .postTextThumbnailDTO(textDto)
                 .build();
     }
 

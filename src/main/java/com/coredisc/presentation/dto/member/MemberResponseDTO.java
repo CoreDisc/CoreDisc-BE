@@ -72,13 +72,13 @@ public class MemberResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserHomeImageAnswerDTO {
-
-        private Long postAnswerImageId;
+    public static class UserHomePostDTO {
 
         private Long postId;
 
-        private String imgUrl;
+        private PostImageThumbnailDTO postImageThumbnailDTO; // 4개의 답변 중 이미지 답변이 존재할 경우
+
+        private PostTextThumbnailDTO postTextThumbnailDTO; // 4개의 답변 모두 텍스트 답변일 경우
     }
 
     @Getter
