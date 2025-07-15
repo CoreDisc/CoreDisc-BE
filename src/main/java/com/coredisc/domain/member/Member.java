@@ -32,6 +32,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Setter
     @Column(length = 16, nullable = false, unique = true)
     private String username;
 
