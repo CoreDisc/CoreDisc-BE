@@ -21,7 +21,14 @@ public class PostAnswerImage extends BaseEntity {
     @Column(name = "img_url", nullable = false)
     private String imgUrl;
 
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_answer_id",nullable = false)
     private PostAnswer postAnswer;
+
+    public boolean hasThumbnail() {
+        return thumbnailUrl != null && !thumbnailUrl.trim().isEmpty();
+    }
 }
