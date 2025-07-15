@@ -1,6 +1,9 @@
-package com.coredisc.domain;
+package com.coredisc.domain.post;
 
 
+import com.coredisc.domain.Comment;
+import com.coredisc.domain.PostAnswer;
+import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
