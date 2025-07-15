@@ -33,12 +33,20 @@ public class MemberController implements MemberControllerDocs {
     }
 
     @Override
-    @PatchMapping("/nickname")
-    public ApiResponse<String> resetNickname(@CurrentMember Member member,
-                                             @RequestBody @Valid MemberRequestDTO.ResetNicknameDTO request) {
+    @PatchMapping("/profile")
+    public ApiResponse<String> resetNicknameAndUsername(@RequestHeader("accessToken") String accessToken,
+                                                        @CurrentMember Member member,
+                                                        @RequestBody @Valid MemberRequestDTO.ResetNicknameAndUsernameDTO request) {
 
-        memberCommandService.resetNickname(member, request);
-        return ApiResponse.onSuccess("닉네임이 성공적으로 변경되었습니다.");
+        boolean isUsernameChanged = memberCommandService.resetNicknameAndUsername(accessToken, member, request);
+
+        // username이 변경되었을 시, 토큰 재발급 요청
+        if(isUsernameChanged) {
+            return ApiResponse.onSuccess("아이디가 변경되어 인증이 만료되었습니다. 다시 로그인 해주세요.");
+        }
+
+        // nickname만 변경되었을 시
+        return ApiResponse.onSuccess("성공적으로 변경되었습니다.");
     }
 
     @Override
