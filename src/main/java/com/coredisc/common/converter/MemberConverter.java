@@ -3,6 +3,7 @@ package com.coredisc.common.converter;
 import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.Post;
 import com.coredisc.domain.postAnswerImage.PostAnswerImage;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
@@ -123,13 +124,25 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeImageAnswerDTO toMyHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+    public static MemberResponseDTO.MyHomePostDTO toMyHomePostDTO(Post post,
+                                                                  MemberResponseDTO.PostImageThumbnailDTO imageDto,
+                                                                  MemberResponseDTO.PostTextThumbnailDTO textDto) {
+        // 이미지 답변이 있는 게시글일 때
+        if(imageDto != null) {
+            return MemberResponseDTO.MyHomePostDTO.builder()
+                    .postId(post.getId())
+                    .publicityType(post.getPublicity())
+                    .postImageThumbnailDTO(imageDto)
+                    .postTextThumbnailDTO(null)
+                    .build();
+        }
 
-        return MemberResponseDTO.MyHomeImageAnswerDTO.builder()
-                .postId(postAnswerImage.getPostAnswer().getPost().getId())
-                .postAnswerImageId(postAnswerImage.getId())
-                .imgUrl(postAnswerImage.getImgUrl())
-                .publicityType(postAnswerImage.getPostAnswer().getPost().getPublicity())
+        // 텍스트 답변만 있는 게시글일 때
+        return MemberResponseDTO.MyHomePostDTO.builder()
+                .postId(post.getId())
+                .publicityType(post.getPublicity())
+                .postImageThumbnailDTO(null)
+                .postTextThumbnailDTO(textDto)
                 .build();
     }
 
@@ -139,6 +152,20 @@ public class MemberConverter {
                 .postId(postAnswerImage.getPostAnswer().getPost().getId())
                 .postAnswerImageId(postAnswerImage.getId())
                 .imgUrl(postAnswerImage.getImgUrl())
+                .build();
+    }
+
+    public static MemberResponseDTO.PostImageThumbnailDTO toPostImageThumbnailDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.PostImageThumbnailDTO.builder()
+                .thumbnailUrl(postAnswerImage.getThumbnailUrl())
+                .build();
+    }
+
+    public static MemberResponseDTO.PostTextThumbnailDTO toPostTextThumbnailDTO(String weekday, String createdDate) {
+        return MemberResponseDTO.PostTextThumbnailDTO.builder()
+                .createdAt(createdDate)
+                .weekday(weekday)
                 .build();
     }
 
