@@ -8,6 +8,7 @@ import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.common.util.DateUtil;
 import com.coredisc.domain.PostAnswer;
 import com.coredisc.domain.common.enums.AnswerType;
+import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
@@ -15,7 +16,6 @@ import com.coredisc.domain.monthlyReport.MonthlyReportRepository;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImage;
-import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.domain.profileImg.ProfileImgRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +37,8 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final FollowRepository followRepository;
     private final ProfileImgRepository profileImgRepository;
     private final MonthlyReportRepository monthlyReportRepository;
-    private final PostAnswerImageRepository postAnswerImageRepository;
     private final PostRepository postRepository;
+
 
 
     @Override
@@ -98,7 +99,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public CursorDTO<MemberResponseDTO.MyHomePostDTO> getMyHomePosts(Member member, Long cursorId, Pageable page) {
 
         // 1. Post 리스트 페이징 조회
-        List<Post> posts = postRepository.findMyPostsWithAnswers(member,cursorId, page);
+        List<Post> posts = postRepository.findMyPostsWithAnswers(member, cursorId, page);
 
         List<MemberResponseDTO.MyHomePostDTO> result = new ArrayList<>();
         for (Post p : posts) {
@@ -127,13 +128,16 @@ public class MemberQueryServiceImpl implements MemberQueryService {
             }
         }
 
+        Set<PublicityType> allowTypes = Set.of(
+                PublicityType.OFFICIAL, PublicityType.CIRCLE, PublicityType.PERSONAL
+        );
         Long lastId = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
-        return new CursorDTO<>(result, hasNext(member, lastId));
+        return new CursorDTO<>(result, hasNext(member, lastId, allowTypes));
     }
 
     @Override
-    public CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO> getUserHomeImageAnswers(Member member, String targetUsername,
-                                                                                       Long cursorId, Pageable page) {
+    public CursorDTO<MemberResponseDTO.UserHomePostDTO> getUserHomePosts(Member member, String targetUsername,
+                                                                         Long cursorId, Pageable page) {
         // targetUsername이 로그인한 사용자 본인의 username일 때 예외 처리
         if(member.getUsername().equals(targetUsername)) {
             throw new MyHomeHandler(ErrorStatus.SELF_PROFILE_REQUEST);
@@ -143,21 +147,50 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         Member targetMember = memberRepository.findByUsername(targetUsername)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<PostAnswerImage> postAnswerImages = postAnswerImageRepository.findImageAnswersByMember(targetMember, cursorId, page);
-        List<MemberResponseDTO.UserHomeImageAnswerDTO> userHomeImageAnswerDTOS = postAnswerImages.stream()
-                .map(MemberConverter::toUserHomeImageAnswerDTO)
-                .toList();
+        // targetMember의 써클에 사용자가 있는지 여부 체크
+        boolean isCircle = followRepository.existsByFollowerAndFollowingAndIsCircle(targetMember, member, true);
 
-        Long lastIdOfList = postAnswerImages.isEmpty() ?
-                null : postAnswerImages.get(postAnswerImages.size() - 1).getId();
+        // 1. Post 리스트 페이징 조회
+        List<Post> posts = postRepository.findUserPostsWithAnswers(targetMember, isCircle, cursorId, page);
 
-        return new CursorDTO<>(userHomeImageAnswerDTOS, hasNext(targetMember, lastIdOfList));
+        List<MemberResponseDTO.UserHomePostDTO> result = new ArrayList<>();
+        for (Post p : posts) {
+            List<PostAnswer> answers = p.getAnswers();
+
+            // 2. 이미지 답변 있는지 우선 검사
+            Optional<PostAnswer> imageAnswerOpt = answers.stream()
+                    .filter(a -> a.getType() == AnswerType.IMAGE && a.getPostAnswerImage().getThumbnailUrl() != null)
+                    .findFirst();
+
+            // 3-1. 이미지 답변이 존재하는 경우
+            if(imageAnswerOpt.isPresent()) {
+                PostAnswerImage pai = imageAnswerOpt.get().getPostAnswerImage();
+                MemberResponseDTO.PostImageThumbnailDTO imageDto = MemberConverter.toPostImageThumbnailDTO(pai);
+
+                result.add(MemberConverter.toUserHomePostDTO(p, imageDto, null));
+            }
+            else { // 3-2. 텍스트 답변만 존재하는 경우
+                String weekday = DateUtil.getWeekdayShort(p.getCreatedAt());
+                String createdDate = DateUtil.getYYMMDD(p.getCreatedAt());
+                // TODO: 답변들의 질문 카테고리 구하기
+
+                MemberResponseDTO.PostTextThumbnailDTO textDto = MemberConverter.toPostTextThumbnailDTO(weekday, createdDate);
+
+                result.add(MemberConverter.toUserHomePostDTO(p, null, textDto));
+            }
+        }
+
+        Set<PublicityType> allowTypes = isCircle
+                ? Set.of(PublicityType.OFFICIAL, PublicityType.CIRCLE)
+                : Set.of(PublicityType.OFFICIAL);
+        Long lastId = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
+        return new CursorDTO<>(result, hasNext(targetMember, lastId, allowTypes));
     }
 
 
-    private Boolean hasNext(Member member, Long id) {
+    private Boolean hasNext(Member member, Long id, Set<PublicityType> allowTypes) {
 
         if(id == null) { return false; }
-        return postRepository.existsByMemberAndIdLessThan(member, id);
+        return postRepository.existsByMemberAndIdLessThan(member, id, allowTypes);
     }
 }
