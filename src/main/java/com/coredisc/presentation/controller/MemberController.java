@@ -82,13 +82,13 @@ public class MemberController implements MemberControllerDocs {
     }
 
     @Override
-    @GetMapping("/my-home/post-images/{targetUsername}")
-    public ApiResponse<CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO>> getUserHomeImageAnswers(@CurrentMember Member member,
-                                                                                                    @PathVariable String targetUsername,
-                                                                                                    @RequestParam(required = false) Long cursorId,
-                                                                                                    @RequestParam(required = false) Integer size) {
+    @GetMapping("/my-home/posts/{targetUsername}")
+    public ApiResponse<CursorDTO<MemberResponseDTO.UserHomePostDTO>> getUserHomePosts(@CurrentMember Member member,
+                                                                                      @PathVariable String targetUsername,
+                                                                                      @RequestParam(required = false) Long cursorId,
+                                                                                      @RequestParam(required = false) Integer size) {
         if(size == null) { size = DEFAULT_SIZE; }
 
-        return ApiResponse.onSuccess(memberQueryService.getUserHomeImageAnswers(member, targetUsername, cursorId, PageRequest.of(0, size)));
+        return ApiResponse.onSuccess(memberQueryService.getUserHomePosts(member, targetUsername, cursorId, PageRequest.of(0, size)));
     }
 }
