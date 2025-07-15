@@ -1,6 +1,6 @@
 package com.coredisc.presentation.controller;
 
-import com.coredisc.application.service.reportStat.ReportStatQueryServiceImpl;
+import com.coredisc.application.service.reportStat.ReportStatQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.ReportStatConverter;
 import com.coredisc.domain.member.Member;
@@ -12,37 +12,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reports")
 public class ReportStatController implements ReportStatControllerDocs {
 
-    private final ReportStatQueryServiceImpl reportStatQueryServiceImpl;
+    private final ReportStatQueryService reportStatQueryService;
 
     // 사용자가 특정 달에 선택한 고정 질문 3개와 랜덤 질문 목록 조회
     @GetMapping("/question-list")
     public ApiResponse<ReportStatResponseDTO.QuestionListDTO> getMonthlyQuestionList(int year, int month, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toQuestionListDTO(reportStatQueryServiceImpl.getQuestionList(year, month, member.getId())));
+        return ApiResponse.onSuccess(ReportStatConverter.toQuestionListDTO(reportStatQueryService.getQuestionList(year, month, member.getId())));
     }
 
     // 사용자가 특정 달 동안 가장 많이 선택한 랜덤 질문 3개 조회
     @GetMapping("/most-selected")
     public ApiResponse<ReportStatResponseDTO.MostSelectedQuestionDTO> getMostSelectedQuestions(int year, int month, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toMostSelectedQuestionDTO(reportStatQueryServiceImpl.getMostSelectedQuestions(year, month, member.getId())));
+        return ApiResponse.onSuccess(ReportStatConverter.toMostSelectedQuestionDTO(reportStatQueryService.getMostSelectedQuestions(year, month, member.getId())));
     }
 
     // 사용자가 특정 달에 시간대 별로 응답한 횟수 조회
     @GetMapping("/peak-hours")
     public ApiResponse<ReportStatResponseDTO.PeakHourDTO> getPeakHour(int year, int month, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toPeakHourDTO(reportStatQueryServiceImpl.getHourlyAnswerCountMap(year, month, member.getId())));
+        return ApiResponse.onSuccess(ReportStatConverter.toPeakHourDTO(reportStatQueryService.getHourlyAnswerCountMap(year, month, member.getId())));
     }
 
     // 사용자가 선택형 일기에서 특정 달에 가장 많이 선택한 옵션 조회
     @GetMapping("/daily/top-selection")
     public ApiResponse<ReportStatResponseDTO.TopDailySelectionDTO> getMostSelectedDaily(int year, int month, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toTopDailySelectionDTO(reportStatQueryServiceImpl.getMostSelectedDaily(year, month, member.getId())));
+        return ApiResponse.onSuccess(ReportStatConverter.toTopDailySelectionDTO(reportStatQueryService.getMostSelectedDaily(year, month, member.getId())));
     }
 
     // 사용자가 특정 달에 작성한 일기 내용 전체 출력

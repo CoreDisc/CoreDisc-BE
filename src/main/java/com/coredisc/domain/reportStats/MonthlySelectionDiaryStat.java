@@ -33,7 +33,6 @@ public class MonthlySelectionDiaryStat extends BaseEntity {
     private int dailyType; // 1, 2, 3 (데일리 질문 3개)
 
     @Column(nullable = false)
-    @Min(1) @Max(5)
     private int selectedOption; // 1~5 (선택된 옵션)
 
     @Column(nullable = false)

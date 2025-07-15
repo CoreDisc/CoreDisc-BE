@@ -9,8 +9,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
-
 @Tag(name = "리포트 세부 통계", description = "사용자별 세부 통계 API")
 public interface ReportStatControllerDocs {
 
