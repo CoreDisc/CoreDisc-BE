@@ -6,7 +6,6 @@ import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class OfficialQuestion extends BaseEntity {
 
     @Column(nullable = false)
     @Builder.Default    // false: 기본질문, true: 공유질문
-    private boolean isOfficial = true;
+    private boolean isShared = true;
 
     @Column(nullable = false)
     private String contents;
