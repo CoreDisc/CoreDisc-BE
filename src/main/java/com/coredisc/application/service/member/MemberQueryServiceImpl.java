@@ -7,6 +7,7 @@ import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.common.util.DateUtil;
 import com.coredisc.domain.PostAnswer;
+import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.follow.FollowRepository;
@@ -37,7 +38,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final ProfileImgRepository profileImgRepository;
     private final MonthlyReportRepository monthlyReportRepository;
     private final PostRepository postRepository;
-
+    private final BlockRepository blockRepository;
 
 
     @Override
@@ -91,7 +92,13 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         // 팔로우 여부
         boolean isFollowing = followRepository.existsByFollowerAndFollowing(member, targetMember);
 
-        return MemberConverter.toUserHomeInfoDTO(targetMember, followerCount, followingCount, discCount, profileImg, isFollowing);
+        // 차단 여부
+        boolean isBlocked = blockRepository.existsByBlockerAndBlocked(member, targetMember);
+
+        return MemberConverter.toUserHomeInfoDTO(
+                targetMember, followerCount, followingCount,
+                discCount, profileImg, isFollowing, isBlocked
+        );
     }
 
     @Override
@@ -116,12 +123,19 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public CursorDTO<MemberResponseDTO.UserHomePostDTO> getUserHomePosts(Member member, String targetUsername, Long cursorId, Pageable page) {
 
+        // targetUsername이 로그인한 사용자 본인의 username일 때 예외 처리
         if(member.getUsername().equals(targetUsername)) {
             throw new MyHomeHandler(ErrorStatus.SELF_PROFILE_REQUEST);
         }
 
+        // 존재하지 않는 username일 때
         Member targetMember = memberRepository.findByUsername(targetUsername)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 차단된 사용자일 때
+        if(blockRepository.existsByBlockerAndBlocked(member, targetMember)) {
+            throw new MyHomeHandler(ErrorStatus.BLOCKED_MEMBER_REQUEST);
+        }
 
         boolean isCircle = followRepository.existsByFollowerAndFollowingAndIsCircle(targetMember, member, true);
 
