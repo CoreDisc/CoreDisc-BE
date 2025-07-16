@@ -87,8 +87,8 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, Long followerCount,
-                                                                  Long followingCount, Long discCount,
+    public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, String followerCount,
+                                                                  String followingCount, String discCount,
                                                                   ProfileImg profileImg) {
 
         return MemberResponseDTO.MyHomeInfoDTO.builder()
@@ -102,8 +102,8 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, Long followerCount,
-                                                                      Long followingCount, Long discCount,
+    public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, String followerCount,
+                                                                      String followingCount, String discCount,
                                                                       ProfileImg profileImg, boolean isFollowing,
                                                                       boolean isBlocked) {
 

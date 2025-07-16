@@ -21,11 +21,11 @@ public class MemberResponseDTO {
 
         private String nickname;
 
-        private Long followerCount;
+        private String followerCount;
 
-        private Long followingCount;
+        private String followingCount;
 
-        private Long discCount;
+        private String discCount;
 
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
@@ -42,11 +42,11 @@ public class MemberResponseDTO {
 
         private String nickname;
 
-        private Long followerCount;
+        private String followerCount;
 
-        private Long followingCount;
+        private String followingCount;
 
-        private Long discCount;
+        private String discCount;
 
         private Boolean isFollowing;
 

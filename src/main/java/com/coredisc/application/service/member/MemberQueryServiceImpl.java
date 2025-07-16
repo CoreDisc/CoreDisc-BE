@@ -6,6 +6,7 @@ import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.common.util.DateUtil;
+import com.coredisc.common.util.FormatNumberUtil;
 import com.coredisc.domain.PostAnswer;
 import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.common.enums.AnswerType;
@@ -51,13 +52,19 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public MemberResponseDTO.MyHomeInfoDTO getMyHomeInfo(Member member) {
 
         // 사용자의 팔로워 수
-        Long followerCount = followRepository.countByFollowingId(member.getId());
+        String followerCount = FormatNumberUtil.formatNumberUnit(
+                followRepository.countByFollowingId(member.getId())
+        );
 
         // 사용자의 팔로잉 수
-        Long followingCount = followRepository.countByFollowerId(member.getId());
+        String followingCount = FormatNumberUtil.formatNumberUnit(
+                followRepository.countByFollowerId(member.getId())
+        );
 
         // 총 디스크 수(월별 리포트 수)
-        Long discCount = monthlyReportRepository.countByMember(member);
+        String discCount = FormatNumberUtil.formatNumberUnit(
+                monthlyReportRepository.countByMember(member)
+        );
 
         // 사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(member);
@@ -78,13 +85,19 @@ public class MemberQueryServiceImpl implements MemberQueryService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 타사용자의 팔로워 수
-        Long followerCount = followRepository.countByFollowingId(targetMember.getId());
+        String followerCount = FormatNumberUtil.formatNumberUnit(
+                followRepository.countByFollowingId(targetMember.getId())
+        );
 
         // 타사용자의 팔로잉 수
-        Long followingCount = followRepository.countByFollowerId(targetMember.getId());
+        String followingCount = FormatNumberUtil.formatNumberUnit(
+                followRepository.countByFollowerId(targetMember.getId())
+        );
 
         // 총 디스크 수(월별 리포트 수)
-        Long discCount = monthlyReportRepository.countByMember(targetMember);
+        String discCount = FormatNumberUtil.formatNumberUnit(
+                monthlyReportRepository.countByMember(targetMember)
+        );
 
         // 타사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(targetMember);
