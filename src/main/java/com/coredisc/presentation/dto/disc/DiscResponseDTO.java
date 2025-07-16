@@ -10,12 +10,15 @@ import java.util.List;
 
 public class DiscResponseDTO {
 
+    @Builder
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder
-    public static class DiscListDTO{
+    public static class DiscListDTO {
         private int totalDiscCount;
+        private int totalPages;
+        private int currentPage;
+        private boolean hasNext;
         private List<DiscDTO> discs;
     }
 

@@ -62,6 +62,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Disc 관련 에러
     DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
+    PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "DISC4002", "존재하지 않는 페이지입니다."),
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");

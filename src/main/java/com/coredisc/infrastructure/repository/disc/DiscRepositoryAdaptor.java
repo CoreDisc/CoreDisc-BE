@@ -4,9 +4,10 @@ import com.coredisc.domain.disc.Disc;
 import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,8 +28,8 @@ public class DiscRepositoryAdaptor implements DiscRepository {
     }
 
     @Override
-    public List<Disc> findByMember(Member member) {
-        return jpaDiscRepository.findByMember(member);
+    public Page<Disc> findByMember(Member member, Pageable pageable) {
+        return jpaDiscRepository.findByMember(member, pageable);
     }
 
     @Override

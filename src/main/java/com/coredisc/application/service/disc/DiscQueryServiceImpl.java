@@ -6,9 +6,9 @@ import com.coredisc.domain.disc.Disc;
 import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,12 +17,18 @@ public class DiscQueryServiceImpl implements DiscQueryService {
     private final DiscRepository discRepository;
 
     @Override
-    public List<Disc> getMyDiscList(Member member) {
-        List<Disc> discList = discRepository.findByMember(member);
-        if (discList.isEmpty()) {
-            throw new DiscHandler(ErrorStatus.DISC_NOT_FOUND);
+    public Page<Disc> getMyDiscList(Member member, Pageable pageable) {
+        Page<Disc> discPage = discRepository.findByMember(member, pageable);
+
+        if (discPage.isEmpty()) {
+            if (pageable.getPageNumber() > 0) {
+                throw new DiscHandler(ErrorStatus.PAGE_OUT_OF_BOUNDS);
+            } else {
+                throw new DiscHandler(ErrorStatus.DISC_NOT_FOUND);
+            }
         }
-        return discList;
+
+        return discPage;
     }
 
     @Override

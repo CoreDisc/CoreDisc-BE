@@ -4,6 +4,7 @@ import com.coredisc.application.service.disc.DiscCommandService;
 import com.coredisc.application.service.disc.DiscQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.DiscConverter;
+import com.coredisc.common.exception.handler.DiscHandler;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.DiscControllerDocs;
 import com.coredisc.presentation.dto.disc.DiscRequestDTO;
@@ -11,6 +12,9 @@ import com.coredisc.presentation.dto.disc.DiscResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,10 +25,13 @@ public class DiscController implements DiscControllerDocs {
     private final DiscQueryService discQueryService;
     private final DiscCommandService discCommandService;
 
+    private static final int PAGE_SIZE = 15;
+
     //나의 디스크 목록 조회
     @GetMapping
-    public ApiResponse<DiscResponseDTO.DiscListDTO> getDiscList(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(DiscConverter.toDiscListDTO(discQueryService.getMyDiscList(member)));
+    public ApiResponse<DiscResponseDTO.DiscListDTO> getDiscList(@RequestParam(name = "page") int page, @CurrentMember Member member) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("year").descending().and(Sort.by("month").descending()));
+        return ApiResponse.onSuccess(DiscConverter.toDiscListDTO(discQueryService.getMyDiscList(member, pageable)));
     }
 
     //id로 디스크 조회

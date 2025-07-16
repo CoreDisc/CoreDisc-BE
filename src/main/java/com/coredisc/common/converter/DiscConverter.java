@@ -2,6 +2,7 @@ package com.coredisc.common.converter;
 
 import com.coredisc.domain.disc.Disc;
 import com.coredisc.presentation.dto.disc.DiscResponseDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -12,16 +13,20 @@ public class DiscConverter {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static DiscResponseDTO.DiscListDTO toDiscListDTO(List<Disc> discList) {
-
-        List<DiscResponseDTO.DiscDTO> discDTOList = discList.stream()
-                .map(DiscConverter::toDiscDTO).toList();
+    public static DiscResponseDTO.DiscListDTO toDiscListDTO(Page<Disc> discPage) {
+        List<DiscResponseDTO.DiscDTO> discDTOList = discPage.getContent().stream()
+                .map(DiscConverter::toDiscDTO)
+                .toList();
 
         return DiscResponseDTO.DiscListDTO.builder()
                 .discs(discDTOList)
-                .totalDiscCount(discList.size())
+                .totalDiscCount((int) discPage.getTotalElements())
+                .totalPages(discPage.getTotalPages())
+                .currentPage(discPage.getNumber())
+                .hasNext(discPage.hasNext())
                 .build();
     }
+
 
     public static DiscResponseDTO.DiscDTO toDiscDTO(Disc disc) {
         return DiscResponseDTO.DiscDTO.builder()
