@@ -105,7 +105,8 @@ public class MemberConverter {
 
     public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, Long followerCount,
                                                                       Long followingCount, Long discCount,
-                                                                      ProfileImg profileImg, boolean isFollowing) {
+                                                                      ProfileImg profileImg, boolean isFollowing,
+                                                                      boolean isBlocked) {
 
         return MemberResponseDTO.UserHomeInfoDTO.builder()
                 .memberId(targetMember.getId())
@@ -115,6 +116,7 @@ public class MemberConverter {
                 .followingCount(followingCount)
                 .discCount(discCount)
                 .isFollowing(isFollowing)
+                .isBlocked(isBlocked)
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
     }
