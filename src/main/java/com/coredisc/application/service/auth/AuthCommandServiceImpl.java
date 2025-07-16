@@ -192,11 +192,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         try {
             String accessToken = jwtProvider.resolveAccessToken(request);
 
-            // 블랙리스트에 저장
-            redisUtil.set(accessToken, "logout");
-            redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
-            // RefreshToken 삭제
-            redisUtil.delete(jwtProvider.getUsername(accessToken));
+            if(jwtProvider.validateAccessToken(accessToken)) {
+                // 블랙리스트에 저장
+                redisUtil.set(accessToken, "logout");
+                redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
+                // RefreshToken 삭제
+                redisUtil.delete(jwtProvider.getUsername(accessToken));
+            } else {
+                throw new AuthHandler(ErrorStatus.TOKEN_EXPIRED);
+            }
         } catch (ExpiredJwtException e) {
             throw new AuthHandler(ErrorStatus.TOKEN_EXPIRED);
         }
