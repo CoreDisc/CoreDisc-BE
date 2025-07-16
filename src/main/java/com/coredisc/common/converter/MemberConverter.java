@@ -11,7 +11,6 @@ import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class MemberConverter {
@@ -92,13 +91,10 @@ public class MemberConverter {
     public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, Long followerCount,
                                                                   Long followingCount, Long discCount,
                                                                   ProfileImg profileImg) {
-        // 가입 시기 M.d.yyyy 형태로 변환
-        String formattedDate = formatJoinDate(member);
 
         return MemberResponseDTO.MyHomeInfoDTO.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
-                .joinDate(formattedDate)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .discCount(discCount)
@@ -109,13 +105,10 @@ public class MemberConverter {
     public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, Long followerCount,
                                                                       Long followingCount, Long discCount,
                                                                       ProfileImg profileImg, boolean isFollowing) {
-        // 가입 시기 M.d.yyyy 형태로 변환
-        String formattedDate = formatJoinDate(targetMember);
 
         return MemberResponseDTO.UserHomeInfoDTO.builder()
                 .memberId(targetMember.getId())
                 .nickname(targetMember.getNickname())
-                .joinDate(formattedDate)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .discCount(discCount)
@@ -179,15 +172,5 @@ public class MemberConverter {
                 .createdAt(createdDate)
                 .weekday(weekday)
                 .build();
-    }
-
-
-
-    // 날짜 M.d.yyyy 형태로 변환
-    private static String formatJoinDate(Member member) {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M.d.yyyy");
-
-        return member.getCreatedAt().format(formatter);
     }
 }

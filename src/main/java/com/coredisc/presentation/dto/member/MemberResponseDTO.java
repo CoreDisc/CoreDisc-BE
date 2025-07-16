@@ -19,8 +19,6 @@ public class MemberResponseDTO {
 
         private String nickname;
 
-        private String joinDate;
-
         private Long followerCount;
 
         private Long followingCount;
@@ -39,8 +37,6 @@ public class MemberResponseDTO {
         private Long memberId;
 
         private String nickname;
-
-        private String joinDate;
 
         private Long followerCount;
 
