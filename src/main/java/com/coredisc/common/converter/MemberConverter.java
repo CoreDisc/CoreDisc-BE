@@ -1,11 +1,17 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.PostAnswerImage;
+import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class MemberConverter {
 
@@ -19,7 +25,7 @@ public class MemberConverter {
         return Member.builder()
                 .email(request.getEmail())
                 .name(request.getName())
-                .nickname(request.getNickname())
+                .nickname(RandomNicknameGenerator.generateRandomNickname())
                 .username(request.getUsername())
                 .password(request.getPassword())
                 .status(true)
@@ -27,6 +33,7 @@ public class MemberConverter {
                 .oauthType(null)
                 .oauthKey(null)
                 .role(Role.USER)
+                .memberTermsList(new ArrayList<>())
                 .build();
     }
 
@@ -72,5 +79,76 @@ public class MemberConverter {
         return AuthResponseDTO.CheckNicknameResultDTO.builder()
                 .isDuplicated(isDuplicated)
                 .build();
+    }
+
+    public static AuthResponseDTO.FindUsernameResultDTO toFindUsernameResultDTO(Member member) {
+
+        return AuthResponseDTO.FindUsernameResultDTO.builder()
+                .username(member.getUsername())
+                .build();
+    }
+
+    public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, Long followerCount,
+                                                                  Long followingCount, Long discCount,
+                                                                  ProfileImg profileImg) {
+        // 가입 시기 M.d.yyyy 형태로 변환
+        String formattedDate = formatJoinDate(member);
+
+        return MemberResponseDTO.MyHomeInfoDTO.builder()
+                .memberId(member.getId())
+                .nickname(member.getNickname())
+                .joinDate(formattedDate)
+                .followerCount(followerCount)
+                .followingCount(followingCount)
+                .discCount(discCount)
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
+                .build();
+    }
+
+    public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, Long followerCount,
+                                                                      Long followingCount, Long discCount,
+                                                                      ProfileImg profileImg, boolean isFollowing) {
+        // 가입 시기 M.d.yyyy 형태로 변환
+        String formattedDate = formatJoinDate(targetMember);
+
+        return MemberResponseDTO.UserHomeInfoDTO.builder()
+                .memberId(targetMember.getId())
+                .nickname(targetMember.getNickname())
+                .joinDate(formattedDate)
+                .followerCount(followerCount)
+                .followingCount(followingCount)
+                .discCount(discCount)
+                .isFollowing(isFollowing)
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
+                .build();
+    }
+
+    public static MemberResponseDTO.MyHomeImageAnswerDTO toMyHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.MyHomeImageAnswerDTO.builder()
+                .postId(postAnswerImage.getPostAnswer().getPost().getId())
+                .postAnswerImageId(postAnswerImage.getId())
+                .imgUrl(postAnswerImage.getImgUrl())
+                .publicityType(postAnswerImage.getPostAnswer().getPost().getPublicity())
+                .build();
+    }
+
+    public static MemberResponseDTO.UserHomeImageAnswerDTO toUserHomeImageAnswerDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.UserHomeImageAnswerDTO.builder()
+                .postId(postAnswerImage.getPostAnswer().getPost().getId())
+                .postAnswerImageId(postAnswerImage.getId())
+                .imgUrl(postAnswerImage.getImgUrl())
+                .build();
+    }
+
+
+
+    // 날짜 M.d.yyyy 형태로 변환
+    private static String formatJoinDate(Member member) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M.d.yyyy");
+
+        return member.getCreatedAt().format(formatter);
     }
 }

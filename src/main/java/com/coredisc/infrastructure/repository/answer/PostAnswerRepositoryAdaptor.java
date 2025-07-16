@@ -3,7 +3,7 @@ package com.coredisc.infrastructure.repository.answer;
 import com.coredisc.domain.TodayQuestion;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
-import com.coredisc.domain.post.PostAnswerRepository;
+import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

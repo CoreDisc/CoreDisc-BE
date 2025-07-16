@@ -4,6 +4,8 @@ import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.PostAnswer;
+import com.coredisc.domain.officialQuestion.OfficialQuestion;
+import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import jakarta.persistence.*;
 import lombok.*;
 

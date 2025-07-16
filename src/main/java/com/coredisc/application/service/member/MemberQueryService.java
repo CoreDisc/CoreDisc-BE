@@ -2,7 +2,25 @@ package com.coredisc.application.service.member;
 
 
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
+import org.springframework.data.domain.Pageable;
 
 public interface MemberQueryService {
+
+    // CurrentMemberResolver를 위해 Member 찾기
     Member getMemberByUsername(String username);
+
+    // 마이홈(본인) 사용자 정보 조회
+    MemberResponseDTO.MyHomeInfoDTO getMyHomeInfo(Member member);
+
+    // 마이홈(타사용자) 사용자 정보 조회
+    MemberResponseDTO.UserHomeInfoDTO getUserHomeInfo(Member member, String targetUsername);
+
+    // 마이홈(본인) 사진 답변 리스트 조회
+    CursorDTO<MemberResponseDTO.MyHomeImageAnswerDTO> getMyHomeImageAnswers(Member member, Long cursorId, Pageable page);
+
+    // 마이홈(타사용자) 사진 답변 리스트 조회
+    CursorDTO<MemberResponseDTO.UserHomeImageAnswerDTO> getUserHomeImageAnswers(Member member, String targetUsername, Long cursorId, Pageable page);
+
 }

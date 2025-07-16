@@ -7,12 +7,13 @@ import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.domain.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PostStatus;
-import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
+import com.coredisc.domain.postAnswer.PostAnswerRepository;
+import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.infrastructure.file.FileInfo;
 import com.coredisc.infrastructure.file.FileStore;
-import com.coredisc.infrastructure.repository.answer.TodayQuestionRepository;
+import com.coredisc.infrastructure.repository.question.TodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -251,6 +250,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     //TODO : 나중에 respository 와 연결하기
     private List<TodayQuestion> validateTodayQuestions(Member member) {
+
         List<TodayQuestion> todayQuestions = todayQuestionRepository.findByMember(member);
 
         if (todayQuestions.size() != 4) {
