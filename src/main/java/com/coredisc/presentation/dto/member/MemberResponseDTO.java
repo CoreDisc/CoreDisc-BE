@@ -50,6 +50,8 @@ public class MemberResponseDTO {
 
         private Boolean isFollowing;
 
+        private boolean isBlocked;
+
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
 
