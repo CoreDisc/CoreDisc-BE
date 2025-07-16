@@ -1,6 +1,5 @@
 package com.coredisc.common.converter;
 
-import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
@@ -20,12 +19,12 @@ public class MemberConverter {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static Member toMember(AuthRequestDTO.SignupDTO request) {
+    public static Member toMember(AuthRequestDTO.SignupDTO request, String nickname) {
 
         return Member.builder()
                 .email(request.getEmail())
                 .name(request.getName())
-                .nickname(RandomNicknameGenerator.generateRandomNickname())
+                .nickname(nickname)
                 .username(request.getUsername())
                 .password(request.getPassword())
                 .status(true)
