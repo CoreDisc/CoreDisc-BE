@@ -17,6 +17,8 @@ public class MemberResponseDTO {
 
         private Long memberId;
 
+        private String username;
+
         private String nickname;
 
         private Long followerCount;
@@ -35,6 +37,8 @@ public class MemberResponseDTO {
     public static class UserHomeInfoDTO {
 
         private Long memberId;
+
+        private String username;
 
         private String nickname;
 

@@ -94,6 +94,7 @@ public class MemberConverter {
 
         return MemberResponseDTO.MyHomeInfoDTO.builder()
                 .memberId(member.getId())
+                .username(member.getUsername())
                 .nickname(member.getNickname())
                 .followerCount(followerCount)
                 .followingCount(followingCount)
@@ -108,6 +109,7 @@ public class MemberConverter {
 
         return MemberResponseDTO.UserHomeInfoDTO.builder()
                 .memberId(targetMember.getId())
+                .username(targetMember.getUsername())
                 .nickname(targetMember.getNickname())
                 .followerCount(followerCount)
                 .followingCount(followingCount)
