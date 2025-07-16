@@ -8,8 +8,9 @@ public interface MemberCommandService {
     // 비밀번호 변경
     void resetPassword(MemberRequestDTO.ResetPasswordDTO request);
 
-    // 닉네임 변경
-    void resetNickname(Member member, MemberRequestDTO.ResetNicknameDTO request);
+    // 닉네임, 아이디 변경
+    boolean resetNicknameAndUsername(String accessToken, Member member,
+                                     MemberRequestDTO.ResetNicknameAndUsernameDTO request);
 
     // 계정 탈퇴
     void resignMember(Member member);

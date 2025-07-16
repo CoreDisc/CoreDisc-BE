@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Member", description = "멤버 관련 API")
@@ -21,8 +22,10 @@ public interface MemberControllerDocs {
     @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 기능입니다.")
     ApiResponse<String> resetPassword(@RequestBody @Valid MemberRequestDTO.ResetPasswordDTO request);
 
-    @Operation(summary = "닉네임 변경", description = "닉네임 변경 기능입니다.")
-    ApiResponse<String> resetNickname(@CurrentMember Member member, @RequestBody @Valid MemberRequestDTO.ResetNicknameDTO request);
+    @Operation(summary = "닉네임, 아이디 변경", description = "닉네임, 아이디 변경 기능입니다.")
+    ApiResponse<String> resetNicknameAndUsername(@RequestHeader("accessToken") String accessToken,
+                                                 @CurrentMember Member member,
+                                                 @RequestBody @Valid MemberRequestDTO.ResetNicknameAndUsernameDTO request);
 
     @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
     ApiResponse<String> resignMember(@CurrentMember Member member);
