@@ -7,6 +7,7 @@ import com.coredisc.common.converter.ProfileImgConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.exception.handler.ProfileImgHandler;
 import com.coredisc.common.exception.handler.TermsHandler;
+import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.common.util.RedisUtil;
 import com.coredisc.domain.common.enums.EmailRequestType;
 import com.coredisc.domain.mapping.MemberTerms;
@@ -95,7 +96,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.REQUIRED_TERMS_NOT_AGREED);
         }
 
-        Member newMember = MemberConverter.toMember(request);
+        // 랜덤 닉네임 부여
+        String nickname = RandomNicknameGenerator.generateRandomNickname();
+        while (memberRepository.existsByNickname(nickname)) {
+            nickname = RandomNicknameGenerator.generateRandomNickname();
+        }
+
+        Member newMember = MemberConverter.toMember(request, nickname);
         newMember.encodePassword(passwordEncoder.encode(request.getPassword()));
 
         // 사용자 이용약관 저장
@@ -185,11 +192,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         try {
             String accessToken = jwtProvider.resolveAccessToken(request);
 
-            // 블랙리스트에 저장
-            redisUtil.set(accessToken, "logout");
-            redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
-            // RefreshToken 삭제
-            redisUtil.delete(jwtProvider.getUsername(accessToken));
+            if(jwtProvider.validateAccessToken(accessToken)) {
+                // 블랙리스트에 저장
+                redisUtil.set(accessToken, "logout");
+                redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
+                // RefreshToken 삭제
+                redisUtil.delete(jwtProvider.getUsername(accessToken));
+            } else {
+                throw new AuthHandler(ErrorStatus.TOKEN_EXPIRED);
+            }
         } catch (ExpiredJwtException e) {
             throw new AuthHandler(ErrorStatus.TOKEN_EXPIRED);
         }

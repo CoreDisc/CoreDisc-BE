@@ -9,7 +9,6 @@ import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

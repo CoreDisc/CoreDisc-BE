@@ -1,10 +1,9 @@
 package com.coredisc.domain.post;
 
 
-
 import com.coredisc.domain.TodayQuestion;
-import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.common.enums.AnswerType;
 import jakarta.persistence.*;
 import lombok.*;
 

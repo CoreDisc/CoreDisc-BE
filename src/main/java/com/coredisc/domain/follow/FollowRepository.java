@@ -21,4 +21,6 @@ public interface FollowRepository {
     List<Follow> findAllByFollowing(Member member);
     List<Follow> findAllByFollower(Member member);
 
+    // 써클 여부
+    boolean existsByFollowerAndFollowingAndIsCircle(Member follower, Member following, boolean isCircle);
 }

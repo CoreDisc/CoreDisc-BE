@@ -17,15 +17,15 @@ public class MemberResponseDTO {
 
         private Long memberId;
 
+        private String username;
+
         private String nickname;
 
-        private String joinDate;
+        private String followerCount;
 
-        private Long followerCount;
+        private String followingCount;
 
-        private Long followingCount;
-
-        private Long discCount;
+        private String discCount;
 
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
@@ -38,17 +38,19 @@ public class MemberResponseDTO {
 
         private Long memberId;
 
+        private String username;
+
         private String nickname;
 
-        private String joinDate;
+        private String followerCount;
 
-        private Long followerCount;
+        private String followingCount;
 
-        private Long followingCount;
-
-        private Long discCount;
+        private String discCount;
 
         private Boolean isFollowing;
+
+        private boolean isBlocked;
 
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
@@ -57,27 +59,51 @@ public class MemberResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class MyHomeImageAnswerDTO {
-
-        private Long postAnswerImageId;
+    public static class MyHomePostDTO {
 
         private Long postId;
 
-        private String imgUrl;
-
         private PublicityType publicityType;
+
+        private PostImageThumbnailDTO postImageThumbnailDTO; // 4개의 답변 중 이미지 답변이 존재할 경우
+
+        private PostTextThumbnailDTO postTextThumbnailDTO; // 4개의 답변 모두 텍스트 답변일 경우
     }
 
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserHomeImageAnswerDTO {
-
-        private Long postAnswerImageId;
+    public static class UserHomePostDTO {
 
         private Long postId;
 
-        private String imgUrl;
+        private PostImageThumbnailDTO postImageThumbnailDTO; // 4개의 답변 중 이미지 답변이 존재할 경우
+
+        private PostTextThumbnailDTO postTextThumbnailDTO; // 4개의 답변 모두 텍스트 답변일 경우
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PostImageThumbnailDTO {
+
+        private String thumbnailUrl;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PostTextThumbnailDTO {
+
+        private String weekday;
+
+        private String createdAt;
+
+        // TODO: 답변의 질문 카테고리
+//        private List<String> categories;
+    }
+
 }
