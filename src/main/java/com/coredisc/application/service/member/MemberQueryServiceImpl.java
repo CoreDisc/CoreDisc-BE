@@ -9,7 +9,6 @@ import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.domain.disc.DiscRepository;
-import com.coredisc.domain.monthlyReport.MonthlyReportRepository;
 import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.domain.profileImg.ProfileImg;
