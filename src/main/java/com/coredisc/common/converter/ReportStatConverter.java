@@ -1,8 +1,8 @@
 package com.coredisc.common.converter;
 
-import com.coredisc.application.service.report.ReportRawData;
+import com.coredisc.application.service.reportStat.ReportRawData;
 import com.coredisc.domain.common.enums.TimeZoneType;
-import com.coredisc.presentation.dto.report.ReportResponseDTO;
+import com.coredisc.presentation.dto.reportStat.ReportStatResponseDTO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ public class ReportStatConverter {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static ReportResponseDTO.PeakHourDTO toPeakHourDTO(ReportRawData.HourlyAnswerRawData rawData) {
+    public static ReportStatResponseDTO.PeakHourDTO toPeakHourDTO(ReportRawData.HourlyAnswerRawData rawData) {
         // 최다 응답 시간대 찾기 -> 이 부분 고민 중...
         Map.Entry<Integer, Integer> maxEntry = rawData.getHourCountMap().entrySet().stream()
                 .max(Map.Entry.comparingByValue())
@@ -24,18 +24,18 @@ public class ReportStatConverter {
         int topHour = (maxEntry != null) ? maxEntry.getKey() : -1;
         int maxCount = (maxEntry != null) ? maxEntry.getValue() : -1;
 
-        ReportResponseDTO.HourlyAnswerCountDTO topHours = ReportResponseDTO.HourlyAnswerCountDTO.builder()
+        ReportStatResponseDTO.HourlyAnswerCountDTO topHours = ReportStatResponseDTO.HourlyAnswerCountDTO.builder()
                 .hour(topHour)
                 .answerCount(maxCount)
                 .build();
 
-        List<ReportResponseDTO.TimeZoneCountDTO> timeZoneStats = Arrays.stream(TimeZoneType.values())
-                .map(type -> new ReportResponseDTO.TimeZoneCountDTO(
+        List<ReportStatResponseDTO.TimeZoneCountDTO> timeZoneStats = Arrays.stream(TimeZoneType.values())
+                .map(type -> new ReportStatResponseDTO.TimeZoneCountDTO(
                         type,
                         getTimeZoneCount(type, rawData.getHourCountMap())
                 )).toList();
 
-        return ReportResponseDTO.PeakHourDTO.builder()
+        return ReportStatResponseDTO.PeakHourDTO.builder()
                 .year(rawData.getYear())
                 .month(rawData.getMonth())
                 .topHours(topHours)
@@ -43,35 +43,35 @@ public class ReportStatConverter {
                 .build();
     }
 
-    public static ReportResponseDTO.MostSelectedQuestionDTO toMostSelectedQuestionDTO(ReportRawData.MostSelectedQuestionRawData rawData) {
-        List<ReportResponseDTO.SeletedQuestionDTO> questions = rawData.getQuestions().stream()
-                .map(data -> ReportResponseDTO.SeletedQuestionDTO.builder()
+    public static ReportStatResponseDTO.MostSelectedQuestionDTO toMostSelectedQuestionDTO(ReportRawData.MostSelectedQuestionRawData rawData) {
+        List<ReportStatResponseDTO.SeletedQuestionDTO> questions = rawData.getQuestions().stream()
+                .map(data -> ReportStatResponseDTO.SeletedQuestionDTO.builder()
                         .questionContent(data.getQuestionContent())
                         .selectedCount(data.getSelectionCount())
                         .build()
                 ).toList();
 
-        return ReportResponseDTO.MostSelectedQuestionDTO.builder()
+        return ReportStatResponseDTO.MostSelectedQuestionDTO.builder()
                 .year(rawData.getYear())
                 .month(rawData.getMonth())
                 .questions(questions)
                 .build();
     }
 
-    public static ReportResponseDTO.QuestionListDTO toQuestionListDTO(ReportRawData.QuestionListRawData rawData) {
-        List<ReportResponseDTO.QuestionDTO> fixed = rawData.getFixedQuestions().stream()
-                .map(stat -> ReportResponseDTO.QuestionDTO.builder()
+    public static ReportStatResponseDTO.QuestionListDTO toQuestionListDTO(ReportRawData.QuestionListRawData rawData) {
+        List<ReportStatResponseDTO.QuestionDTO> fixed = rawData.getFixedQuestions().stream()
+                .map(stat -> ReportStatResponseDTO.QuestionDTO.builder()
                         .questionContent(stat.getQuestionContent())
                         .build()
                 ).toList();
 
-        List<ReportResponseDTO.QuestionDTO> random = rawData.getRandomQuestions().stream()
-                .map(stat -> ReportResponseDTO.QuestionDTO.builder()
+        List<ReportStatResponseDTO.QuestionDTO> random = rawData.getRandomQuestions().stream()
+                .map(stat -> ReportStatResponseDTO.QuestionDTO.builder()
                         .questionContent(stat.getQuestionContent())
                         .build()
                 ).toList();
 
-        return ReportResponseDTO.QuestionListDTO.builder()
+        return ReportStatResponseDTO.QuestionListDTO.builder()
                 .year(rawData.getYear())
                 .month(rawData.getMonth())
                 .fixedQuestions(fixed)
@@ -79,8 +79,8 @@ public class ReportStatConverter {
                 .build();
     }
 
-    public static ReportResponseDTO.TopDailySelectionDTO toTopDailySelectionDTO(ReportRawData.DailyOptionRawData rawData) {
-        List<ReportResponseDTO.DailyOptionDTO> optionDTOList = rawData.getTopSelectedOption().entrySet().stream()
+    public static ReportStatResponseDTO.TopDailySelectionDTO toTopDailySelectionDTO(ReportRawData.DailyOptionRawData rawData) {
+        List<ReportStatResponseDTO.DailyOptionDTO> optionDTOList = rawData.getTopSelectedOption().entrySet().stream()
                 .map(entry -> {
                     int dailyType = entry.getKey();
                     int selectedOption = entry.getValue().getSelectedOption();
@@ -88,7 +88,7 @@ public class ReportStatConverter {
 
                     String optionContent = String.valueOf(selectedOption);
 
-                    return ReportResponseDTO.DailyOptionDTO.builder()
+                    return ReportStatResponseDTO.DailyOptionDTO.builder()
                             .dailyType(dailyType)
                             .optionContent(optionContent)
                             .selectionCount(selectionCount)
@@ -96,7 +96,7 @@ public class ReportStatConverter {
                 })
                 .toList();
 
-        return ReportResponseDTO.TopDailySelectionDTO.builder()
+        return ReportStatResponseDTO.TopDailySelectionDTO.builder()
                 .year(rawData.getYear())
                 .month(rawData.getMonth())
                 .dailyList(optionDTOList)

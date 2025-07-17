@@ -1,14 +1,14 @@
 package com.coredisc.domain.member;
 
 import com.coredisc.domain.Comment;
-import com.coredisc.domain.PostLike;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
+import com.coredisc.domain.disc.Disc;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.mapping.MemberTerms;
-import com.coredisc.domain.monthlyReport.MonthlyReport;
 import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostLike;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -84,7 +84,7 @@ public class Member extends BaseEntity {
     private List<MemberTerms> memberTermsList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MonthlyReport> monthlyReportList = new ArrayList<>();
+    private List<Disc> discList = new ArrayList<>();
 
     // 이 사용자가 팔로우하는 다른 사용자들과의 관계 목록
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)

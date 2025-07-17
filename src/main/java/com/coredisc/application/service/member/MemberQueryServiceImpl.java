@@ -7,17 +7,17 @@ import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.common.util.DateUtil;
 import com.coredisc.common.util.FormatNumberUtil;
-import com.coredisc.domain.PostAnswer;
 import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PublicityType;
+import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
-import com.coredisc.domain.monthlyReport.MonthlyReportRepository;
 import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostAnswer;
+import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.domain.post.PostRepository;
-import com.coredisc.domain.postAnswerImage.PostAnswerImage;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.domain.profileImg.ProfileImgRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
@@ -37,9 +37,9 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final ProfileImgRepository profileImgRepository;
-    private final MonthlyReportRepository monthlyReportRepository;
     private final PostRepository postRepository;
     private final BlockRepository blockRepository;
+    private final DiscRepository discRepository;
 
 
     @Override
@@ -63,7 +63,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         // 총 디스크 수(월별 리포트 수)
         String discCount = FormatNumberUtil.formatNumberUnit(
-                monthlyReportRepository.countByMember(member)
+                discRepository.countByMember(member)
         );
 
         // 사용자의 프로필 이미지
@@ -96,8 +96,9 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         // 총 디스크 수(월별 리포트 수)
         String discCount = FormatNumberUtil.formatNumberUnit(
-                monthlyReportRepository.countByMember(targetMember)
+                discRepository.countByMember(targetMember)
         );
+
 
         // 타사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(targetMember);
