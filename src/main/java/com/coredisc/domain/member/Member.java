@@ -1,6 +1,7 @@
 package com.coredisc.domain.member;
 
 import com.coredisc.domain.Comment;
+import com.coredisc.domain.block.Block;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
@@ -94,6 +95,11 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follow> followReceivedList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "blocker", cascade = CascadeType.ALL)
+    private List<Block> blockedList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "blocked", cascade = CascadeType.ALL)
+    private List<Block> blockerList = new ArrayList<>();
 
     // 메서드
     public void encodePassword(String password) {
