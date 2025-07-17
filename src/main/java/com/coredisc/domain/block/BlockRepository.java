@@ -2,6 +2,8 @@ package com.coredisc.domain.block;
 
 import com.coredisc.domain.member.Member;
 
+import java.util.List;
+
 public interface BlockRepository {
 
     // 차단 여부
@@ -15,4 +17,5 @@ public interface BlockRepository {
 
     Block findByBlockerAndBlocked(Member blocker, Member blocked);
 
+    List<Block> findAllByBlocked(Member member);
 }

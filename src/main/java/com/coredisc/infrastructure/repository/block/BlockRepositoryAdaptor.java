@@ -6,6 +6,8 @@ import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class BlockRepositoryAdaptor implements BlockRepository {
@@ -30,5 +32,10 @@ public class BlockRepositoryAdaptor implements BlockRepository {
     @Override
     public Block findByBlockerAndBlocked(Member blocker, Member blocked) {
         return jpaBlockRepository.findByBlockerAndBlocked(blocker, blocked);
+    }
+
+    @Override
+    public List<Block> findAllByBlocked(Member member) {
+        return jpaBlockRepository.findAllByBlocked(member);
     }
 }
