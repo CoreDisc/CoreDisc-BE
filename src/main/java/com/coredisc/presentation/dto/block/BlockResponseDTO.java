@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class BlockResponseDTO {
     @Getter
@@ -17,5 +18,25 @@ public class BlockResponseDTO {
         private Long blockerId;
         private Long blockedId;
         private LocalDateTime createdAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class BlockedDTO {
+        private Long blockedId;
+        public String blockedNickname;
+        public String blockedUsername;
+        public String blockedImageUrl;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class BlockedListViewDTO {
+        private int totalBlockedCount;
+        private List<BlockedDTO> blockedList;
     }
 }
