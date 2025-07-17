@@ -35,7 +35,7 @@ public class BlockRepositoryAdaptor implements BlockRepository {
     }
 
     @Override
-    public List<Block> findAllByBlocked(Member member) {
-        return jpaBlockRepository.findAllByBlocked(member);
+    public List<Block> findAllByBlocker(Member member) {
+        return jpaBlockRepository.findAllByBlocker(member);
     }
 }

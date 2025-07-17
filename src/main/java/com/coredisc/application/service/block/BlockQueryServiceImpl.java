@@ -17,6 +17,6 @@ public class BlockQueryServiceImpl implements BlockQueryService {
     @Override
     public List<Block> getBlockeds(Member member) {
 
-        return blockRepository.findAllByBlocked(member);
+        return blockRepository.findAllByBlocker(member);
     }
 }
