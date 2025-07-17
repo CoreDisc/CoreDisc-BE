@@ -1,13 +1,10 @@
-package com.coredisc.domain.category;
+package com.coredisc.infrastructure.repository.category.qeurydsl;
 
 import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface CategoryRepository {
-
-    Optional<Category> findById(Long id);
+public interface QueryCategoryRepository {
 
     List<CategoryResponseDTO.CategoryDTO> findCategoryList();
 }
