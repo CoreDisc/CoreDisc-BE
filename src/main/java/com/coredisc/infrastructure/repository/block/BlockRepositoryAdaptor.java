@@ -1,9 +1,12 @@
 package com.coredisc.infrastructure.repository.block;
 
+import com.coredisc.domain.block.Block;
 import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -14,5 +17,25 @@ public class BlockRepositoryAdaptor implements BlockRepository {
     @Override
     public boolean existsByBlockerAndBlocked(Member blocker, Member blocked) {
         return jpaBlockRepository.existsByBlockerAndBlocked(blocker, blocked);
+    }
+
+    @Override
+    public Block save(Block block) {
+        return jpaBlockRepository.save(block);
+    }
+
+    @Override
+    public void delete(Block block) {
+        jpaBlockRepository.delete(block);
+    }
+
+    @Override
+    public Block findByBlockerAndBlocked(Member blocker, Member blocked) {
+        return jpaBlockRepository.findByBlockerAndBlocked(blocker, blocked);
+    }
+
+    @Override
+    public List<Block> findAllByBlocker(Member member) {
+        return jpaBlockRepository.findAllByBlocker(member);
     }
 }

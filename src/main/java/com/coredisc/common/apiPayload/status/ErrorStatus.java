@@ -76,7 +76,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SELF_PROFILE_REQUEST(HttpStatus.BAD_REQUEST, "MY_HOME4001", "자기 자신의 프로필은 해당 API로 요청할 수 없습니다."),
 
     // 카테고리 관련 에러
-    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "해당 카테고리가 없습니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "헤딩 카테고리가 없습니다."),
 
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
@@ -86,13 +86,16 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 차단 관련 에러
     BLOCKED_MEMBER_REQUEST(HttpStatus.BAD_REQUEST, "Block4001", "차단된 사용자입니다."),
+    SELF_BLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4001", "자기 자신은 차단할 수 없습니다."),
+    ALREADY_BLOCKING(HttpStatus.BAD_REQUEST, "BLOCK4002", "이미 차단한 이력이 있습니다."),
+    BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "BLOCK4003", "차단한 이력이 없습니다."),
+    SELF_UNBLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4004", "자기 자신은 차단 취소 할 수 없습니다."),
 
     // Disc 관련 에러
     DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
 
     // 페이지 관련 에러
     PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),
-
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");
