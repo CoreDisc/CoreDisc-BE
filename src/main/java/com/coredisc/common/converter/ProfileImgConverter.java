@@ -6,6 +6,11 @@ import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
 
 public class ProfileImgConverter {
 
+    private ProfileImgConverter() {
+        // 인스턴스화 방지
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static ProfileImgResponseDTO.ProfileImgDTO toProfileImgDTO(ProfileImg profileImg) {
 
         return ProfileImgResponseDTO.ProfileImgDTO.builder()

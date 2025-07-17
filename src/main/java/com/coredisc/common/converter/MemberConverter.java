@@ -1,15 +1,15 @@
 package com.coredisc.common.converter;
 
-import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class MemberConverter {
@@ -19,12 +19,12 @@ public class MemberConverter {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static Member toMember(AuthRequestDTO.SignupDTO request) {
+    public static Member toMember(AuthRequestDTO.SignupDTO request, String nickname) {
 
         return Member.builder()
                 .email(request.getEmail())
                 .name(request.getName())
-                .nickname(RandomNicknameGenerator.generateRandomNickname())
+                .nickname(nickname)
                 .username(request.getUsername())
                 .password(request.getPassword())
                 .status(true)
@@ -87,16 +87,14 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeInfoOfMeDTO toMyHomeInfoOfMeDTO(Member member, Long followerCount,
-                                                                          Long followingCount, Long discCount,
-                                                                          ProfileImg profileImg) {
-        // 가입 시기 M.d.yyyy 형태로 변환
-        String formattedDate = formatJoinDate(member);
+    public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, String followerCount,
+                                                                  String followingCount, String discCount,
+                                                                  ProfileImg profileImg) {
 
-        return MemberResponseDTO.MyHomeInfoOfMeDTO.builder()
+        return MemberResponseDTO.MyHomeInfoDTO.builder()
                 .memberId(member.getId())
+                .username(member.getUsername())
                 .nickname(member.getNickname())
-                .joinDate(formattedDate)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .discCount(discCount)
@@ -104,29 +102,78 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MyHomeInfoOfOtherDTO toMyHomeInfoOfOtherDTO(Member targetMember, Long followerCount,
-                                                                                Long followingCount, Long discCount,
-                                                                                ProfileImg profileImg, boolean isFollowing) {
-        // 가입 시기 M.d.yyyy 형태로 변환
-        String formattedDate = formatJoinDate(targetMember);
+    public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, String followerCount,
+                                                                      String followingCount, String discCount,
+                                                                      ProfileImg profileImg, boolean isFollowing,
+                                                                      boolean isBlocked) {
 
-        return MemberResponseDTO.MyHomeInfoOfOtherDTO.builder()
+        return MemberResponseDTO.UserHomeInfoDTO.builder()
                 .memberId(targetMember.getId())
+                .username(targetMember.getUsername())
                 .nickname(targetMember.getNickname())
-                .joinDate(formattedDate)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .discCount(discCount)
                 .isFollowing(isFollowing)
+                .isBlocked(isBlocked)
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
     }
 
-    // 날짜 M.d.yyyy 형태로 변환
-    private static String formatJoinDate(Member member) {
+    public static MemberResponseDTO.MyHomePostDTO toMyHomePostDTO(Post post,
+                                                                  MemberResponseDTO.PostImageThumbnailDTO imageDto,
+                                                                  MemberResponseDTO.PostTextThumbnailDTO textDto) {
+        // 이미지 답변이 있는 게시글일 때
+        if(imageDto != null) {
+            return MemberResponseDTO.MyHomePostDTO.builder()
+                    .postId(post.getId())
+                    .publicityType(post.getPublicity())
+                    .postImageThumbnailDTO(imageDto)
+                    .postTextThumbnailDTO(null)
+                    .build();
+        }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M.d.yyyy");
+        // 텍스트 답변만 있는 게시글일 때
+        return MemberResponseDTO.MyHomePostDTO.builder()
+                .postId(post.getId())
+                .publicityType(post.getPublicity())
+                .postImageThumbnailDTO(null)
+                .postTextThumbnailDTO(textDto)
+                .build();
+    }
 
-        return member.getCreatedAt().format(formatter);
+    public static MemberResponseDTO.UserHomePostDTO toUserHomePostDTO(Post post,
+                                                                      MemberResponseDTO.PostImageThumbnailDTO imageDto,
+                                                                      MemberResponseDTO.PostTextThumbnailDTO textDto) {
+
+        // 이미지 답변이 있는 게시글일 때
+        if(imageDto != null) {
+            return MemberResponseDTO.UserHomePostDTO.builder()
+                    .postId(post.getId())
+                    .postImageThumbnailDTO(imageDto)
+                    .postTextThumbnailDTO(null)
+                    .build();
+        }
+
+        // 텍스트 답변만 있는 게시글일 때
+        return MemberResponseDTO.UserHomePostDTO.builder()
+                .postId(post.getId())
+                .postImageThumbnailDTO(null)
+                .postTextThumbnailDTO(textDto)
+                .build();
+    }
+
+    public static MemberResponseDTO.PostImageThumbnailDTO toPostImageThumbnailDTO(PostAnswerImage postAnswerImage) {
+
+        return MemberResponseDTO.PostImageThumbnailDTO.builder()
+                .thumbnailUrl(postAnswerImage.getThumbnailUrl())
+                .build();
+    }
+
+    public static MemberResponseDTO.PostTextThumbnailDTO toPostTextThumbnailDTO(String weekday, String createdDate) {
+        return MemberResponseDTO.PostTextThumbnailDTO.builder()
+                .createdAt(createdDate)
+                .weekday(weekday)
+                .build();
     }
 }

@@ -53,4 +53,9 @@ public class FollowRepositoryAdaptor implements FollowRepository {
         return jpaFollowRepository.findAllByFollower(member);
     }
 
+    @Override
+    public boolean existsByFollowerAndFollowingAndIsCircle(Member follower, Member following, boolean isCircle) {
+        return jpaFollowRepository.existsByFollowerAndFollowingAndIsCircle(follower, following, isCircle);
+    }
+
 }

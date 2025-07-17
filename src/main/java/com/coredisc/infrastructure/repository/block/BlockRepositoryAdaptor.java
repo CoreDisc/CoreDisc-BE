@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class BlockRepositoryAdaptor implements BlockRepository {
+
     private final JpaBlockRepository jpaBlockRepository;
 
     @Override

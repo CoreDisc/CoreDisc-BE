@@ -37,3 +37,8 @@ out/
 .vscode/
 
 src/main/resources
+
+### 이미지 임시 저장소
+uploads
+
+/src/main/generated/

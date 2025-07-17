@@ -35,9 +35,33 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
     EMAIL_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5002", "메일 작성에 실패했습니다."),
 
+    // 게시글 관련 에러
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "게시글을 찾을 수 없습니다."),
+    POST_ALREADY_EXISTS(HttpStatus.CONFLICT, "POST4002", "이미 해당 날짜에 게시글이 존재합니다."),
+    POST_ALREADY_PUBLISHED(HttpStatus.CONFLICT, "POST4003", "이미 발행된 게시글입니다."),
+    POST_NOT_READY_TO_PUBLISH(HttpStatus.BAD_REQUEST, "POST4004", "발행할 수 없는 상태입니다."),
+    NOT_POST_OWNER(HttpStatus.FORBIDDEN, "POST4005", "게시글 작성자가 아닙니다."),
+    INCOMPLETE_TODAY_QUESTIONS(HttpStatus.BAD_REQUEST, "POST4006", "오늘의 질문이 4개가 설정되지 않았습니다."),
+    INVALID_QUESTION_ORDER(HttpStatus.BAD_REQUEST, "POST4007", "잘못된 질문 순서입니다."),
+    INVALID_DATE(HttpStatus.BAD_REQUEST, "POST4008", "잘못된 날짜입니다."),
+
+    // 이미지 파일 관련 에러
+    FILE_STORE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5001", "파일 저장에 실패했습니다."),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "FILE404", "파일을 찾을 수 없습니다."),
+    THUMBNAIL_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5002", "썸네일 생성에 실패했습니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE5003", "파일 업로드에 실패했습니다."),
+    EMPTY_FILE(HttpStatus.BAD_REQUEST, "FILE4001", "빈 파일입니다."),
+    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "FILE4002", "파일 크기가 너무 큽니다. (최대 10MB)"),
+    INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FILE4003", "잘못된 파일명입니다."),
+    INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE4004", "지원하지 않는 파일 형식입니다. (jpg, jpeg, png, gif, webp만 허용)"),
+
+    //통계 관련 에러
     STATS_NOT_FOUND(HttpStatus.NOT_FOUND, "STATS4001","요청한 통계 데이터를 찾을 수 없습니다."),
     STATS_NOT_MEANINGFUL(HttpStatus.NO_CONTENT, "STATS4002","통계 데이터가 유의미하지 않거나 충분하지 않습니다."),
 
+
+    // 답변 관련 예외
+    ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "ANSWER4004", "답변을 찾을 수 없습니다."),
 
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
@@ -57,11 +81,18 @@ public enum ErrorStatus implements BaseErrorCode {
     FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW4003", "팔로우한 이력이 없습니다."),
     SELF_UNFOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4004", "자기 자신은 언팔로우할 수 없습니다."),
 
-    // Block 관련 에러
+    // 차단 관련 에러
+    BLOCKED_MEMBER_REQUEST(HttpStatus.BAD_REQUEST, "Block4001", "차단된 사용자입니다."),
     SELF_BLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4001", "자기 자신은 차단할 수 없습니다."),
     ALREADY_BLOCKING(HttpStatus.BAD_REQUEST, "BLOCK4002", "이미 차단한 이력이 있습니다."),
     BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "BLOCK4003", "차단한 이력이 없습니다."),
     SELF_UNBLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4004", "자기 자신은 차단 취소 할 수 없습니다."),
+
+    // Disc 관련 에러
+    DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
+
+    // 페이지 관련 에러
+    PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");
