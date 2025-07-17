@@ -63,7 +63,6 @@ public enum ErrorStatus implements BaseErrorCode {
     // 답변 관련 예외
     ANSWER_NOT_FOUND(HttpStatus.NOT_FOUND, "ANSWER4004", "답변을 찾을 수 없습니다."),
 
-
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
 
@@ -84,6 +83,12 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우한 이력이 있습니다."),
     FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW4003", "팔로우한 이력이 없습니다."),
     SELF_UNFOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4004", "자기 자신은 언팔로우할 수 없습니다."),
+
+    // Disc 관련 에러
+    DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
+
+    // 페이지 관련 에러
+    PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");

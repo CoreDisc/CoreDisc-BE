@@ -1,4 +1,4 @@
-package com.coredisc.presentation.dto.report;
+package com.coredisc.presentation.dto.reportStat;
 
 import com.coredisc.domain.common.enums.TimeZoneType;
 import lombok.*;
@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
-public class ReportResponseDTO {
+public class ReportStatResponseDTO {
 
     @Builder
     @Getter

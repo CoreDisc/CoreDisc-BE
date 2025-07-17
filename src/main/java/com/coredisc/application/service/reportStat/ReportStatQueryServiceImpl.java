@@ -1,14 +1,14 @@
-package com.coredisc.application.service.report;
+package com.coredisc.application.service.reportStat;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
-import com.coredisc.common.exception.handler.ReportStatsHandler;
+import com.coredisc.common.exception.handler.ReportStatHandler;
 import com.coredisc.common.util.DateUtil;
-import com.coredisc.domain.stats.DailyRandomQuestionStat;
-import com.coredisc.domain.stats.MonthlyFixedQuestionStat;
-import com.coredisc.infrastructure.repository.stats.DailyAnswerHourStatRepository;
-import com.coredisc.infrastructure.repository.stats.DailyRandomQuestionStatRepository;
-import com.coredisc.infrastructure.repository.stats.MonthlyFixedQuestionStatRepository;
-import com.coredisc.infrastructure.repository.stats.MonthlySelectionDiaryStatRepository;
+import com.coredisc.domain.reportStats.DailyRandomQuestionStat;
+import com.coredisc.domain.reportStats.MonthlyFixedQuestionStat;
+import com.coredisc.infrastructure.repository.reportStat.DailyAnswerHourStatRepository;
+import com.coredisc.infrastructure.repository.reportStat.DailyRandomQuestionStatRepository;
+import com.coredisc.infrastructure.repository.reportStat.MonthlyFixedQuestionStatRepository;
+import com.coredisc.infrastructure.repository.reportStat.MonthlySelectionDiaryStatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +32,7 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         List<MonthlyFixedQuestionStat> fixedQuestions = fixedQuestionRepository.findByMemberIdAndYearAndMonthOrderByQuestionOrder(
                 memberId, year, month);
         if(fixedQuestions.isEmpty()) {
-            throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
+            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
         }
 
         LocalDate start = DateUtil.getStartDate(year, month);
@@ -45,11 +45,15 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     }
 
     @Override
-    public ReportRawData.MostSelectedQuestionRawData getMostSelectedQuestions(LocalDate startDate, LocalDate endDate, Long memberId) {
+    public ReportRawData.MostSelectedQuestionRawData getMostSelectedQuestions(int year, int month, Long memberId) {
         Pageable top3 = PageRequest.of(0, 3);
+
+        LocalDate startDate = DateUtil.getStartDate(year, month);
+        LocalDate endDate = DateUtil.getEndDate(year, month);
+
         List<Object[]> results = randomQuestionRepository.findTop3QuestionsByMemberAndDateRange(memberId, startDate, endDate, top3);
         if(results.isEmpty()) {
-            throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
+            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
         }
 
         List<ReportRawData.MostSelectedQuestionItem> topQuestions = new ArrayList<>();
@@ -63,10 +67,13 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     }
 
     @Override
-    public ReportRawData.HourlyAnswerRawData getHourlyAnswerCountMap(LocalDate startDate, LocalDate endDate, Long memberId) {
+    public ReportRawData.HourlyAnswerRawData getHourlyAnswerCountMap(int year, int month,  Long memberId) {
+        LocalDate startDate = DateUtil.getStartDate(year, month);
+        LocalDate endDate = DateUtil.getEndDate(year, month);
+
         List<Object[]> results = answerHourStatRepository.findHourlyAnswerCountsByMemberIdAndDateRange(memberId, startDate, endDate);
         if(results.isEmpty()) {
-            throw new ReportStatsHandler(ErrorStatus.STATS_NOT_FOUND);
+            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
         }
 
         Map<Integer, Integer> hourCountMap = new HashMap<>();

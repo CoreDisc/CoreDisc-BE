@@ -8,6 +8,7 @@ import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.monthlyReport.MonthlyReportRepository;
 import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
@@ -28,7 +29,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final ProfileImgRepository profileImgRepository;
-    private final MonthlyReportRepository monthlyReportRepository;
+    private final DiscRepository discRepository;
     private final PostAnswerImageRepository postAnswerImageRepository;
 
 
@@ -48,7 +49,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         Long followingCount = followRepository.countByFollowerId(member.getId());
 
         // 총 디스크 수(월별 리포트 수)
-        Long discCount = monthlyReportRepository.countByMember(member);
+        Long discCount = discRepository.countByMember(member);
 
         // 사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(member);
@@ -75,7 +76,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         Long followingCount = followRepository.countByFollowerId(targetMember.getId());
 
         // 총 디스크 수(월별 리포트 수)
-        Long discCount = monthlyReportRepository.countByMember(targetMember);
+        Long discCount = discRepository.countByMember(targetMember);
 
         // 타사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(targetMember);
