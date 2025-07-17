@@ -16,4 +16,7 @@ public interface BlockControllerDocs {
 
     @Operation(summary = "차단 취소", description = "차단 취소 기능입니다.")
     ApiResponse<String> unblock(@CurrentMember Member member, @PathVariable Long targetId);
+
+    @Operation(summary = "차단한 유저 목록 조회", description = "차단한 유저 목록 조회 기능입니다.")
+    ApiResponse<BlockResponseDTO.BlockedListViewDTO> getBlockedList(@CurrentMember Member member);
 }
