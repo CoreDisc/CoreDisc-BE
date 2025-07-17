@@ -29,10 +29,14 @@ public class MemberRequestDTO {
     }
 
     @Getter
-    public static class ResetNicknameDTO {
+    public static class ResetNicknameAndUsernameDTO {
 
         @NotBlank(message = "변경할 닉네임 입력은 필수입니다.")
         @Size(max = 16, message = "닉네임은 16자 이내로 입력해주세요.")
         private String newNickname;
+
+        @NotBlank(message = "변경할 아이디 입력은 필수입니다.")
+        @Size(max = 16, message = "아이디는 16자 이내로 입력해주세요.")
+        private String newUsername;
     }
 }

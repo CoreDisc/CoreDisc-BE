@@ -1,7 +1,7 @@
 package com.coredisc.infrastructure.repository.postAnswerImage.queryDsl;
 
 import com.coredisc.domain.member.Member;
-import com.coredisc.domain.postAnswerImage.PostAnswerImage;
+import com.coredisc.domain.post.PostAnswerImage;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

@@ -1,12 +1,14 @@
 package com.coredisc.infrastructure.repository.postAnswerImage.queryDsl;
 
-import com.coredisc.domain.QPost;
-import com.coredisc.domain.QPostAnswer;
+
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.member.Member;
-import com.coredisc.domain.postAnswerImage.PostAnswerImage;
-import com.coredisc.domain.postAnswerImage.QPostAnswerImage;
+
+import com.coredisc.domain.post.PostAnswerImage;
+import com.coredisc.domain.post.QPost;
+import com.coredisc.domain.post.QPostAnswer;
+import com.coredisc.domain.post.QPostAnswerImage;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

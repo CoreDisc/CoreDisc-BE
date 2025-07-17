@@ -3,7 +3,7 @@ package com.coredisc.common.converter;
 import com.coredisc.common.util.RandomNicknameGenerator;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
-import com.coredisc.domain.postAnswerImage.PostAnswerImage;
+import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
