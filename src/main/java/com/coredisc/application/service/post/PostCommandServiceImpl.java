@@ -11,6 +11,8 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
+import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
+import com.coredisc.infrastructure.aws.s3.ImageUploadResult;
 import com.coredisc.infrastructure.file.FileInfo;
 import com.coredisc.infrastructure.file.FileStore;
 import com.coredisc.infrastructure.repository.question.TodayQuestionRepository;
@@ -35,6 +37,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostAnswerRepository postAnswerRepository;
     private final PostAnswerImageRepository postAnswerImageRepository;
     private final TodayQuestionRepository todayQuestionRepository;
+    private final AmazonS3Manager amazonS3Manager;
     private final FileStore fileStore;
 
     //  빈 게시글 생성
@@ -67,7 +70,6 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
 
-    //TODO : requestBody 로 Type 을 받아야 하는가?
     @Override
     public PostResponseDTO.AnswerResultDto updateTextAnswer(Member member,Long postId, Integer questionId, PostRequestDTO.TextAnswerDto request) {
 
@@ -136,6 +138,7 @@ public class PostCommandServiceImpl implements PostCommandService {
      * 이미지 작성 및 수정 로직 구현
      */
 
+
     @Override
     @Transactional
     public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postId, Integer questionType, MultipartFile image) {
@@ -150,7 +153,10 @@ public class PostCommandServiceImpl implements PostCommandService {
         TodayQuestion todayQuestion = getTodayQuestion(member, questionType);
 
         // 3. 이미지 파일 저장
-        FileInfo fileInfo = fileStore.storeFile(image, "post-answers");
+        FileInfo fileInfo = amazonS3Manager.uploadFile(image, member.getId());
+
+        // 임시 저장소
+//        FileInfo fileInfo = fileStore.storeFile(image, "post-answers");
 
         // 4. 기존 답변 조회
         Optional<PostAnswer> existingAnswer = postAnswerRepository
@@ -248,7 +254,6 @@ public class PostCommandServiceImpl implements PostCommandService {
         // TODO : 게시글이 이미 있다면 예외를 던짐. - 오늘 날짜 기준 published 인 게시글이 있다면?
     }
 
-    //TODO : 나중에 respository 와 연결하기
     private List<TodayQuestion> validateTodayQuestions(Member member) {
 
         List<TodayQuestion> todayQuestions = todayQuestionRepository.findByMember(member);
