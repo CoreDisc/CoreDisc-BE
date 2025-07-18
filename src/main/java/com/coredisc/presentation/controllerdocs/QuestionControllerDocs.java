@@ -6,9 +6,16 @@ import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Tag(name = "Question", description = "질문 관련 API")
 public interface QuestionControllerDocs {
@@ -18,5 +25,12 @@ public interface QuestionControllerDocs {
 
     @Operation(summary = "내가 작성한 질문 공유하기", description = "내가 커스텀한 질문을 공유하는 기능입니다.")
     ApiResponse<QuestionResponseDTO.saveOfficialQuestionResultDTO> saveOfficialQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveOfficialQuestionDTO request);
+
+    @Operation(summary = "기본 질문 리스트 조회 (카테고리별)", description = "카테고리별로 기본 리스트를 조회하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "categoryId", description = "카테고리ID pathVariable입니다.", in = ParameterIn.PATH),
+            @Parameter(name = "page", description = "페이지 번호 (0부터 시작)"),
+    })
+    ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionList(@CurrentMember Member member, @PathVariable(name = "categoryId") Long categoryId, @RequestParam(name = "page") Integer page);
 
 }

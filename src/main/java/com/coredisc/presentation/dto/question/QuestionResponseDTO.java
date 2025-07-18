@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class QuestionResponseDTO {
 
@@ -29,5 +30,31 @@ public class QuestionResponseDTO {
         private Long id;
 
         private LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BasicQuestionListResultDTO {
+        List<BasicQuestionResultDTO> basicQuestionList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class BasicQuestionResultDTO {
+
+        private Long id;
+
+        private String questionType;
+
+        private String question;
     }
 }

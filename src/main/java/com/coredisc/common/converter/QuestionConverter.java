@@ -5,6 +5,7 @@ import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 
@@ -39,6 +40,18 @@ public class QuestionConverter {
         return QuestionResponseDTO.saveOfficialQuestionResultDTO.builder()
                 .id(officialQuestion.getId())
                 .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static QuestionResponseDTO.BasicQuestionListResultDTO toBasicQuestionListResultDTO(Page<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList) {
+
+        return QuestionResponseDTO.BasicQuestionListResultDTO.builder()
+                .basicQuestionList(basicQuestionList.getContent())
+                .listSize(basicQuestionList.getNumberOfElements())
+                .totalPage(basicQuestionList.getTotalPages())
+                .totalElements(basicQuestionList.getTotalElements())
+                .isFirst(basicQuestionList.isFirst())
+                .isLast(basicQuestionList.isLast())
                 .build();
     }
 }
