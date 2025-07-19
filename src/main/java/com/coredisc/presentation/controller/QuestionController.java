@@ -43,4 +43,11 @@ public class QuestionController implements QuestionControllerDocs {
 
         return ApiResponse.onSuccess(QuestionConverter.toBasicQuestionListResultDTO(questionQueryService.getBasicQuestionList(member, categoryId, PageRequest.of(page, DEFAULT_PAGE_SIZE))));
     }
+    
+    // 기본 질문 검색 리스트 조회
+    @GetMapping("/basic/search")
+    public ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionSearchList(@CurrentMember Member member, @RequestParam(name = "keyword") String keyword, @RequestParam(name = "page") Integer page){
+
+        return ApiResponse.onSuccess(QuestionConverter.toBasicQuestionListResultDTO(questionQueryService.getBasicQuestionSearchList(member, keyword, PageRequest.of(page, DEFAULT_PAGE_SIZE))));
+    }
 }

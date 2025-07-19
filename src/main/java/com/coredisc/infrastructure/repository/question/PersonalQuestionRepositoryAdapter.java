@@ -29,4 +29,9 @@ public class PersonalQuestionRepositoryAdapter implements PersonalQuestionReposi
     public Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByCategories(Member member, Category category, Pageable pageable) {
         return queryPersonalQuestionRepository.findBasicQuestionListByCategories(member, category, pageable);
     }
+
+    @Override
+    public Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(Member member, String keyword, Pageable pageable) {
+        return queryPersonalQuestionRepository.findBasicQuestionListByKeyword(member, keyword, pageable);
+    }
 }

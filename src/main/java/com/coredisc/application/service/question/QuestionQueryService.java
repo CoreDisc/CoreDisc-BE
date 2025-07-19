@@ -10,4 +10,7 @@ public interface QuestionQueryService {
 
     // 기본 질문 리스트 조회 (카테고리별)
     Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionList(Member member, Long categoryId, Pageable pageable);
+
+    // 기본 질문 검색 리스트 조회
+    Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(Member member, String keyword, Pageable pageable);
 }

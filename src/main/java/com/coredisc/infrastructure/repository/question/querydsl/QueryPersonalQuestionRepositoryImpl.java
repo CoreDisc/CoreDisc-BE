@@ -1,6 +1,7 @@
 package com.coredisc.infrastructure.repository.question.querydsl;
 
 import com.coredisc.domain.category.Category;
+import com.coredisc.domain.category.QCategory;
 import com.coredisc.domain.mapping.questionCategory.QQuestionCategory;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.QOfficialQuestion;
@@ -26,12 +27,13 @@ public class QueryPersonalQuestionRepositoryImpl implements QueryPersonalQuestio
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private final QOfficialQuestion qOfficialQuestion = QOfficialQuestion.officialQuestion;
+    private final QPersonalQuestion qPersonalQuestion = QPersonalQuestion.personalQuestion;
+    private final QQuestionCategory qQuestionCategory = QQuestionCategory.questionCategory;
+    private final QCategory qCategory = QCategory.category;
+
     @Override
     public Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByCategories(Member member, Category category, Pageable pageable) {
-
-        QOfficialQuestion qOfficialQuestion = QOfficialQuestion.officialQuestion;
-        QPersonalQuestion qPersonalQuestion = QPersonalQuestion.personalQuestion;
-        QQuestionCategory qQuestionCategory = QQuestionCategory.questionCategory;
 
         // 저장 질문 조회
         List<QuestionResponseDTO.BasicQuestionResultDTO> personalResults = jpaQueryFactory
@@ -81,7 +83,7 @@ public class QueryPersonalQuestionRepositoryImpl implements QueryPersonalQuestio
                 .collect(Collectors.toList());
 
 
-        // 전체 개수 쿼리 수행 (공식 질문 수 + 개인 질문 수)
+        // 전체 개수 쿼리 수행 (기본 질문 수 + 저장 질문 수)
         Long personalCount = jpaQueryFactory
                 .select(qPersonalQuestion.count())
                 .from(qPersonalQuestion)
@@ -105,5 +107,71 @@ public class QueryPersonalQuestionRepositoryImpl implements QueryPersonalQuestio
         long totalCount = (officialCount == null ? 0 : officialCount) + (personalCount == null ? 0 : personalCount);
 
         return new PageImpl<>(basicQuestionList, pageable, totalCount);
+    }
+
+    @Override
+    public Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(Member member, String keyword, Pageable pageable) {
+
+        // 키워드와 일치하는 카테고리 검색
+        Category matchedCategory = jpaQueryFactory
+                .selectFrom(qCategory)
+                .where(qCategory.name.eq(keyword))
+                .fetchFirst();
+
+        // 저장 질문 검색
+        List<QuestionResponseDTO.BasicQuestionResultDTO> personalResults = jpaQueryFactory
+                .select(Projections.constructor(
+                        QuestionResponseDTO.BasicQuestionResultDTO.class,
+                        qPersonalQuestion.id,
+                        Expressions.constant("PERSONAL"),
+                        qPersonalQuestion.content
+                ))
+                .from(qPersonalQuestion)
+                .join(qPersonalQuestion.questionCategoryList, qQuestionCategory)
+                .where(
+                        qPersonalQuestion.member.eq(member)
+                                .and(
+                                        qPersonalQuestion.content.containsIgnoreCase(keyword)
+                                                .or(matchedCategory != null ? qQuestionCategory.category.eq(matchedCategory) : Expressions.FALSE)
+                                )
+                )
+                .distinct()
+                .fetch();
+
+        // 기본 질문 검색
+        List<QuestionResponseDTO.BasicQuestionResultDTO> officialResults = jpaQueryFactory
+                .select(Projections.constructor(
+                        QuestionResponseDTO.BasicQuestionResultDTO.class,
+                        qOfficialQuestion.id,
+                        Expressions.constant("DEFAULT"),
+                        qOfficialQuestion.contents
+                ))
+                .from(qOfficialQuestion)
+                .join(qOfficialQuestion.questionCategoryList, qQuestionCategory)
+                .where(
+                        qOfficialQuestion.isShared.isFalse()
+                                .and(
+                                        qOfficialQuestion.contents.containsIgnoreCase(keyword)
+                                                .or(matchedCategory != null ? qQuestionCategory.category.eq(matchedCategory) : Expressions.FALSE)
+                                )
+                )
+                .distinct()
+                .fetch();
+
+
+        List<QuestionResponseDTO.BasicQuestionResultDTO> mergedResults = Stream.concat(officialResults.stream(), personalResults.stream())
+                .sorted(
+                        Comparator.comparing(QuestionResponseDTO.BasicQuestionResultDTO::getId).reversed()
+                                .thenComparing(dto -> dto.getQuestionType().equals("PERSONAL") ? 0 : 1)
+                )
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.toList());
+
+
+        long total = officialResults.size() + personalResults.size();
+
+        return new PageImpl<>(mergedResults, pageable, total);
+
     }
 }

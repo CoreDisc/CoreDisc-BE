@@ -29,4 +29,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
         return personalQuestionRepository.findBasicQuestionListByCategories(member, category, pageable);
     }
+
+    // 기본 질문 검색 리스트 조회
+    @Override
+    public Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(Member member, String keyword, Pageable pageable){
+
+        return personalQuestionRepository.findBasicQuestionListByKeyword(member, keyword, pageable);
+    }
 }

@@ -10,4 +10,6 @@ import org.springframework.data.domain.Pageable;
 public interface QueryPersonalQuestionRepository {
 
     Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByCategories(Member member, Category category, Pageable pageable);
+
+    Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(Member member, String keyword, Pageable pageable);
 }
