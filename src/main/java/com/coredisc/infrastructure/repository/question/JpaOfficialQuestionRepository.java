@@ -9,4 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface JpaOfficialQuestionRepository extends JpaRepository<OfficialQuestion, Long> {
 
     Page<OfficialQuestion> findAllByMemberOrderByCreatedAtDesc(Member member, Pageable pageable);
+
+     Long countOfficialQuestionByMember(Member member);
+
 }

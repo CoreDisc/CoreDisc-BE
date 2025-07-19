@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-
 @Tag(name = "Question", description = "질문 관련 API")
 public interface QuestionControllerDocs {
 
@@ -40,10 +38,11 @@ public interface QuestionControllerDocs {
     })
     ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionSearchList(@CurrentMember Member member, @RequestParam(name = "keyword") String keyword, @RequestParam(name = "page") Integer page);
 
-    @Operation(summary = "내가 발행한 공유질문 리스트 조회", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다.")
+    @Operation(summary = "내가 발행한 공유질문 리스트 조회 (카테고리 필터링 가능)", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다. (카테고리 필터링 가능)")
     @Parameters({
+            @Parameter(name = "category", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),
             @Parameter(name = "page", description = "페이지 번호 (0부터 시작)"),
     })
-    ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(@CurrentMember Member member, @RequestParam(name = "page") Integer page);
+    ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(@CurrentMember Member member, @RequestParam(name = "category", required = false) Long category, @RequestParam(name = "page") Integer page);
 
 }

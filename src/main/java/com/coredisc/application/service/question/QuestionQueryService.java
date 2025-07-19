@@ -15,6 +15,7 @@ public interface QuestionQueryService {
     Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(Member member, String keyword, Pageable pageable);
 
 
-    // 내가 발행한 공유질문 리스트 조회
-    Page<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Pageable pageable);
+    // 내가 발행한 공유질문 리스트 조회 (카테고리 필터링 포함)
+    QuestionResponseDTO.MySharedQuestionListResultDTO getMySharedQuestionList(Member member, Long categoryId, Pageable pageable);
+
 }

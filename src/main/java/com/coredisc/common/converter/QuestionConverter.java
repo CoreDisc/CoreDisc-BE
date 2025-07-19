@@ -80,14 +80,14 @@ public class QuestionConverter {
                 .collect(Collectors.toList());
     }
 
-    public static org.springframework.data.domain.Page<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOPage(Page<OfficialQuestion> officialQuestionList, Pageable pageable) {
+    public static Page<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOPage(Page<OfficialQuestion> officialQuestionList, Pageable pageable) {
         List<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestiondtoList = toMySharedQuestionResultDTOList(officialQuestionList.getContent());
         return new org.springframework.data.domain.PageImpl<>(mySharedQuestiondtoList, pageable, officialQuestionList.getTotalElements());
     }
 
-    public static QuestionResponseDTO.MySharedQuestionListResultDTO toMySharedQuestionListResultDTO(Page<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList) {
+    public static QuestionResponseDTO.MySharedQuestionListResultDTO toMySharedQuestionListResultDTO(Page<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList, Long totalMySharedQuestionCnt) {
         return QuestionResponseDTO.MySharedQuestionListResultDTO.builder()
-                .mySharedQuestionCnt(mySharedQuestionList.getTotalElements())
+                .mySharedQuestionCnt(totalMySharedQuestionCnt)
                 .mySharedQuestionList(mySharedQuestionList.getContent())
                 .listSize(mySharedQuestionList.getNumberOfElements())
                 .totalPage(mySharedQuestionList.getTotalPages())

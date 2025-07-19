@@ -5,7 +5,9 @@ import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.category.Category;
 import com.coredisc.domain.category.CategoryRepository;
+import com.coredisc.domain.mapping.questionCategory.QuestionCategoryRepository;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
 import com.coredisc.domain.personalQuestion.PersonalQuestionRepository;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
@@ -21,6 +23,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final PersonalQuestionRepository personalQuestionRepository;
     private final OfficialQuestionRepository officialQuestionRepository;
+    private final QuestionCategoryRepository questionCategoryRepository;
     private final CategoryRepository categoryRepository;
 
     // 기본 질문 리스트 조회 (카테고리별)
@@ -42,11 +45,23 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 내가 발행한 공유 질문 리스트 조회
     @Override
-    public Page<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Pageable pageable){
+    public QuestionResponseDTO.MySharedQuestionListResultDTO getMySharedQuestionList(Member member, Long categoryId, Pageable pageable){
 
-        return QuestionConverter.toMySharedQuestionResultDTOPage(
-                        officialQuestionRepository.findAllByMemberOrderByCreatedAtDesc(member, pageable),
-                        pageable
-                );
+        Long mySharedQuestionTotal = officialQuestionRepository.countOfficialQuestionByMember(member);
+
+        Page<OfficialQuestion> mySharedQuestionsList;
+
+        if (categoryId == null || categoryId == 0) {    // 전체 조회
+            mySharedQuestionsList = officialQuestionRepository.findAllByMemberOrderByCreatedAtDesc(member, pageable);
+        } else {    // 카테고리별 조회
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+            mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCategory(member, category, pageable);
+        }
+
+        Page<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionPage =
+                QuestionConverter.toMySharedQuestionResultDTOPage(mySharedQuestionsList, pageable);
+
+        return QuestionConverter.toMySharedQuestionListResultDTO(mySharedQuestionPage, mySharedQuestionTotal);
     }
 }
