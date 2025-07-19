@@ -22,10 +22,10 @@ public interface MemberControllerDocs {
     @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 기능입니다.")
     ApiResponse<String> resetPassword(@RequestBody @Valid MemberRequestDTO.ResetPasswordDTO request);
 
-    @Operation(summary = "닉네임, 아이디 변경", description = "닉네임, 아이디 변경 기능입니다.")
-    ApiResponse<String> resetNicknameAndUsername(@RequestHeader("accessToken") String accessToken,
-                                                 @CurrentMember Member member,
-                                                 @RequestBody @Valid MemberRequestDTO.ResetNicknameAndUsernameDTO request);
+    @Operation(summary = "마이홈 닉네임, 아이디 변경", description = "닉네임, 아이디 변경 기능입니다.")
+    ApiResponse<String> resetNicknameAndUsernameMyHome(@RequestHeader("accessToken") String accessToken,
+                                                       @CurrentMember Member member,
+                                                       @RequestBody @Valid MemberRequestDTO.MyHomeResetNicknameAndUsernameDTO request);
 
     @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
     ApiResponse<String> resignMember(@CurrentMember Member member);
@@ -56,4 +56,10 @@ public interface MemberControllerDocs {
                                                                                @PathVariable String targetUsername,
                                                                                @RequestParam(required = false) Long cursorId,
                                                                                @RequestParam(required = false) Integer size);
+
+    @Operation(summary = "마이홈 계정 관리 이메일 변경", description = "계정 관리 이메일 변경 기능입니다.")
+    ApiResponse<String> resetEmailMyHome(@CurrentMember Member member, @RequestBody MemberRequestDTO.MyHomeResetEmailDTO request);
+
+    @Operation(summary = "마이홈 계정 관리 비밀번호 변경", description = "계정 관리 비밀번호 변경 기능입니다.")
+    ApiResponse<String> resetPasswordMyHome(@CurrentMember Member member, @RequestBody MemberRequestDTO.MyHomeResetPasswordDTO request);
 }

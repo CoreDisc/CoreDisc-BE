@@ -34,11 +34,11 @@ public class MemberController implements MemberControllerDocs {
 
     @Override
     @PatchMapping("/profile")
-    public ApiResponse<String> resetNicknameAndUsername(@RequestHeader("accessToken") String accessToken,
-                                                        @CurrentMember Member member,
-                                                        @RequestBody @Valid MemberRequestDTO.ResetNicknameAndUsernameDTO request) {
+    public ApiResponse<String> resetNicknameAndUsernameMyHome(@RequestHeader("accessToken") String accessToken,
+                                                              @CurrentMember Member member,
+                                                              @RequestBody @Valid MemberRequestDTO.MyHomeResetNicknameAndUsernameDTO request) {
 
-        boolean isUsernameChanged = memberCommandService.resetNicknameAndUsername(accessToken, member, request);
+        boolean isUsernameChanged = memberCommandService.resetNicknameAndUsernameMyHome(accessToken, member, request);
 
         // username이 변경되었을 시, 토큰 재발급 요청
         if(isUsernameChanged) {
@@ -90,5 +90,25 @@ public class MemberController implements MemberControllerDocs {
         if(size == null) { size = DEFAULT_SIZE; }
 
         return ApiResponse.onSuccess(memberQueryService.getUserHomePosts(member, targetUsername, cursorId, PageRequest.of(0, size)));
+    }
+
+    @Override
+    @PatchMapping("/my-home/email")
+    public ApiResponse<String> resetEmailMyHome(@CurrentMember Member member,
+                                                @RequestBody MemberRequestDTO.MyHomeResetEmailDTO request) {
+
+        memberCommandService.resetEmailMyHome(member, request);
+
+        return ApiResponse.onSuccess("이메일이 성공적으로 변경되었습니다.");
+    }
+
+    @Override
+    @PatchMapping("/my-home/password")
+    public ApiResponse<String> resetPasswordMyHome(@CurrentMember Member member,
+                                                   @RequestBody MemberRequestDTO.MyHomeResetPasswordDTO request) {
+
+        memberCommandService.resetPasswordMyHome(member, request);
+
+        return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
 }
