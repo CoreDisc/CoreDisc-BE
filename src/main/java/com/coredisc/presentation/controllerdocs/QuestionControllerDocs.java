@@ -40,4 +40,10 @@ public interface QuestionControllerDocs {
     })
     ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionSearchList(@CurrentMember Member member, @RequestParam(name = "keyword") String keyword, @RequestParam(name = "page") Integer page);
 
+    @Operation(summary = "내가 발행한 공유질문 리스트 조회", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호 (0부터 시작)"),
+    })
+    ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(@CurrentMember Member member, @RequestParam(name = "page") Integer page);
+
 }

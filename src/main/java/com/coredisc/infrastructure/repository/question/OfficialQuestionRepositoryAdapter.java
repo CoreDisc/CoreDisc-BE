@@ -1,8 +1,11 @@
 package com.coredisc.infrastructure.repository.question;
 
+import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,5 +17,10 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     @Override
     public OfficialQuestion save(OfficialQuestion officialQuestion) {
         return jpaOfficialQuestionRepository.save(officialQuestion);
+    }
+
+    @Override
+    public Page<OfficialQuestion> findAllByMemberOrderByCreatedAtDesc(Member member, Pageable pageable){
+        return jpaOfficialQuestionRepository.findAllByMemberOrderByCreatedAtDesc(member, pageable);
     }
 }

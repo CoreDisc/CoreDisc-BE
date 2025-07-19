@@ -13,4 +13,8 @@ public interface QuestionQueryService {
 
     // 기본 질문 검색 리스트 조회
     Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(Member member, String keyword, Pageable pageable);
+
+
+    // 내가 발행한 공유질문 리스트 조회
+    Page<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package com.coredisc.presentation.dto.question;
 
+import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,5 +57,36 @@ public class QuestionResponseDTO {
         private String questionType;
 
         private String question;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MySharedQuestionListResultDTO {
+        Long mySharedQuestionCnt;
+        List<MySharedQuestionResultDTO> mySharedQuestionList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MySharedQuestionResultDTO {
+
+        private Long id;
+
+        private List<CategoryResponseDTO.CategoryInfoDTO> categories;
+
+        private String question;
+
+        private Long sharedCount;
+
+        private LocalDateTime createdAt;
     }
 }

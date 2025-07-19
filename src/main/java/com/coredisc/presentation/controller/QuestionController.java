@@ -50,4 +50,12 @@ public class QuestionController implements QuestionControllerDocs {
 
         return ApiResponse.onSuccess(QuestionConverter.toBasicQuestionListResultDTO(questionQueryService.getBasicQuestionSearchList(member, keyword, PageRequest.of(page, DEFAULT_PAGE_SIZE))));
     }
+
+    // 내가 발행한 공유 질문 리스트 조회
+    @GetMapping("/official/mine")
+    public ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(@CurrentMember Member member, @RequestParam(name = "page") Integer page){
+
+        return ApiResponse.onSuccess(QuestionConverter.toMySharedQuestionListResultDTO(questionQueryService.getMySharedQuestionList(member, PageRequest.of(page, DEFAULT_PAGE_SIZE))));
+
+    }
 }
