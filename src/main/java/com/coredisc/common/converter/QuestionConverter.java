@@ -1,8 +1,10 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
@@ -94,6 +96,36 @@ public class QuestionConverter {
                 .totalElements(mySharedQuestionList.getTotalElements())
                 .isFirst(mySharedQuestionList.isFirst())
                 .isLast(mySharedQuestionList.isLast())
+                .build();
+    }
+
+    public static TodayQuestion toTodayQuestionByOfficial(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, OfficialQuestion officialQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDateTime.now())
+                .questionType(questionType)
+                .questionOrder(request.getQuestionOrder())
+                .member(member)
+                .officialQuestion(officialQuestion)
+                .build();
+    }
+
+    public static TodayQuestion toTodayQuestionByPersonal(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, PersonalQuestion personalQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDateTime.now())
+                .questionType(questionType)
+                .questionOrder(request.getQuestionOrder())
+                .member(member)
+                .personalQuestion(personalQuestion)
+                .build();
+    }
+
+    public static QuestionResponseDTO.SaveFixedTodayQuestionResultDTO toSaveFixedTodayQuestionResultDTO(TodayQuestion todayQuestion) {
+
+        return QuestionResponseDTO.SaveFixedTodayQuestionResultDTO.builder()
+                .id(todayQuestion.getId())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

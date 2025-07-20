@@ -89,4 +89,15 @@ public class QuestionResponseDTO {
 
         private LocalDateTime createdAt;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SaveFixedTodayQuestionResultDTO {
+
+        private Long id;
+
+        private LocalDateTime createdAt;
+    }
 }

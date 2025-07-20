@@ -78,6 +78,14 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카테고리 관련 에러
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "해당 카테고리가 없습니다."),
 
+    // 질문 관련 에러
+    BASIC_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4001", "해당되는 기본 질문이 없습니다."),
+    OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4002", "해당되는 공유 질문이 없습니다."),
+    PERSONAL_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4003", "해당되는 저장 질문이 없습니다."),
+    QUESTION_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4004", "해당되는 저장 타입이 없습니다."),
+    DUPLICATE_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4005", "해당 순서의 질문이 이번 달에 이미 존재합니다."),
+
+    
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
     ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우한 이력이 있습니다."),

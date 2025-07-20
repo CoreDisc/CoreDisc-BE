@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,5 +39,10 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     @Override
     public Long countOfficialQuestionByMember(Member member){
         return jpaOfficialQuestionRepository.countOfficialQuestionByMember(member);
+    }
+
+    @Override
+    public Optional<OfficialQuestion> findById(Long id) {
+        return jpaOfficialQuestionRepository.findById(id);
     }
 }

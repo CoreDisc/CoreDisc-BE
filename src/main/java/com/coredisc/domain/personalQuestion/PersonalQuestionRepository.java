@@ -6,6 +6,8 @@ import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 public interface PersonalQuestionRepository {
 
     PersonalQuestion save(PersonalQuestion personalQuestion);
@@ -13,4 +15,6 @@ public interface PersonalQuestionRepository {
     Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByCategories(Member member, Category category, Pageable pageable);
 
     Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(Member member, String keyword, Pageable pageable);
+
+    Optional<PersonalQuestion> findById(Long id);
 }
