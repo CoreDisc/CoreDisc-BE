@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,5 +34,10 @@ public class PersonalQuestionRepositoryAdapter implements PersonalQuestionReposi
     @Override
     public Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(Member member, String keyword, Pageable pageable) {
         return queryPersonalQuestionRepository.findBasicQuestionListByKeyword(member, keyword, pageable);
+    }
+
+    @Override
+    public Optional<PersonalQuestion> findById(Long id) {
+        return jpaPersonalQuestionRepository.findById(id);
     }
 }

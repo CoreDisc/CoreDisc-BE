@@ -1,6 +1,6 @@
 package com.coredisc.domain.postAnswer;
 
-import com.coredisc.domain.TodayQuestion;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 

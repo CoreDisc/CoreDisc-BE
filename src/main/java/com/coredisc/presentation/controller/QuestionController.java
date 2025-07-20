@@ -58,4 +58,18 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess(questionQueryService.getMySharedQuestionList(member, categoryId, PageRequest.of(page, DEFAULT_PAGE_SIZE)));
 
     }
+
+    // 고정 질문 선택
+    @PostMapping("/fixed")
+    public ApiResponse<QuestionResponseDTO.SaveFixedTodayQuestionResultDTO> saveFixedTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveFixedTodayQuestionDTO request){
+
+        return ApiResponse.onSuccess(QuestionConverter.toSaveFixedTodayQuestionResultDTO(questionCommandService.saveFixedTodayQuestion(request, member)));
+    }
+
+    @PostMapping("/random")
+    public ApiResponse<QuestionResponseDTO.SaveRandomTodayQuestionResultDTO> saveRandomTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveRandomTodayQuestionDTO request) {
+
+        return ApiResponse.onSuccess(QuestionConverter.toSaveRandomTodayQuestionResultDTO(questionCommandService.saveRandomTodayQuestion(request, member)));
+    }
+
 }

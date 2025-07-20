@@ -2,12 +2,12 @@ package com.coredisc.domain.officialQuestion;
 
 
 import com.coredisc.domain.category.Category;
-import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OfficialQuestionRepository {
 
@@ -18,4 +18,6 @@ public interface OfficialQuestionRepository {
     Page<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Pageable pageable);
 
     Long countOfficialQuestionByMember(Member member);
+
+    Optional<OfficialQuestion> findById(Long id);
 }

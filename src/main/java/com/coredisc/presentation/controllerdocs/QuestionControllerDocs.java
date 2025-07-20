@@ -45,4 +45,10 @@ public interface QuestionControllerDocs {
     })
     ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(@CurrentMember Member member, @RequestParam(name = "category", required = false) Long category, @RequestParam(name = "page") Integer page);
 
+    @Operation(summary = "고정 질문 선택", description = "고정 질문을 선택하는 기능입니다.")
+    ApiResponse<QuestionResponseDTO.SaveFixedTodayQuestionResultDTO> saveFixedTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveFixedTodayQuestionDTO request);
+
+    @Operation(summary = "랜덤 질문 선택", description = "랜덤 질문을 선택하는 기능입니다.")
+    ApiResponse<QuestionResponseDTO.SaveRandomTodayQuestionResultDTO> saveRandomTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveRandomTodayQuestionDTO request);
+
 }
