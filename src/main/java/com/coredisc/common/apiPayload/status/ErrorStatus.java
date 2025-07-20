@@ -83,7 +83,8 @@ public enum ErrorStatus implements BaseErrorCode {
     OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4002", "해당되는 공유 질문이 없습니다."),
     PERSONAL_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4003", "해당되는 저장 질문이 없습니다."),
     QUESTION_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4004", "해당되는 저장 타입이 없습니다."),
-    DUPLICATE_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4005", "해당 순서의 질문이 이번 달에 이미 존재합니다."),
+    DUPLICATE_FIXED_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4005", "해당 순서의 질문이 이번 달에 이미 존재합니다."),
+    DUPLICATE_RANDOM_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4006", "이미 오늘 설정한 랜덤 질문이 존재합니다."),
 
     
     // Follow 관련 에러

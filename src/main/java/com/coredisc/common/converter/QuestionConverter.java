@@ -11,6 +11,7 @@ import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,7 +103,7 @@ public class QuestionConverter {
     public static TodayQuestion toFixedTodayQuestionByOfficial(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, OfficialQuestion officialQuestion, Member member){
 
         return TodayQuestion.builder()
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDate.now())
                 .questionType(questionType)
                 .questionOrder(request.getQuestionOrder())
                 .member(member)
@@ -113,7 +114,7 @@ public class QuestionConverter {
     public static TodayQuestion toFixedTodayQuestionByPersonal(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, PersonalQuestion personalQuestion, Member member){
 
         return TodayQuestion.builder()
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDate.now())
                 .questionType(questionType)
                 .questionOrder(request.getQuestionOrder())
                 .member(member)
@@ -124,6 +125,36 @@ public class QuestionConverter {
     public static QuestionResponseDTO.SaveFixedTodayQuestionResultDTO toSaveFixedTodayQuestionResultDTO(TodayQuestion todayQuestion) {
 
         return QuestionResponseDTO.SaveFixedTodayQuestionResultDTO.builder()
+                .id(todayQuestion.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static TodayQuestion toRandomTodayQuestionByOfficial(QuestionType questionType, OfficialQuestion officialQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDate.now())
+                .questionType(questionType)
+                .questionOrder(4)
+                .member(member)
+                .officialQuestion(officialQuestion)
+                .build();
+    }
+
+    public static TodayQuestion toRandomTodayQuestionByPersonal(QuestionType questionType, PersonalQuestion personalQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDate.now())
+                .questionType(questionType)
+                .questionOrder(4)
+                .member(member)
+                .personalQuestion(personalQuestion)
+                .build();
+    }
+
+    public static QuestionResponseDTO.SaveRandomTodayQuestionResultDTO toSaveRandomTodayQuestionResultDTO(TodayQuestion todayQuestion) {
+
+        return QuestionResponseDTO.SaveRandomTodayQuestionResultDTO.builder()
                 .id(todayQuestion.getId())
                 .createdAt(LocalDateTime.now())
                 .build();

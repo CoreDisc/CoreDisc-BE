@@ -16,4 +16,8 @@ public interface QuestionCommandService {
 
     // 고정 질문 선택
     TodayQuestion saveFixedTodayQuestion(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, Member member);
+
+
+    // 랜덤 질문 선택
+    TodayQuestion saveRandomTodayQuestion(QuestionRequestDTO.SaveRandomTodayQuestionDTO request, Member member);
 }

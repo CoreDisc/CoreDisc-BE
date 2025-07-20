@@ -7,6 +7,7 @@ import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -22,8 +23,12 @@ public class TodayQuestionRepositoryAdapter  implements TodayQuestionRepository 
     }
 
     @Override
-    public Optional<TodayQuestion> findByMemberAndQuestionOrderAndSelectedDateBetween(Member member, Integer questionOrder, LocalDateTime startDate, LocalDateTime endDate) {
+    public Optional<TodayQuestion> findByMemberAndQuestionOrderAndSelectedDateBetween(Member member, Integer questionOrder, LocalDate startDate, LocalDate endDate) {
         return jpaTodayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, questionOrder, startDate, endDate);
     }
 
+    @Override
+    public Optional<TodayQuestion> findByMemberAndQuestionOrderAndSelectedDate(Member member, Integer questionOrder, LocalDate selectedDate) {
+        return jpaTodayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, questionOrder, selectedDate);
+    }
 }

@@ -53,4 +53,16 @@ public class QuestionRequestDTO {
         @Schema(description = "questionId", example = "1")
         Long questionId;
     }
+
+    @Getter
+    public static class SaveRandomTodayQuestionDTO {
+
+        @NotBlank(message = "질문 타입 입력은 필수입니다.")
+        @Schema(description = "질문 타입 (DEFAULT / OFFICIAL / PERSONAL)", example = "PERSONAL")
+        String selectedQuestionType;
+
+        @NotNull
+        @Schema(description = "questionId", example = "1")
+        Long questionId;
+    }
 }

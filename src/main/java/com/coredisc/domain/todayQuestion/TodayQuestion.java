@@ -9,7 +9,7 @@ import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class TodayQuestion extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime selectedDate;
+    private LocalDate selectedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
