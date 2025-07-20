@@ -101,19 +101,19 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
             OfficialQuestion selectedQuestion = officialQuestionRepository.findById(request.getQuestionId())
                     .orElseThrow(() -> new QuestionHandler(ErrorStatus.BASIC_QUESTION_NOT_FOUND));
-            newTodayQuestion = QuestionConverter.toTodayQuestionByOfficial(request, QuestionType.FIXED, selectedQuestion, member);
+            newTodayQuestion = QuestionConverter.toFixedTodayQuestionByOfficial(request, QuestionType.FIXED, selectedQuestion, member);
 
         } else if (request.getSelectedQuestionType().equals("OFFICIAL")) {  // 공유 질문
 
             OfficialQuestion selectedQuestion = officialQuestionRepository.findById(request.getQuestionId())
                     .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
-            newTodayQuestion = QuestionConverter.toTodayQuestionByOfficial(request, QuestionType.FIXED, selectedQuestion, member);
+            newTodayQuestion = QuestionConverter.toFixedTodayQuestionByOfficial(request, QuestionType.FIXED, selectedQuestion, member);
 
         } else if (request.getSelectedQuestionType().equals("PERSONAL")) {  // 저장 질문
 
             PersonalQuestion selectedQuestion = personalQuestionRepository.findById(request.getQuestionId())
                     .orElseThrow(() -> new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_NOT_FOUND));
-            newTodayQuestion = QuestionConverter.toTodayQuestionByPersonal(request, QuestionType.FIXED, selectedQuestion, member);
+            newTodayQuestion = QuestionConverter.toFixedTodayQuestionByPersonal(request, QuestionType.FIXED, selectedQuestion, member);
 
         } else {    // 잘못된 질문 타입
             throw new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_NOT_FOUND);

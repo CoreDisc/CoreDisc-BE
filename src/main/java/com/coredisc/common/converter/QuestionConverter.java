@@ -99,7 +99,7 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static TodayQuestion toTodayQuestionByOfficial(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, OfficialQuestion officialQuestion, Member member){
+    public static TodayQuestion toFixedTodayQuestionByOfficial(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, OfficialQuestion officialQuestion, Member member){
 
         return TodayQuestion.builder()
                 .selectedDate(LocalDateTime.now())
@@ -110,7 +110,7 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static TodayQuestion toTodayQuestionByPersonal(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, PersonalQuestion personalQuestion, Member member){
+    public static TodayQuestion toFixedTodayQuestionByPersonal(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, PersonalQuestion personalQuestion, Member member){
 
         return TodayQuestion.builder()
                 .selectedDate(LocalDateTime.now())
