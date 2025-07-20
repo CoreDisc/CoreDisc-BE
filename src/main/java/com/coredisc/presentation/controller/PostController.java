@@ -28,11 +28,9 @@ public class PostController implements PostControllerDocs {
     @PostMapping
     public ApiResponse<PostResponseDTO.CreatePostResultDto> createPost(@CurrentMember Member member,
                                                                        @Valid @RequestBody PostRequestDTO.CreatePostDto request) {
-        PostResponseDTO.CreatePostResultDto response = postCommandService.createEmptyPost(member,request);
+        PostResponseDTO.CreatePostResultDto response = postCommandService.createEmptyPost(member, request);
         return ApiResponse.onSuccess(response);
     }
-
-
 
 
     /**
@@ -51,7 +49,7 @@ public class PostController implements PostControllerDocs {
                 member.getId(), postId, questionId);
 
         PostResponseDTO.AnswerResultDto response = postCommandService.updateTextAnswer(
-                member,postId, questionId, request);
+                member, postId, questionId, request);
 
 
         return ApiResponse.onSuccess(response);
@@ -94,11 +92,14 @@ public class PostController implements PostControllerDocs {
     }
 
 
-
-
     @PutMapping("/{postId}/publish")
-    public ApiResponse<PostResponseDTO.PublishResultDto> publishPost(Long postId, PostRequestDTO.PublishPostDto request) {
-        return null;
+    public ApiResponse<PostResponseDTO.PublishResultDto> publishPost(
+            @CurrentMember Member member,
+            @PathVariable Long postId,
+            @Valid @RequestBody PostRequestDTO.PublishPostDto request) {
+
+        return ApiResponse.onSuccess(postCommandService.publishPost(member, postId, request));
+
     }
 
     @GetMapping("/{postId}")

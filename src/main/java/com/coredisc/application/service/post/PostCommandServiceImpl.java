@@ -12,7 +12,6 @@ import com.coredisc.domain.post.*;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
-import com.coredisc.infrastructure.aws.s3.ImageUploadResult;
 import com.coredisc.infrastructure.file.FileInfo;
 import com.coredisc.infrastructure.file.FileStore;
 import com.coredisc.infrastructure.repository.question.TodayQuestionRepository;
@@ -201,6 +200,40 @@ public class PostCommandServiceImpl implements PostCommandService {
                 savedAnswer.getId(), fileInfo.getFileUrl());
 
         return PostConverter.toAnswerResultDto(savedAnswer);
+    }
+
+    // 게시글 발행하기 - 실제 발행
+    @Override
+    @Transactional
+    public PostResponseDTO.PublishResultDto publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request) {
+        Post post = validatePostOwnership(member, postId);
+        PostRequestDTO.SelectiveDiaryDto selectiveDiaryDto = request.getSelectiveDiary();
+
+        //발행으로 변경
+        post.publish();
+        // 선택형 일기 업데이트
+        post.updateSelectiveDiary(
+                selectiveDiaryDto.getWho(),
+                selectiveDiaryDto.getWhere(),
+                selectiveDiaryDto.getWhat(),
+                selectiveDiaryDto.getDetail());
+        post.updatePublicity(request.getPublicity());
+
+
+        Post savedPost = postRepository.save(post);
+
+
+        log.info("게시글 발행 완료 - 게시글 ID: {}, 회원 ID: {}",postId, member.getId());
+
+
+
+        //TODO : Converter
+        return PostResponseDTO.PublishResultDto.builder()
+                .postId(savedPost.getId())
+                .status(savedPost.getStatus())
+                .publishedAt(savedPost.getUpdatedAt())
+                .build();
+
     }
 
 

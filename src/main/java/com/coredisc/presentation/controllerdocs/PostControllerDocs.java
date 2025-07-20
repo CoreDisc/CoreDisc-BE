@@ -63,6 +63,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 발행", description = "모든 답변과 선택형 일기 작성 후 게시글을 발행합니다.")
     ApiResponse<PostResponseDTO.PublishResultDto> publishPost(
+            @CurrentMember Member member,
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long postId,
             @Parameter(description = "게시글 발행 요청") @RequestBody PostRequestDTO.PublishPostDto request
     );

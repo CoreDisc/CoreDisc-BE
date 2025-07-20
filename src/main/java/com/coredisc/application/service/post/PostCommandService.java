@@ -13,4 +13,6 @@ public interface PostCommandService {
 
     public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postID, Integer questionId, MultipartFile image);
 
+    public PostResponseDTO.PublishResultDto publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request);
+
 }

@@ -88,4 +88,17 @@ public class Post extends BaseEntity {
         return this.status == PostStatus.PUBLISHED;
     }
 
+    // 선택형 일기 저장
+    public void updateSelectiveDiary(String who, String where, String what, String detail) {
+        this.dailyWho = who;
+        this.dailyWhere = where;
+        this.dailyWhat  = what;
+        this.dailyDetail = detail;
+    }
+
+    // 공개범위 설정
+    public void updatePublicity(PublicityType publicityType) {
+        this.publicity = publicityType;
+    }
+
 }
