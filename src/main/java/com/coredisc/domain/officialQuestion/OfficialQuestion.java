@@ -1,6 +1,6 @@
 package com.coredisc.domain.officialQuestion;
 
-import com.coredisc.domain.TodayQuestion;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
