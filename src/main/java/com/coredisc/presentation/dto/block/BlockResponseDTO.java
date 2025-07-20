@@ -26,9 +26,9 @@ public class BlockResponseDTO {
     @Builder
     public static class BlockedDTO {
         private Long blockedId;
-        public String blockedNickname;
-        public String blockedUsername;
-        public String blockedImageUrl;
+        private String blockedNickname;
+        private String blockedUsername;
+        private String blockedImageUrl;
     }
 
     @Getter
