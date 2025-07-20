@@ -12,5 +12,4 @@ public interface JpaBlockRepository extends JpaRepository<Block, Long> {
 
     Block findByBlockerAndBlocked(Member blocker, Member blocked);
 
-    List<Block> findAllByBlocker(Member blocked);
 }

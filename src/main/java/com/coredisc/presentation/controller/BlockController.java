@@ -7,8 +7,11 @@ import com.coredisc.common.converter.BlockConverter;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.BlockControllerDocs;
 import com.coredisc.presentation.dto.block.BlockResponseDTO;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,11 +43,12 @@ public class BlockController implements BlockControllerDocs {
     }
 
     @GetMapping("/api/blocks")
-    public ApiResponse<BlockResponseDTO.BlockedListViewDTO> getBlockedList(
-            @CurrentMember Member member
+    public ApiResponse<CursorDTO<BlockResponseDTO.BlockedDTO>> getBlockedList(
+            @CurrentMember Member member,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-        return ApiResponse.onSuccess(BlockConverter.toBlockedListViewDTO(
-                blockQueryService.getBlockeds(member)
-        ));
+        Pageable pageable = PageRequest.of(0, size);
+        return ApiResponse.onSuccess(blockQueryService.getBlockedList(member, cursorId, pageable));
     }
 }

@@ -17,5 +17,4 @@ public interface BlockRepository {
 
     Block findByBlockerAndBlocked(Member blocker, Member blocked);
 
-    List<Block> findAllByBlocker(Member member);
 }

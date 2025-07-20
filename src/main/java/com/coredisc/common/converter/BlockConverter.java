@@ -33,14 +33,4 @@ public class BlockConverter {
                 .build();
     }
 
-    public static BlockResponseDTO.BlockedListViewDTO toBlockedListViewDTO(List<Block> blockeds) {
-        List<BlockResponseDTO.BlockedDTO> dtos = blockeds.stream()
-                .map(BlockConverter::toBlockedDTO)
-                .collect(Collectors.toList());
-
-        return BlockResponseDTO.BlockedListViewDTO.builder()
-                .totalBlockedCount(blockeds.size())
-                .blockedList(dtos)
-                .build();
-    }
 }
