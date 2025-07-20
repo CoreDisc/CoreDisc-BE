@@ -20,4 +20,7 @@ public interface MemberCommandService {
 
     // 계정 관리 - 비밀번호 변경
     void resetPasswordMyHome(Member member, MemberRequestDTO.MyHomeResetPasswordDTO request);
+
+    // 계정 관리 - 아이디 변경
+    void resetUsernameMyHome(String accessToken, Member member, MemberRequestDTO.MyHomeResetUsernameDTO request);
 }

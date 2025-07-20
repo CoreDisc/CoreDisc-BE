@@ -66,13 +66,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         // username 변경시 기존 accessToken 블랙리스트 저장
         if (isUsernameChanged) {
-            if(accessToken.startsWith("Bear ")) {
-                accessToken = accessToken.substring(7);
-            }
-            redisUtil.set(accessToken, "logout");
-            redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
-            // RefreshToken 삭제
-            redisUtil.delete(String.valueOf(jwtProvider.getId(accessToken)));
+            logoutMember(accessToken);
         }
 
         return isUsernameChanged;
@@ -112,5 +106,34 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         member.encodePassword(passwordEncoder.encode(request.getNewPassword()));
         memberRepository.save(member);
+    }
+
+    @Override
+    public void resetUsernameMyHome(String accessToken, Member member, MemberRequestDTO.MyHomeResetUsernameDTO request) {
+
+        if(member.getUsername().equals(request.getNewUsername())) {
+            throw new AuthHandler(ErrorStatus.SAME_USERNAME_REQUEST);
+        }
+
+        if(memberRepository.existsByUsername(request.getNewUsername())) {
+            throw new AuthHandler(ErrorStatus.USERNAME_ALREADY_EXISTS);
+        }
+
+        member.setUsername(request.getNewUsername());
+        memberRepository.save(member);
+
+        logoutMember(accessToken);
+    }
+
+
+    private void logoutMember(String accessToken) {
+
+        if(accessToken.startsWith("Bear ")) {
+            accessToken = accessToken.substring(7);
+        }
+        redisUtil.set(accessToken, "logout");
+        redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
+        // RefreshToken 삭제
+        redisUtil.delete(jwtProvider.getUsername(accessToken));
     }
 }
