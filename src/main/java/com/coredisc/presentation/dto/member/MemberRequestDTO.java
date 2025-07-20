@@ -70,4 +70,11 @@ public class MemberRequestDTO {
         @Schema(description = "passwordCheck", example = "coredisc123456!")
         private String passwordCheck;
     }
+
+    @Getter
+    public static class MyHomeResetUsernameDTO {
+        @NotBlank(message = "변경할 아이디 입력은 필수입니다.")
+        @Size(max = 16, message = "아이디는 16자 이내로 입력해주세요.")
+        private String newUsername;
+    }
 }
