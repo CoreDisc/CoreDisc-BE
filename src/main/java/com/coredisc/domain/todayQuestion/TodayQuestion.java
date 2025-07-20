@@ -1,4 +1,4 @@
-package com.coredisc.domain;
+package com.coredisc.domain.todayQuestion;
 
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.QuestionType;
@@ -25,11 +25,14 @@ public class TodayQuestion extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    protected LocalDateTime selectedDate;
+    private LocalDateTime selectedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private QuestionType questionType;
+
+    @Column(nullable = false)
+    private Integer questionOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

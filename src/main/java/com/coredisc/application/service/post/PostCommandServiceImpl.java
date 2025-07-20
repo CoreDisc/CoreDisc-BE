@@ -4,7 +4,7 @@ package com.coredisc.application.service.post;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.PostConverter;
 import com.coredisc.common.exception.handler.PostHandler;
-import com.coredisc.domain.TodayQuestion;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.member.Member;
@@ -13,7 +13,7 @@ import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.infrastructure.file.FileInfo;
 import com.coredisc.infrastructure.file.FileStore;
-import com.coredisc.infrastructure.repository.question.TodayQuestionRepository;
+import com.coredisc.infrastructure.repository.question.JpaTodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostRepository postRepository;
     private final PostAnswerRepository postAnswerRepository;
     private final PostAnswerImageRepository postAnswerImageRepository;
-    private final TodayQuestionRepository todayQuestionRepository;
+    private final JpaTodayQuestionRepository todayQuestionRepository;
     private final FileStore fileStore;
 
     //  빈 게시글 생성
