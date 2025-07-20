@@ -62,4 +62,9 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "마이홈 계정 관리 비밀번호 변경", description = "계정 관리 비밀번호 변경 기능입니다.")
     ApiResponse<String> resetPasswordMyHome(@CurrentMember Member member, @RequestBody MemberRequestDTO.MyHomeResetPasswordDTO request);
+
+    @Operation(summary = "마이홈 계정 관리 아이디 변경", description = "계정 관리 아이디 변경 기능입니다.")
+    ApiResponse<String> resetUsernameMyHome(@RequestHeader("accessToken") String accessToken,
+                                            @CurrentMember Member member,
+                                            @RequestBody MemberRequestDTO.MyHomeResetUsernameDTO request);
 }
