@@ -66,7 +66,7 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess(QuestionConverter.toSaveFixedTodayQuestionResultDTO(questionCommandService.saveFixedTodayQuestion(request, member)));
     }
 
-    @PostMapping("random")
+    @PostMapping("/random")
     public ApiResponse<QuestionResponseDTO.SaveRandomTodayQuestionResultDTO> saveRandomTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveRandomTodayQuestionDTO request) {
 
         return ApiResponse.onSuccess(QuestionConverter.toSaveRandomTodayQuestionResultDTO(questionCommandService.saveRandomTodayQuestion(request, member)));
