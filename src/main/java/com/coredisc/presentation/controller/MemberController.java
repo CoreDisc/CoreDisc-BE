@@ -111,4 +111,14 @@ public class MemberController implements MemberControllerDocs {
 
         return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
     }
+
+    @Override
+    @PatchMapping("/my-home/username")
+    public ApiResponse<String> resetUsernameMyHome(@RequestHeader("accessToken") String accessToken,
+                                                   @CurrentMember Member member,
+                                                   @RequestBody MemberRequestDTO.MyHomeResetUsernameDTO request) {
+
+        memberCommandService.resetUsernameMyHome(accessToken, member, request);
+        return ApiResponse.onSuccess("아이디가 변경되어 인증이 만료되었습니다. 다시 로그인 해주세요.");
+    }
 }
