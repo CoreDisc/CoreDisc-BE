@@ -31,12 +31,4 @@ public class BlockResponseDTO {
         private String blockedImageUrl;
     }
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class BlockedListViewDTO {
-        private int totalBlockedCount;
-        private List<BlockedDTO> blockedList;
-    }
 }
