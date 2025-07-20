@@ -26,7 +26,6 @@ public class QuestionRequestDTO {
 
     @Getter
     public static class SaveOfficialQuestionDTO {
-
         @NotNull
         @Size(min = 1, max = 3, message = "카테고리는 최소 1개, 최대 3개까지 선택할 수 있습니다.")
         @Schema(description = "categoryId 목록", example = "[1, 2]")
