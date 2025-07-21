@@ -2,6 +2,7 @@ package com.coredisc.infrastructure.repository.question;
 
 
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,4 +32,9 @@ public class TodayQuestionRepositoryAdapter  implements TodayQuestionRepository 
     public Optional<TodayQuestion> findByMemberAndQuestionOrderAndSelectedDate(Member member, Integer questionOrder, LocalDate selectedDate) {
         return jpaTodayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, questionOrder, selectedDate);
     }
+    @Override
+    public boolean existsByPersonalQuestion(PersonalQuestion personalQuestion) {
+        return jpaTodayQuestionRepository.existsByPersonalQuestion(personalQuestion);
+    }
+
 }

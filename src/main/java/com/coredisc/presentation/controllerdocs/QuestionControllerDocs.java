@@ -62,4 +62,10 @@ public interface QuestionControllerDocs {
     })
     ApiResponse<QuestionResponseDTO.savePersonalQuestionResultDTO> updatePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @Valid @RequestBody QuestionRequestDTO.SavePersonalQuestionDTO request);
 
+    @Operation(summary = "커스텀 질문 삭제", description = "사용자가 작성하여 저장했던 질문을 삭제하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+    })
+    ApiResponse<String> deletePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
+
 }

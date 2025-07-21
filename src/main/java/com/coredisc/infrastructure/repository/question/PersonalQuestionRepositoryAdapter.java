@@ -40,4 +40,9 @@ public class PersonalQuestionRepositoryAdapter implements PersonalQuestionReposi
     public Optional<PersonalQuestion> findById(Long id) {
         return jpaPersonalQuestionRepository.findById(id);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaPersonalQuestionRepository.deleteById(id);
+    }
 }
