@@ -20,7 +20,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -74,6 +77,145 @@ public class AmazonS3Manager {
         } catch(Exception e) {
             log.error("이미지 삭제 실패 - 파일키: {}", key, e);
         }
+    }
+    /**
+     * URL 기반 이미지 삭제 (새로 추가)
+     * @param imageUrl S3 전체 URL (예: https://bucket.s3.region.amazonaws.com/original/user_1_abc123.jpg)
+     */
+    public void deleteImageByUrl(String imageUrl) {
+        try {
+            // URL에서 파일키 추출
+            String fileKey = extractFileKeyFromUrl(imageUrl);
+
+            if (fileKey == null) {
+                log.warn("URL에서 파일키 추출 실패: {}", imageUrl);
+                return;
+            }
+
+            // 파일키로 이미지 삭제
+            deleteImage(fileKey);
+
+        } catch (Exception e) {
+            log.error("URL 기반 이미지 삭제 실패 - URL: {}", imageUrl, e);
+            throw new RuntimeException("URL 기반 이미지 삭제 실패", e);
+        }
+    }
+
+    /**
+     * 단일 파일 삭제 (S3 key 직접 삭제)
+     */
+    public void deleteImageByKey(String s3Key) {
+        try {
+            deleteFromS3(s3Key);
+            log.info("S3 파일 삭제 완료 - 키: {}", s3Key);
+        } catch (Exception e) {
+            log.error("S3 파일 삭제 실패 - 키: {}", s3Key, e);
+            throw new RuntimeException("S3 파일 삭제 실패", e);
+        }
+    }
+
+    /**
+     * URL에서 파일키 추출
+     * URL 형식: https://bucket.s3.region.amazonaws.com/original/user_1_abc123.jpg
+     * 추출 결과: user_1_abc123
+     */
+    private String extractFileKeyFromUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return null;
+        }
+
+        try {
+            // 정규식으로 파일키 패턴 추출
+            // original/ 또는 thumbnail/ 다음의 user_숫자_문자열 부분을 추출
+            Pattern pattern = Pattern.compile("(?:original|thumbnail)/(user_\\d+_[a-zA-Z0-9]+)\\.jpg");
+            Matcher matcher = pattern.matcher(imageUrl);
+
+            if (matcher.find()) {
+                String fileKey = matcher.group(1);
+                log.debug("URL에서 파일키 추출 성공 - URL: {}, 파일키: {}", imageUrl, fileKey);
+                return fileKey;
+            }
+
+            // 정규식 실패 시 수동 파싱 시도
+            return extractFileKeyManually(imageUrl);
+
+        } catch (Exception e) {
+            log.error("파일키 추출 중 오류 발생 - URL: {}", imageUrl, e);
+            return null;
+        }
+    }
+
+    /**
+     * 수동으로 파일키 추출 (정규식 실패 시 백업)
+     */
+    private String extractFileKeyManually(String imageUrl) {
+        try {
+            // URL에서 경로 부분만 추출
+            String path = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+            // .jpg 제거
+            if (path.endsWith(".jpg")) {
+                path = path.substring(0, path.length() - 4);
+            }
+
+            // user_로 시작하는지 확인
+            if (path.startsWith("user_")) {
+                log.debug("수동 파일키 추출 성공 - 파일키: {}", path);
+                return path;
+            }
+
+            log.warn("파일키 패턴이 맞지 않음 - 추출된 값: {}", path);
+            return null;
+
+        } catch (Exception e) {
+            log.error("수동 파일키 추출 실패 - URL: {}", imageUrl, e);
+            return null;
+        }
+    }
+
+    /**
+     * URL이 현재 S3 버킷의 URL인지 검증
+     */
+    public boolean isValidS3Url(String url) {
+        if (url == null || url.isEmpty()) {
+            return false;
+        }
+
+        String expectedDomain = String.format("https://%s.s3.%s.amazonaws.com/",
+                s3Config.getBucket(), s3Config.getRegion());
+
+        return url.startsWith(expectedDomain);
+    }
+
+    /**
+     * 여러 URL을 한번에 삭제
+     */
+    public void deleteImagesByUrls(List<String> imageUrls) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return;
+        }
+
+        log.info("다중 이미지 삭제 시작 - 개수: {}", imageUrls.size());
+
+        int successCount = 0;
+        int failCount = 0;
+
+        for (String imageUrl : imageUrls) {
+            try {
+                if (isValidS3Url(imageUrl)) {
+                    deleteImageByUrl(imageUrl);
+                    successCount++;
+                } else {
+                    log.warn("유효하지 않은 S3 URL 건너뛰기: {}", imageUrl);
+                    failCount++;
+                }
+            } catch (Exception e) {
+                log.error("개별 이미지 삭제 실패 - URL: {}", imageUrl, e);
+                failCount++;
+            }
+        }
+
+        log.info("다중 이미지 삭제 완료 - 성공: {}, 실패: {}", successCount, failCount);
     }
 
     /**
