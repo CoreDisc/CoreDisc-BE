@@ -19,7 +19,7 @@ public class CircleController implements CircleControllerDocs {
     private final FollowCommandService followCommandService;
     private final FollowQueryService followQueryService;
 
-    @PatchMapping("/api/circle/{targetId}")
+    @PatchMapping("/api/circle/add/{targetId}")
     public ApiResponse<String> addToCircle(@CurrentMember Member member,
                                            @PathVariable Long targetId) {
 
@@ -28,7 +28,7 @@ public class CircleController implements CircleControllerDocs {
         return ApiResponse.onSuccess("성공적으로 친한 친구가 설정되었습니다.");
     }
 
-    @PatchMapping("/api/circle/{targetId}")
+    @PatchMapping("/api/circle/remove/{targetId}")
     public ApiResponse<String> removeToCircle(@CurrentMember Member member,
                                               @PathVariable Long targetId) {
 
