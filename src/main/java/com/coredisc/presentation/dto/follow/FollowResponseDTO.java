@@ -2,7 +2,6 @@ package com.coredisc.presentation.dto.follow;
 
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

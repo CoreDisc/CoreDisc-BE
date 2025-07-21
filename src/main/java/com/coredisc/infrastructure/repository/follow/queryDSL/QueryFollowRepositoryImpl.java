@@ -3,14 +3,12 @@ package com.coredisc.infrastructure.repository.follow.queryDSL;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.follow.QFollow;
 import com.coredisc.domain.member.Member;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
