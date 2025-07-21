@@ -30,4 +30,7 @@ public class Follow extends BaseEntity {
     @Builder.Default
     private boolean isCircle = false;
 
+    public void updateCircle(boolean isCircle) {
+        this.isCircle = isCircle;
+    }
 }
