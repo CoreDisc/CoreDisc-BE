@@ -6,10 +6,7 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.CircleControllerDocs;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +14,7 @@ public class CircleController implements CircleControllerDocs {
 
     private final FollowCommandService followCommandService;
 
-    @PostMapping("/api/circle/{targetId}")
+    @PatchMapping("/api/circle/{targetId}")
     public ApiResponse<String> addToCircle(@CurrentMember Member member,
                                            @PathVariable Long targetId) {
 
@@ -26,7 +23,7 @@ public class CircleController implements CircleControllerDocs {
         return ApiResponse.onSuccess("성공적으로 친한 친구가 설정되었습니다.");
     }
 
-    @DeleteMapping("/api/circle/{targetId}")
+    @PatchMapping("/api/circle/{targetId}")
     public ApiResponse<String> removeToCircle(@CurrentMember Member member,
                                               @PathVariable Long targetId) {
 
