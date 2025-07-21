@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Tag(name = "Question", description = "질문 관련 API")
 public interface QuestionControllerDocs {
 
@@ -50,5 +52,8 @@ public interface QuestionControllerDocs {
 
     @Operation(summary = "랜덤 질문 선택", description = "랜덤 질문을 선택하는 기능입니다.")
     ApiResponse<QuestionResponseDTO.SaveRandomTodayQuestionResultDTO> saveRandomTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveRandomTodayQuestionDTO request);
+
+    @Operation(summary = "선택한 고정&랜덤 질문 조회", description = "선택한 고정 질문 3개와 랜덤 질문 1개 조회하는 기능입니다.")
+    ApiResponse<List<QuestionResponseDTO.SelectedTodayQuestionResultDTO>> getMyTodayQuestion(@CurrentMember Member member);
 
 }

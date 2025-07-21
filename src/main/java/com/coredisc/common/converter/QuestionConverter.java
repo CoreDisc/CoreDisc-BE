@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class QuestionConverter {
@@ -158,5 +159,21 @@ public class QuestionConverter {
                 .id(todayQuestion.getId())
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    public static QuestionResponseDTO.SelectedTodayQuestionResultDTO toSelectedTodayQuestionResultDTO(Optional<TodayQuestion> todayQuestion, int questionOrder) {
+        return todayQuestion
+                .map(q -> QuestionResponseDTO.SelectedTodayQuestionResultDTO.builder()
+                        .id(q.getId())
+                        .questionOrder(questionOrder)
+                        .question(q.getQuestionContent())
+                        .questionType(q.getQuestionType())
+                        .build())
+                .orElseGet(() -> QuestionResponseDTO.SelectedTodayQuestionResultDTO.builder()
+                        .id(null)
+                        .questionOrder(questionOrder)
+                        .question(null)
+                        .questionType(null)
+                        .build());
     }
 }
