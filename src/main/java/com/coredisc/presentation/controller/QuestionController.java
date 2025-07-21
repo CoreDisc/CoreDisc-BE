@@ -81,4 +81,20 @@ public class QuestionController implements QuestionControllerDocs {
 
         return ApiResponse.onSuccess(questionQueryService.getMyTodayQuestion(member));
     }
+
+    // 사용자가 작성하여 저장했던 질문 수정
+    public ApiResponse<QuestionResponseDTO.savePersonalQuestionResultDTO> updatePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @Valid @RequestBody QuestionRequestDTO.SavePersonalQuestionDTO request) {
+
+        return ApiResponse.onSuccess(QuestionConverter.toSavePersonalQuestionResultDTO(questionCommandService.updatePersonalQuestion(member, questionId, request)));
+    }
+
+    // 사용자가 작성하여 저장했던 질문 삭제
+    @DeleteMapping("/personal/{questionId}")
+    public ApiResponse<String> deletePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+
+        questionCommandService.deletePersonalQuestion(member, questionId);
+
+        return ApiResponse.onSuccess("질문이 삭제되었습니다.");
+    }
+
 }

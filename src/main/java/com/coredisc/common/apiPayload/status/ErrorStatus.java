@@ -90,8 +90,9 @@ public enum ErrorStatus implements BaseErrorCode {
     QUESTION_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4004", "해당되는 저장 타입이 없습니다."),
     DUPLICATE_FIXED_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4005", "해당 순서의 질문이 이번 달에 이미 존재합니다."),
     DUPLICATE_RANDOM_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4006", "이미 오늘 설정한 랜덤 질문이 존재합니다."),
+    UNAUTHORIZED_PERSONAL_QUESTION_ACCESS(HttpStatus.FORBIDDEN, "QUESTION4007", "해당 질문에 대한 수정/삭제 권한이 없습니다."),
+    PERSONAL_QUESTION_USED_IN_TODAY_QUESTION(HttpStatus.CONFLICT, "QUESTION4008", "고정 또는 랜덤 질문으로 사용된 질문은 삭제할 수 없습니다."),
 
-    
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
     ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우한 이력이 있습니다."),

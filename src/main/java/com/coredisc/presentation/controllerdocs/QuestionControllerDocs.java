@@ -56,4 +56,16 @@ public interface QuestionControllerDocs {
     @Operation(summary = "선택한 고정&랜덤 질문 조회", description = "선택한 고정 질문 3개와 랜덤 질문 1개 조회하는 기능입니다.")
     ApiResponse<List<QuestionResponseDTO.SelectedTodayQuestionResultDTO>> getMyTodayQuestion(@CurrentMember Member member);
 
+    @Operation(summary = "커스텀 질문 수정", description = "사용자가 작성하여 저장했던 질문을 수정하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+    })
+    ApiResponse<QuestionResponseDTO.savePersonalQuestionResultDTO> updatePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @Valid @RequestBody QuestionRequestDTO.SavePersonalQuestionDTO request);
+
+    @Operation(summary = "커스텀 질문 삭제", description = "사용자가 작성하여 저장했던 질문을 삭제하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+    })
+    ApiResponse<String> deletePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
+
 }

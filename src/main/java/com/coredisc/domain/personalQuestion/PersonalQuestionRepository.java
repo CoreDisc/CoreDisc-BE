@@ -17,4 +17,6 @@ public interface PersonalQuestionRepository {
     Page<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(Member member, String keyword, Pageable pageable);
 
     Optional<PersonalQuestion> findById(Long id);
+
+    void deleteById(Long id);
 }
