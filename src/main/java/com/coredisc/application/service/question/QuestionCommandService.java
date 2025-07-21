@@ -20,4 +20,7 @@ public interface QuestionCommandService {
 
     // 랜덤 질문 선택
     TodayQuestion saveRandomTodayQuestion(QuestionRequestDTO.SaveRandomTodayQuestionDTO request, Member member);
+
+    // 사용자가 작성하여 저장했던 질문 수정
+    PersonalQuestion updatePersonalQuestion(Member member, Long questionId, QuestionRequestDTO.SavePersonalQuestionDTO request);
 }
