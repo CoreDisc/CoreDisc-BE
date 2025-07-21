@@ -1,8 +1,11 @@
 package com.coredisc.domain.post;
 
 
+import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.domain.Comment;
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
@@ -100,5 +103,16 @@ public class Post extends BaseEntity {
     public void updatePublicity(PublicityType publicityType) {
         this.publicity = publicityType;
     }
+
+    /**
+     * 멤버 소유권 확인
+     */
+    public void validateOwnership(Member member) {
+        if (!this.member.getId().equals(member.getId())) {
+            throw new PostHandler(ErrorStatus.NOT_POST_OWNER);
+        }
+
+    }
+
 
 }

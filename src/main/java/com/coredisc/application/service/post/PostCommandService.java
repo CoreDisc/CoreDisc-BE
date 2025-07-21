@@ -15,4 +15,6 @@ public interface PostCommandService {
 
     public PostResponseDTO.PublishResultDto publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request);
 
+    void deletePost(Member member, Long postId);
+
 }

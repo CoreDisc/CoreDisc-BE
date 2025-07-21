@@ -113,8 +113,15 @@ public class PostController implements PostControllerDocs {
     }
 
     @DeleteMapping("/{postId}")
-    public ApiResponse<String> deletePost(Long postId) {
-        return null;
+    public ApiResponse<String> deletePost(
+            @CurrentMember Member member,
+            @PathVariable Long postId
+    ) {
+        log.info("게시글 삭제 요청 - 회원ID: {}, 게시글ID: {}", member.getId(), postId);
+
+        postCommandService.deletePost(member,postId);
+
+        return ApiResponse.onSuccess("게시글이 삭제되었습니다.");
     }
 
     @PutMapping("/posts/{postId}/selective-diary")

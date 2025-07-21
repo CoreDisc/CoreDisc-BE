@@ -81,7 +81,7 @@ public interface PostControllerDocs {
 
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
     ApiResponse<String> deletePost(
-            @Parameter(description = "게시글 ID", required = true) @PathVariable Long postId
+            @CurrentMember Member member , @Parameter(description = "게시글 ID", required = true)  @PathVariable Long postId
     );
 
     @Operation(summary = "선택형 일기 임시 저장", description = "게시글 발행 전 선택형 일기를 임시 저장합니다.")
