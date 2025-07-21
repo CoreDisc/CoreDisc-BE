@@ -92,6 +92,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우한 이력이 있습니다."),
     FOLLOW_NOT_FOUND(HttpStatus.NOT_FOUND, "FOLLOW4003", "팔로우한 이력이 없습니다."),
     SELF_UNFOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4004", "자기 자신은 언팔로우할 수 없습니다."),
+    FOLLOWER_NOT_FOUND(HttpStatus.BAD_REQUEST, "FOLLOW4005", "해당 팔로워는 존재하지 않습니다."),
 
     // 차단 관련 에러
     BLOCKED_MEMBER_REQUEST(HttpStatus.BAD_REQUEST, "Block4001", "차단된 사용자입니다."),
@@ -99,6 +100,9 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_BLOCKING(HttpStatus.BAD_REQUEST, "BLOCK4002", "이미 차단한 이력이 있습니다."),
     BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "BLOCK4003", "차단한 이력이 없습니다."),
     SELF_UNBLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4004", "자기 자신은 차단 취소 할 수 없습니다."),
+
+    // Circle 관련 에러
+    SELF_CIRCLE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "CIRCLE4001", "자기 자신은 친한 친구로 설정할 수 없습니다."),
 
     // Disc 관련 에러
     DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
