@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/questions")
 @RequiredArgsConstructor
@@ -66,10 +68,17 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess(QuestionConverter.toSaveFixedTodayQuestionResultDTO(questionCommandService.saveFixedTodayQuestion(request, member)));
     }
 
+    // 랜덤 질문 선택
     @PostMapping("/random")
     public ApiResponse<QuestionResponseDTO.SaveRandomTodayQuestionResultDTO> saveRandomTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveRandomTodayQuestionDTO request) {
 
         return ApiResponse.onSuccess(QuestionConverter.toSaveRandomTodayQuestionResultDTO(questionCommandService.saveRandomTodayQuestion(request, member)));
     }
 
+    // 선택한 고정&랜덤 질문 조회
+    @GetMapping("/selected")
+    public ApiResponse<List<QuestionResponseDTO.SelectedTodayQuestionResultDTO>> getMyTodayQuestion(@CurrentMember Member member) {
+
+        return ApiResponse.onSuccess(questionQueryService.getMyTodayQuestion(member));
+    }
 }

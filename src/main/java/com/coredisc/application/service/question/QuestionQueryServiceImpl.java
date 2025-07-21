@@ -10,11 +10,18 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
 import com.coredisc.domain.personalQuestion.PersonalQuestionRepository;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
+import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -23,7 +30,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final PersonalQuestionRepository personalQuestionRepository;
     private final OfficialQuestionRepository officialQuestionRepository;
-    private final QuestionCategoryRepository questionCategoryRepository;
+    private final TodayQuestionRepository todayQuestionRepository;
     private final CategoryRepository categoryRepository;
 
     // 기본 질문 리스트 조회 (카테고리별)
@@ -64,4 +71,33 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
         return QuestionConverter.toMySharedQuestionListResultDTO(mySharedQuestionPage, mySharedQuestionTotal);
     }
+
+    // 선택한 고정&랜덤 질문 조회
+    @Override
+    public List<QuestionResponseDTO.SelectedTodayQuestionResultDTO> getMyTodayQuestion(Member member) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        List<QuestionResponseDTO.SelectedTodayQuestionResultDTO> myTodayQuestionList = new ArrayList<>();
+
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            QuestionResponseDTO.SelectedTodayQuestionResultDTO selectedTodayQuestionResultDTO =
+                    QuestionConverter.toSelectedTodayQuestionResultDTO(todayQuestion, order);
+
+            myTodayQuestionList.add(selectedTodayQuestionResultDTO);
+        }
+
+        return myTodayQuestionList;
+    }
+
 }

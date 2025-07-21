@@ -1,5 +1,6 @@
 package com.coredisc.presentation.dto.question;
 
+import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -110,5 +111,20 @@ public class QuestionResponseDTO {
         private Long id;
 
         private LocalDateTime createdAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SelectedTodayQuestionResultDTO {
+
+        private Long id;
+
+        private Integer questionOrder;
+
+        private String question;
+
+        private QuestionType questionType;
     }
 }

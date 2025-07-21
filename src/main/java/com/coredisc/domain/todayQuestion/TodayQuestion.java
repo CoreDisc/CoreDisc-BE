@@ -48,4 +48,16 @@ public class TodayQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "todayQuestion")
     private List<PostAnswer> postAnswers = new ArrayList<>();
+
+
+    public String getQuestionContent() {
+        if (this.officialQuestion != null) {
+            return this.officialQuestion.getContents();
+        } else if (this.personalQuestion != null) {
+            return this.personalQuestion.getContent();
+        } else {
+            return null;
+        }
+    }
 }
+
