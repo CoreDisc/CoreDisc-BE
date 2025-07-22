@@ -39,10 +39,10 @@ public class CalendarConverter {
         return days;
     }
 
-    public static CalendarResponseDTO.CalendarDTO toCalendarDTO(int year, int month, List<CalendarResponseDTO.DayResultDTO> days, int totalDays, int continuesDays) {
+    public static CalendarResponseDTO.CalendarDTO toCalendarDTO(int year, int month, List<CalendarResponseDTO.DayResultDTO> days, int totalDays, int continuesDays, LocalDate signupDate) {
         YearMonth target = YearMonth.of(year, month);
-        boolean hasPrevMonth = target.isAfter(YearMonth.of(2020, 1));
-        boolean hasNextMonth = target.isBefore(YearMonth.now().plusMonths(12));
+        boolean hasPrevMonth = target.isAfter(YearMonth.from(signupDate));
+        boolean hasNextMonth = target.isBefore(YearMonth.now());
 
         return CalendarResponseDTO.CalendarDTO.builder()
                 .year(year)

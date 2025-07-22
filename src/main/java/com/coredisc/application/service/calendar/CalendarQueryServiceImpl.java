@@ -42,6 +42,6 @@ public class CalendarQueryServiceImpl implements CalendarQueryService {
             }
         }
 
-        return CalendarConverter.toCalendarDTO(year, month, days, totalDays, continuesDays);
+        return CalendarConverter.toCalendarDTO(year, month, days, totalDays, continuesDays, LocalDate.from(member.getCreatedAt()));
     }
 }
