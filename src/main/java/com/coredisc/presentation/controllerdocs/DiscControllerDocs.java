@@ -8,9 +8,11 @@ import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Tag(name = "Disc", description = "디스크 관련 API")
 public interface DiscControllerDocs {
 
     @Operation(summary = "디스크 목록 조회", description = "사용자의 월간 디스크 목록을 조회합니다.")
