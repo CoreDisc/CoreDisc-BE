@@ -1,6 +1,7 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.member.Member;
@@ -175,5 +176,21 @@ public class QuestionConverter {
                         .question(null)
                         .questionType(null)
                         .build());
+    }
+
+    public static MemberOfficialQuestion toMemberOfficialQuestion(Member member, OfficialQuestion officialQuestion){
+
+        return MemberOfficialQuestion.builder()
+                .officialQuestion(officialQuestion)
+                .member(member)
+                .build();
+    }
+
+    public static QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO toSaveMemberOfficialQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
+
+        return QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO.builder()
+                .id(memberOfficialQuestion.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 }

@@ -5,6 +5,8 @@ import com.coredisc.common.converter.QuestionCategoryConverter;
 import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.category.Category;
@@ -33,6 +35,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final TodayQuestionRepository todayQuestionRepository;
     private final CategoryRepository categoryRepository;
     private final QuestionCategoryRepository questionCategoryRepository;
+    private final MemberOfficialQuestionRepository memberOfficialQuestionRepository;
 
     // 내가 작성한 질문 저장
     @Override
@@ -218,5 +221,21 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         questionCategoryRepository.deleteByPersonalQuestion(existPersonalQuestion);
 
         personalQuestionRepository.deleteById(questionId);
+    }
+
+
+    // 타사용자가 작성한 공유 질문 저장
+    @Override
+    @Transactional
+    public MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId) {
+
+        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+
+        // 본인이 작성헀는지 여부
+        if (selectedOfficialQuestion.getMember().equals(member))
+            throw new QuestionHandler(ErrorStatus.CANNOT_SELECT_OWN_OFFICIAL_QUESTION);
+
+        return memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion));
     }
 }
