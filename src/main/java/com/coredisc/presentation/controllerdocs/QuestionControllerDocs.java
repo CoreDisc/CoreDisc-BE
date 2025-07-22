@@ -74,4 +74,10 @@ public interface QuestionControllerDocs {
     })
     ApiResponse<QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO> saveMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
 
+    @Operation(summary = "저장했던 공유 질문 삭제", description = "타사용자가 발행하여 저장헀던 공유 질문을 삭제하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+    })
+    ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
+
 }

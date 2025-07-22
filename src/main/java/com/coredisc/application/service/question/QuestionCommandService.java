@@ -30,4 +30,7 @@ public interface QuestionCommandService {
 
     // 타사용자가 작성한 공유 질문 저장
     MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId);
+
+    // 저장헀던 공유 질문을 삭제
+    void deleteMemberOfficialQuestion(Member member, Long questionId);
 }

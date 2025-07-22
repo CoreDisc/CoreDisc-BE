@@ -103,5 +103,14 @@ public class QuestionController implements QuestionControllerDocs {
 
         return ApiResponse.onSuccess(QuestionConverter.toSaveMemberOfficialQuestionResultDTO(questionCommandService.saveMemberOfficialQuestion(member, questionId)));
     }
-    
+
+    // 저장헀던 공유 질문을 삭제
+    @DeleteMapping("/official/saved/{questionId}")
+    public ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+
+        questionCommandService.deleteMemberOfficialQuestion(member, questionId);
+
+        return ApiResponse.onSuccess("질문이 삭제되었습니다.");
+    }
+
 }

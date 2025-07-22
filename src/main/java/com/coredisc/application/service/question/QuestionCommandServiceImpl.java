@@ -238,4 +238,15 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         return memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion));
     }
+
+    // 저장헀던 공유 질문을 삭제
+    @Override
+    @Transactional
+    public void deleteMemberOfficialQuestion(Member member, Long questionId) {
+
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndId(member, questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
+
+        memberOfficialQuestionRepository.delete(memberOfficialQuestion);
+    }
 }
