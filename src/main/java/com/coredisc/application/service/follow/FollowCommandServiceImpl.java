@@ -62,6 +62,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     }
 
     @Override
+    // 차단 시, Follow 관계가 삭제되기에 친친 설정 로직에서 차단 여부는 체크하지 않음
     public void updateCircleStatus(Member member, Long targetId, boolean isCircle) {
 
         // 자기 자신을 친한친구로 설정하려는 경우
@@ -72,13 +73,19 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         Member target = memberRepository.findById(targetId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // 상대방이 나를 팔로우하고 있는지 확인
-        // 상대방이 나를 팔로우하고 있는 경우에만 isCircle 변경 가능
-        Follow follow = followRepository.findByFollowerAndFollowing(target, member);
-        if (follow == null) {
-            throw new FollowHandler(ErrorStatus.FOLLOWER_NOT_FOUND);
+        // 상대방이 나를 팔로우 하고 있는지 확인
+        Follow followFromTarget = followRepository.findByFollowerAndFollowing(target, member);
+        if (followFromTarget == null) {
+            throw new FollowHandler(ErrorStatus.MUST_BE_MUTUAL_FOLLOW_TO_BE_CIRCLE);
         }
 
-        follow.updateCircle(isCircle);
+        // 나도 상대방을 팔로우 하고 있는지 확인 (맞팔인 경우에만 친친 가능)
+        Follow followToTarget = followRepository.findByFollowerAndFollowing(member, target);
+        if (followToTarget == null) {
+            throw new FollowHandler(ErrorStatus.MUST_BE_MUTUAL_FOLLOW_TO_BE_CIRCLE);
+        }
+
+        // 나를 팔로우 하고 있는 팔로워 중에서 친한친구 설정 가능
+        followFromTarget.updateCircle(isCircle);
     }
 }
