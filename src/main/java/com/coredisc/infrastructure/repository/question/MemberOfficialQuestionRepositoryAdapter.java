@@ -3,6 +3,7 @@ package com.coredisc.infrastructure.repository.question;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +28,11 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
     @Override
     public void delete(MemberOfficialQuestion memberOfficialQuestion) {
         jpaMemberOfficialQuestionRepository.delete(memberOfficialQuestion);
+    }
+
+    @Override
+    public Optional<MemberOfficialQuestion> findByMemberAndOfficialQuestion(Member member, OfficialQuestion officialQuestion) {
+        return jpaMemberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, officialQuestion);
     }
 
 }

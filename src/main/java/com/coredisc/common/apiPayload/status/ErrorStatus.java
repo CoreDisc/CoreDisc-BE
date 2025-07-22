@@ -94,6 +94,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PERSONAL_QUESTION_USED_IN_TODAY_QUESTION(HttpStatus.CONFLICT, "QUESTION4008", "고정 또는 랜덤 질문으로 사용된 질문은 삭제할 수 없습니다."),
     CANNOT_SELECT_OWN_OFFICIAL_QUESTION(HttpStatus.FORBIDDEN, "QUESTION4009", "자신이 작성한 공유 질문은 저장할 수 없습니다."),
     MEMBER_OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION4010", "저장한 공유 질문이 존재하지 않습니다."),
+    ALREADY_SAVED_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4011", "이미 해당 공유 질문을 저장했습니다."),
 
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
