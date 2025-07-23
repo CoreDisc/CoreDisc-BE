@@ -30,6 +30,10 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4010", "유효하지 않은 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4011", "토큰이 만료되었습니다."),
     TOKEN_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "AUTH4012", "이 토큰은 로그아웃되어 더 이상 유효하지 않습니다."),
+    SAME_EMAIL_REQUEST(HttpStatus.CONFLICT, "AUTH4013", "현재 사용하고 계신 이메일과 동일합니다."),
+    SAME_USERNAME_REQUEST(HttpStatus.CONFLICT, "AUTH4014", "현재 사용하고 계신 아이디와 동일합니다."),
+    INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4015", "현재 사용하고 계신 비밀번호와 일치하지 않습니다."),
+    PASSWORD_CHECK_NOT_EQUAL(HttpStatus.BAD_REQUEST, "AUTH4016", "재확인 비밀번호가 일치하지 않습니다."),
 
     // 인증코드 메일 전송 관련 에러
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
@@ -66,6 +70,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
 
+
     // 이용 약관 관련 에러
     TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "TERMS4001", "존재하지 않는 이용 약관 항목입니다."),
 
@@ -85,8 +90,12 @@ public enum ErrorStatus implements BaseErrorCode {
     QUESTION_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4004", "해당되는 저장 타입이 없습니다."),
     DUPLICATE_FIXED_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4005", "해당 순서의 질문이 이번 달에 이미 존재합니다."),
     DUPLICATE_RANDOM_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4006", "이미 오늘 설정한 랜덤 질문이 존재합니다."),
+    UNAUTHORIZED_PERSONAL_QUESTION_ACCESS(HttpStatus.FORBIDDEN, "QUESTION4007", "해당 질문에 대한 수정/삭제 권한이 없습니다."),
+    PERSONAL_QUESTION_USED_IN_TODAY_QUESTION(HttpStatus.CONFLICT, "QUESTION4008", "고정 또는 랜덤 질문으로 사용된 질문은 삭제할 수 없습니다."),
+    CANNOT_SELECT_OWN_OFFICIAL_QUESTION(HttpStatus.FORBIDDEN, "QUESTION4009", "자신이 작성한 공유 질문은 저장할 수 없습니다."),
+    MEMBER_OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION4010", "저장한 공유 질문이 존재하지 않습니다."),
+    ALREADY_SAVED_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4011", "이미 해당 공유 질문을 저장했습니다."),
 
-    
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
     ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "FOLLOW4002", "이미 팔로우한 이력이 있습니다."),

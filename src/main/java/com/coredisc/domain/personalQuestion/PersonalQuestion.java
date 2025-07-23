@@ -33,4 +33,8 @@ public class PersonalQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "personalQuestion")
     private List<TodayQuestion> todayQuestionList = new ArrayList<>();
+
+    public void updatePersonalQuestion(String content) {
+        this.content = content;
+    }
 }

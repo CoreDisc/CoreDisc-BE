@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/questions")
 @RequiredArgsConstructor
@@ -66,10 +68,49 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess(QuestionConverter.toSaveFixedTodayQuestionResultDTO(questionCommandService.saveFixedTodayQuestion(request, member)));
     }
 
+    // 랜덤 질문 선택
     @PostMapping("/random")
     public ApiResponse<QuestionResponseDTO.SaveRandomTodayQuestionResultDTO> saveRandomTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveRandomTodayQuestionDTO request) {
 
         return ApiResponse.onSuccess(QuestionConverter.toSaveRandomTodayQuestionResultDTO(questionCommandService.saveRandomTodayQuestion(request, member)));
+    }
+
+    // 선택한 고정&랜덤 질문 조회
+    @GetMapping("/selected")
+    public ApiResponse<List<QuestionResponseDTO.SelectedTodayQuestionResultDTO>> getMyTodayQuestion(@CurrentMember Member member) {
+
+        return ApiResponse.onSuccess(questionQueryService.getMyTodayQuestion(member));
+    }
+
+    // 사용자가 작성하여 저장했던 질문 수정
+    public ApiResponse<QuestionResponseDTO.savePersonalQuestionResultDTO> updatePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @Valid @RequestBody QuestionRequestDTO.SavePersonalQuestionDTO request) {
+
+        return ApiResponse.onSuccess(QuestionConverter.toSavePersonalQuestionResultDTO(questionCommandService.updatePersonalQuestion(member, questionId, request)));
+    }
+
+    // 사용자가 작성하여 저장했던 질문 삭제
+    @DeleteMapping("/personal/{questionId}")
+    public ApiResponse<String> deletePersonalQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+
+        questionCommandService.deletePersonalQuestion(member, questionId);
+
+        return ApiResponse.onSuccess("질문이 삭제되었습니다.");
+    }
+
+    // 타사용자가 작성한 공유 질문 저장
+    @PostMapping("/official/{questionId}")
+    public ApiResponse<QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO> saveMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+
+        return ApiResponse.onSuccess(QuestionConverter.toSaveMemberOfficialQuestionResultDTO(questionCommandService.saveMemberOfficialQuestion(member, questionId)));
+    }
+
+    // 저장헀던 공유 질문을 삭제
+    @DeleteMapping("/official/saved/{questionId}")
+    public ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+
+        questionCommandService.deleteMemberOfficialQuestion(member, questionId);
+
+        return ApiResponse.onSuccess("질문이 삭제되었습니다.");
     }
 
 }

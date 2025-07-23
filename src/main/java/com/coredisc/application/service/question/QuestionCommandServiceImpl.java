@@ -5,6 +5,8 @@ import com.coredisc.common.converter.QuestionCategoryConverter;
 import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.category.Category;
@@ -33,6 +35,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final TodayQuestionRepository todayQuestionRepository;
     private final CategoryRepository categoryRepository;
     private final QuestionCategoryRepository questionCategoryRepository;
+    private final MemberOfficialQuestionRepository memberOfficialQuestionRepository;
 
     // 내가 작성한 질문 저장
     @Override
@@ -161,5 +164,93 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         }
 
         return todayQuestionRepository.save(newTodayQuestion);
+    }
+
+    // 사용자가 작성하여 저장했던 질문 수정
+    @Override
+    @Transactional
+    public PersonalQuestion updatePersonalQuestion(Member member, Long questionId, QuestionRequestDTO.SavePersonalQuestionDTO request) {
+
+        PersonalQuestion existPersonalQuestion = personalQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_NOT_FOUND));
+
+        // 작성자 일치 여부
+        if (!existPersonalQuestion.getMember().equals(member))
+            throw new QuestionHandler(ErrorStatus.UNAUTHORIZED_PERSONAL_QUESTION_ACCESS);
+
+        // 질문 내용 수정
+        existPersonalQuestion.updatePersonalQuestion(request.getQuestion());
+
+        // 기존 선택된 카테고리 삭제
+        questionCategoryRepository.deleteByPersonalQuestion(existPersonalQuestion);
+
+        // 카테고리 수정
+        if (request.getCategoryIdList() != null) {
+            for (Long categoryId : request.getCategoryIdList()) {
+                Category category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+
+                QuestionCategory questionCategory = QuestionCategoryConverter.toQuestionCategoryByPersonalQuestion(category, existPersonalQuestion);
+
+                questionCategoryRepository.save(questionCategory);
+            }
+        }
+
+        return existPersonalQuestion;
+    }
+
+
+    // 사용자가 작성하여 저장했던 질문 삭제
+    @Override
+    @Transactional
+    public void deletePersonalQuestion(Member member, Long questionId) {
+
+        PersonalQuestion existPersonalQuestion = personalQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_NOT_FOUND));
+
+        // 작성자 일치 여부
+        if (!existPersonalQuestion.getMember().equals(member))
+            throw new QuestionHandler(ErrorStatus.UNAUTHORIZED_PERSONAL_QUESTION_ACCESS);
+
+        // 고정 또는 랜덤 질문으로 사용되었으면 삭제 불가
+        if (todayQuestionRepository.existsByPersonalQuestion(existPersonalQuestion)) {
+            throw new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_USED_IN_TODAY_QUESTION);
+        }
+        
+        // 선택된 카테고리 삭제
+        questionCategoryRepository.deleteByPersonalQuestion(existPersonalQuestion);
+
+        personalQuestionRepository.deleteById(questionId);
+    }
+
+
+    // 타사용자가 작성한 공유 질문 저장
+    @Override
+    @Transactional
+    public MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId) {
+
+        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+
+        // 이미 저장 여부
+        if(memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion).isPresent())
+            throw new QuestionHandler(ErrorStatus.ALREADY_SAVED_OFFICIAL_QUESTION);
+
+        // 본인이 작성헀는지 여부
+        if (selectedOfficialQuestion.getMember().equals(member))
+            throw new QuestionHandler(ErrorStatus.CANNOT_SELECT_OWN_OFFICIAL_QUESTION);
+
+        return memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion));
+    }
+
+    // 저장헀던 공유 질문을 삭제
+    @Override
+    @Transactional
+    public void deleteMemberOfficialQuestion(Member member, Long questionId) {
+
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndId(member, questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
+
+        memberOfficialQuestionRepository.delete(memberOfficialQuestion);
     }
 }
