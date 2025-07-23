@@ -95,8 +95,6 @@ public class PostResponseDTO {
 
         }
 
-
-
         @Getter
         @Builder
         public static class SelectiveDiaryDto {
@@ -184,5 +182,43 @@ public class PostResponseDTO {
         private String uploadUrl;
         private String imageUrl;
         private LocalDateTime expiresAt;
+    }
+
+
+    /**
+     * 임시저장 게시글 상세 응답 DTO
+     */
+    @Builder
+    @Getter
+    public static class TempPostDetailDto {
+        private Long postId;
+        private LocalDate selectedDate;
+        private PostStatus status;
+        private List<TempAnswerDto> answers;
+        private PostDetailDto.SelectiveDiaryDto selectiveDiary;
+    }
+
+    /**
+     * 임시저장 답변 DTO
+     */
+    @Builder
+    @Getter
+    public static class TempAnswerDto {
+        private Integer questionId;
+        private String questionContent;
+        private AnswerType answerType;
+        private String textContent;
+        private String imageUrl;
+        private LocalDateTime updatedAt;
+    }
+
+    /**
+     *  오늘 날짜 기준 임시저잔된 게시글 들만 조회 - 응답
+     */
+
+    @Builder
+    @Getter
+    public static class TempAnswerPostDto {
+        private List<Long> PostIds;
     }
 }

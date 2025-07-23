@@ -12,19 +12,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
+import static com.coredisc.domain.post.QPost.*;
 
 @Repository
 @RequiredArgsConstructor
-public class QueryPostRepositoryImpl implements  QueryPostRepository{
+public class QueryPostRepositoryImpl implements QueryPostRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable) {
 
-        QPost p = QPost.post;
+        QPost p = post;
         QPostAnswer pa = QPostAnswer.postAnswer;
         QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
 
@@ -45,7 +50,7 @@ public class QueryPostRepositoryImpl implements  QueryPostRepository{
     @Override
     public List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable) {
 
-        QPost p = QPost.post;
+        QPost p = post;
         QPostAnswer pa = QPostAnswer.postAnswer;
         QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
 
@@ -70,7 +75,7 @@ public class QueryPostRepositoryImpl implements  QueryPostRepository{
     @Override
     public boolean existsByMemberAndIdLessThan(Member member, Long id,
                                                Set<PublicityType> allowTypes) {
-        QPost p = QPost.post;
+        QPost p = post;
         Integer fetchOne = jpaQueryFactory
                 .selectOne()
                 .from(p)
@@ -83,5 +88,21 @@ public class QueryPostRepositoryImpl implements  QueryPostRepository{
                 )
                 .fetchFirst();
         return fetchOne != null;
+    }
+
+    @Override
+    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate) {
+        LocalDateTime start = selectedDate.atStartOfDay();
+        LocalDateTime end = selectedDate.plusDays(1).atStartOfDay();
+
+        return jpaQueryFactory
+                .selectFrom(post)
+                .where(
+                        post.member.eq(member),
+                        post.status.eq(PostStatus.TEMP),
+                        post.createdAt.goe(start),
+                        post.createdAt.lt(end)
+                )
+                .fetch();
     }
 }
