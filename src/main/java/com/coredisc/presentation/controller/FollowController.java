@@ -9,6 +9,8 @@ import com.coredisc.presentation.controllerdocs.FollowControllerDocs;
 import com.coredisc.presentation.dto.follow.FollowResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,22 +42,22 @@ public class FollowController implements FollowControllerDocs {
     }
 
     @GetMapping("/api/followers")
-    public ApiResponse<FollowResponseDTO.FollowerListViewDTO> getFollowers(
-            @CurrentMember Member member
+    public ApiResponse<FollowResponseDTO.FollowerListDTO> getFollowers(
+            @CurrentMember Member member,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-
-        return ApiResponse.onSuccess(FollowConverter.toFollowerListViewDTO(
-                followQueryService.getFollowers(member)
-        ));
+        Pageable pageable = PageRequest.of(0, size);
+        return ApiResponse.onSuccess(followQueryService.getFollowers(member, cursorId, pageable));
     }
 
     @GetMapping("/api/followings")
-    public ApiResponse<FollowResponseDTO.FollowingListViewDTO> getFollowings(
-            @CurrentMember Member member
+    public ApiResponse<FollowResponseDTO.FollowingListDTO> getFollowings(
+            @CurrentMember Member member,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-
-        return ApiResponse.onSuccess(FollowConverter.toFollowingListViewDTO(
-                followQueryService.getFollowings(member)
-        ));
+        Pageable pageable = PageRequest.of(0, size);
+        return ApiResponse.onSuccess(followQueryService.getFollowings(member, cursorId, pageable));
     }
 }
