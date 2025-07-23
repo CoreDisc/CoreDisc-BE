@@ -44,8 +44,8 @@ public class ReportStatConverter {
     }
 
     public static ReportStatResponseDTO.MostSelectedQuestionDTO toMostSelectedQuestionDTO(ReportRawData.MostSelectedQuestionRawData rawData) {
-        List<ReportStatResponseDTO.SeletedQuestionDTO> questions = rawData.getQuestions().stream()
-                .map(data -> ReportStatResponseDTO.SeletedQuestionDTO.builder()
+        List<ReportStatResponseDTO.SelectedQuestionDTO> questions = rawData.getQuestions().stream()
+                .map(data -> ReportStatResponseDTO.SelectedQuestionDTO.builder()
                         .questionContent(data.getQuestionContent())
                         .selectedCount(data.getSelectionCount())
                         .build()
