@@ -127,4 +127,15 @@ public class QuestionResponseDTO {
 
         private QuestionType questionType;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SaveMemberOfficialQuestionResultDTO {
+
+        private Long id;
+
+        private LocalDateTime createdAt;
+    }
 }
