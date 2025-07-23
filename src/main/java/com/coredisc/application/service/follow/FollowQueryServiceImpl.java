@@ -48,9 +48,6 @@ public class FollowQueryServiceImpl implements FollowQueryService {
         CursorDTO<FollowResponseDTO.FollowerDTO> cursorDTO = new CursorDTO<>(dtos, hasNext);
         int totalCount = queryFollowRepository.countCircleFollowers(member);
 
-        return FollowResponseDTO.FollowerListDTO.builder()
-                .totalCount(totalCount)
-                .followerCursor(cursorDTO)
-                .build();
+        return FollowConverter.toFollowerListDTO(totalCount, cursorDTO);
     }
 }

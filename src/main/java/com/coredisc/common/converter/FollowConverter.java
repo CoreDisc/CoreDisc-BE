@@ -2,6 +2,7 @@ package com.coredisc.common.converter;
 
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.follow.FollowResponseDTO;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,14 @@ public class FollowConverter {
                 .username(follow.getFollower().getUsername())
                 //.profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
                 .isCircle(follow.isCircle())
+                .build();
+    }
+
+    // TODO: 하단의 toFollowerListViewDTO 삭제 후 해당 메서드로 팔로워 목록 조회 시 사용 예정
+    public static FollowResponseDTO.FollowerListDTO toFollowerListDTO(int totalCount, CursorDTO cursorDTO) {
+        return FollowResponseDTO.FollowerListDTO.builder()
+                .totalCount(totalCount)
+                .followerCursor(cursorDTO)
                 .build();
     }
 
