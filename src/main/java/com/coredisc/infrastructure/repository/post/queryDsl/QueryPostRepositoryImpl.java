@@ -102,7 +102,7 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                         post.status.eq(PostStatus.TEMP),
                         post.createdAt.goe(start),
                         post.createdAt.lt(end)
-                )
+                ).orderBy(post.updatedAt.desc())
                 .fetch();
     }
 }
