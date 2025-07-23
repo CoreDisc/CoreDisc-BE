@@ -1,6 +1,7 @@
 package com.coredisc.application.service.post;
 
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 
 import java.time.LocalDate;
@@ -18,4 +19,6 @@ public interface PostQueryService {
     PostResponseDTO.TempAnswerPostDto getTempPosts(Member member , LocalDate selectedDate);
 
     PostResponseDTO.TempPostDetailDto getTempPost(Member member, Long postId);
+
+    PostResponseDTO.PostFeedResponseDTO findPostFeed(Member member, PostRequestDTO.PostFeedRequestDto request);
 }

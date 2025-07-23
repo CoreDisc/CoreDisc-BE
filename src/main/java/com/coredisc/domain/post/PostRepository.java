@@ -1,7 +1,9 @@
 package com.coredisc.domain.post;
 
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.post.PostResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
@@ -22,5 +24,9 @@ public interface PostRepository {
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
     List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
 
+    // 임시저장 게시글 조회
     List<PostAnswer> findTempPostWithAnswers(Long postId);
+
+    // 게시글 동적 조회
+    List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Member member, FeedType feedType, Long lastPostId, Integer size);
 }

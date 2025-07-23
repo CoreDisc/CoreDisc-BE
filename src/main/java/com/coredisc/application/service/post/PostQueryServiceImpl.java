@@ -3,11 +3,13 @@ package com.coredisc.application.service.post;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.PostConverter;
 import com.coredisc.common.exception.handler.PostHandler;
+import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.post.PostRepository;
+import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,4 +62,34 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         return PostConverter.toTempPostDetailDto(post, answers);
     }
+
+    @Override
+    public PostResponseDTO.PostFeedResponseDTO findPostFeed(Member member, PostRequestDTO.PostFeedRequestDto request) {
+        List<PostResponseDTO.PostFeedResponseDTO.PostSummary> posts = postRepository.findPostFeed(
+                member,
+                request.getFeedType(),
+                request.getLastPostId(),
+                request.getSize()
+        );
+
+        // hasNext 체크
+        boolean hasNext = posts.size() > request.getSize();
+        if (hasNext) {
+            posts = posts.subList(0, request.getSize());
+        }
+
+        // nextCursor 설정
+        Long nextCursor = null;
+        if (hasNext && !posts.isEmpty()) {
+            nextCursor = posts.get(posts.size() - 1).getPostId();
+        }
+
+        return PostResponseDTO.PostFeedResponseDTO.builder()
+                .posts(posts)
+                .nextCursor(nextCursor)
+                .hasNext(hasNext)
+                .build();
+    }
+
+
 }

@@ -1,10 +1,13 @@
 package com.coredisc.infrastructure.repository.post.queryDsl;
 
-import com.coredisc.domain.QTodayQuestion;
+import com.coredisc.common.converter.PostConverter;
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
+import com.coredisc.presentation.dto.post.PostResponseDTO;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -13,13 +16,17 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.coredisc.domain.QTodayQuestion.*;
+import static com.coredisc.domain.follow.QFollow.follow;
+import static com.coredisc.domain.member.QMember.*;
 import static com.coredisc.domain.post.QPost.*;
 import static com.coredisc.domain.post.QPostAnswer.*;
 import static com.coredisc.domain.post.QPostAnswerImage.*;
+import static com.coredisc.domain.profileImg.QProfileImg.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -112,9 +119,102 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
 
         return jpaQueryFactory
                 .selectFrom(postAnswer)
-                .join(postAnswer.todayQuestion , todayQuestion).fetchJoin()
+                .join(postAnswer.todayQuestion, todayQuestion).fetchJoin()
                 .where(postAnswer.post.id.eq(postId))
                 .orderBy(todayQuestion.id.asc())
                 .fetch();
+    }
+
+    @Override
+    public List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Long memberId, FeedType feedType, Long lastPostId, Integer size) {
+
+        BooleanBuilder condition = new BooleanBuilder();
+
+        // 기본 조건: 발행된 게시글만
+        condition.and(post.status.eq(PostStatus.PUBLISHED));
+
+        // 피드 타입별 필터링
+        if (feedType == FeedType.ALL) {
+            // 팔로우하는 모든 사용자의 게시글
+            condition.and(post.member.id.in(
+                    jpaQueryFactory
+                            .select(follow.following.id)
+                            .from(follow)
+                            .where(follow.follower.id.eq(memberId))
+            ));
+        } else if (feedType == FeedType.CORE) {
+            // 친한친구로 설정한 사용자들의 게시글
+            condition.and(post.member.id.in(
+                    jpaQueryFactory
+                            .select(follow.following.id)
+                            .from(follow)
+                            .where(follow.follower.id.eq(memberId)
+                                    .and(follow.isCircle.eq(true)))
+            ));
+        }
+
+        // 공개 범위 필터링
+        BooleanBuilder visibilityCondition = new BooleanBuilder();
+
+        // PUBLIC 게시글은 누구나 볼 수 있음
+        visibilityCondition.or(post.publicity.eq(PublicityType.OFFICIAL));
+
+        // CIRCLE 게시글은 서로 친한친구인 경우만 보이도록
+        visibilityCondition.or(
+                post.publicity.eq(PublicityType.CIRCLE)
+                        .and(post.member.id.in(
+                                jpaQueryFactory
+                                        .select(follow.following.id)
+                                        .from(follow)
+                                        .where(follow.follower.id.eq(memberId)
+                                                .and(follow.isCircle.eq(true)))
+                        ))
+
+        );
+
+        condition.and(visibilityCondition);
+
+        // 커서 페이지네이션 조건 추가
+        if (lastPostId != null) {
+            condition.and(post.id.lt(lastPostId));
+        }
+
+
+        // Pull 모델: 실시간으로 게시글 조회
+        List<Post> posts = jpaQueryFactory
+                .selectFrom(post)
+                .leftJoin(post.member, member).fetchJoin()
+                .leftJoin(member.profileImg, profileImg).fetchJoin()
+                .where(condition)
+                .orderBy(post.id.desc()) // 최신순 정렬
+                .limit(size + 1) // hasNext 체크를 위해 +1
+                .fetch();
+
+        // 게시글 ID 리스트 추출
+        List<Long> postIds = posts.stream()
+                .map(Post::getId)
+                .toList();
+
+        //  모든 게시글의 답변을 한 번에 조회 (N+1 방지)
+        List<com.coredisc.domain.post.PostAnswer> allAnswers = jpaQueryFactory
+                .selectFrom(postAnswer)
+                .leftJoin(postAnswer.postAnswerImage, postAnswerImage).fetchJoin()
+                .leftJoin(postAnswer.todayQuestion).fetchJoin()
+                .where(postAnswer.post.id.in(postIds))
+                .orderBy(postAnswer.post.id.asc(), postAnswer.id.asc())
+                .fetch();
+
+        // 게시글별로 답변 그룹핑
+        Map<Long, List<PostAnswer>> answersMap = allAnswers.stream()
+                .collect(Collectors.groupingBy(answer -> answer.getPost().getId()));
+
+        // PostSummary DTO로 변환
+        return posts.stream()
+                .map(postEntity -> {
+                    List<com.coredisc.domain.post.PostAnswer> postAnswers =
+                            answersMap.getOrDefault(postEntity.getId(), List.of());
+                    return PostConverter.toPostSummary(postEntity, postAnswers);
+                })
+                .toList();
     }
 }
