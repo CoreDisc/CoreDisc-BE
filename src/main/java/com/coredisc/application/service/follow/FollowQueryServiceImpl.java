@@ -2,7 +2,6 @@ package com.coredisc.application.service.follow;
 
 import com.coredisc.common.converter.FollowConverter;
 import com.coredisc.domain.follow.Follow;
-import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.infrastructure.repository.follow.queryDSL.QueryFollowRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
@@ -18,19 +17,42 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FollowQueryServiceImpl implements FollowQueryService {
 
-    private final FollowRepository followRepository;
     private final QueryFollowRepository queryFollowRepository;
 
     @Override
-    public List<Follow> getFollowers(Member member) {
+    public FollowResponseDTO.FollowerListDTO getFollowers(Member member, Long cursorId, Pageable pageable) {
 
-        return followRepository.findAllByFollowing(member);
+        List<Follow> result = queryFollowRepository.findFollowers(member, cursorId, pageable);
+
+        boolean hasNext = result.size() > pageable.getPageSize();
+        if (hasNext) result.remove(pageable.getPageSize());
+
+        List<FollowResponseDTO.FollowerDTO> dtos = result.stream()
+                .map(FollowConverter::toFollowerDTO)
+                .collect(Collectors.toList());
+
+        CursorDTO<FollowResponseDTO.FollowerDTO> cursorDTO = new CursorDTO<>(dtos, hasNext);
+        int totalCount = queryFollowRepository.countFollowers(member);
+
+        return FollowConverter.toFollowerListDTO(totalCount, cursorDTO);
     }
 
     @Override
-    public List<Follow> getFollowings(Member member) {
+    public FollowResponseDTO.FollowingListDTO getFollowings(Member member, Long cursorId, Pageable pageable) {
 
-        return followRepository.findAllByFollower(member);
+        List<Follow> result = queryFollowRepository.findFollowings(member, cursorId, pageable);
+
+        boolean hasNext = result.size() > pageable.getPageSize();
+        if (hasNext) result.remove(pageable.getPageSize());
+
+        List<FollowResponseDTO.FollowingDTO> dtos = result.stream()
+                .map(FollowConverter::toFollowingDTO)
+                .collect(Collectors.toList());
+
+        CursorDTO<FollowResponseDTO.FollowingDTO> cursorDTO = new CursorDTO<>(dtos, hasNext);
+        int totalCount = queryFollowRepository.countFollowings(member);
+
+        return FollowConverter.toFollowingListDTO(totalCount, cursorDTO);
     }
 
     @Override
