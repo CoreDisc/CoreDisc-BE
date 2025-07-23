@@ -325,6 +325,20 @@ public class PostConverter {
                 .fetch();
     }
 
+
+    public static PostResponseDTO.PostFeedResponseDTO toPostFeedResponseDto(
+            List<PostResponseDTO.PostFeedResponseDTO.PostSummary> posts,
+            Long nextCursor,
+            boolean hasNext)
+    {
+        return PostResponseDTO.PostFeedResponseDTO.builder()
+                .posts(posts)
+                .nextCursor(nextCursor)
+                .hasNext(hasNext)
+                .build();
+
+    }
+
 }
 
 

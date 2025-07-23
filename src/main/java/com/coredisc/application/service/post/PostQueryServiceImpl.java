@@ -84,11 +84,14 @@ public class PostQueryServiceImpl implements PostQueryService {
             nextCursor = posts.get(posts.size() - 1).getPostId();
         }
 
-        return PostResponseDTO.PostFeedResponseDTO.builder()
-                .posts(posts)
-                .nextCursor(nextCursor)
-                .hasNext(hasNext)
-                .build();
+        return PostConverter.toPostFeedResponseDto(posts, nextCursor,hasNext);
+    }
+
+    @Override
+    public PostResponseDTO.PostDetailDto findPostDetail(Member member, Long postId) {
+
+
+        return null;
     }
 
 

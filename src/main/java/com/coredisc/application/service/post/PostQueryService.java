@@ -21,4 +21,6 @@ public interface PostQueryService {
     PostResponseDTO.TempPostDetailDto getTempPost(Member member, Long postId);
 
     PostResponseDTO.PostFeedResponseDTO findPostFeed(Member member, PostRequestDTO.PostFeedRequestDto request);
+
+    PostResponseDTO.PostDetailDto findPostDetail(Member member, Long postId);
 }
