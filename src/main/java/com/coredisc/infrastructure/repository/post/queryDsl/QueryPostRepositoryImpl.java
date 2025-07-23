@@ -217,4 +217,19 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                 })
                 .toList();
     }
+
+    @Override
+    public Post findPostDetail(Long memberId, Long postId) {
+        // 엔티티 조회로 한 번에 조회하고 Converter 로 변환하기
+
+        return  jpaQueryFactory
+                .selectFrom(post)
+                .leftJoin(post.answers, postAnswer).fetchJoin()
+                .leftJoin(postAnswer.postAnswerImage, postAnswerImage).fetchJoin()
+                .leftJoin(post.member, member).fetchJoin()
+                .leftJoin(member.profileImg, profileImg).fetchJoin()
+                .where(post.id.eq(postId)
+                        .and(post.status.eq(PostStatus.PUBLISHED)))
+                .fetchOne();
+    }
 }

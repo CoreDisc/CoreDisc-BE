@@ -67,6 +67,11 @@ public class PostRepositoryAdaptor implements PostRepository {
     }
 
     @Override
+    public Post findPostDetail(Member member, Long postId) {
+        return queryPostRepository.findPostDetail(member.getId(),postId);
+    }
+
+    @Override
     public List<PostAnswer> findTempPostWithAnswers(Long postId) {
 
         return queryPostRepository.findTempPostAnswerByPostId(postId);

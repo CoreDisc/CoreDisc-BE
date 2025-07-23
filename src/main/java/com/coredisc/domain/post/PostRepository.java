@@ -24,9 +24,13 @@ public interface PostRepository {
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
     List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
 
+    //단건 조회
+    Post findPostDetail(Member member, Long postId);
+
     // 임시저장 게시글 조회
     List<PostAnswer> findTempPostWithAnswers(Long postId);
 
     // 게시글 동적 조회
     List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Member member, FeedType feedType, Long lastPostId, Integer size);
+
 }

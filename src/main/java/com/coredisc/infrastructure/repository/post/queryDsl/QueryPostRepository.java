@@ -25,4 +25,6 @@ public interface QueryPostRepository {
     List<PostAnswer> findTempPostAnswerByPostId(Long postId);
 
     List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Long memberId, FeedType feedType, Long lastPostId, Integer size);
+
+    Post findPostDetail(Long memberId, Long postId);
 }

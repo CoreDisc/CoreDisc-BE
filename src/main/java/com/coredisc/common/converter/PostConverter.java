@@ -151,8 +151,8 @@ public class PostConverter {
     /**
      * Post 엔티티를 PostDetailResponseDTO로 변환
      */
-    public static PostDetailResponseDTO toPostDetailResponse(Post post, boolean isLiked) {
-        return PostDetailResponseDTO.builder()
+    public static PostDetailDto toPostDetailResponse(Post post, boolean isLiked) {
+        return PostDetailDto.builder()
                 .postId(post.getId())
                 .member(toDetailMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
@@ -181,8 +181,8 @@ public class PostConverter {
     /**
      * Member 정보를 MemberInfo DTO로 변환 (Detail용)
      */
-    private static PostDetailResponseDTO.MemberInfo toDetailMemberInfo(Post post) {
-        return PostDetailResponseDTO.MemberInfo.builder()
+    private static PostDetailDto.MemberInfo toDetailMemberInfo(Post post) {
+        return PostDetailDto.MemberInfo.builder()
                 .memberId(post.getMember().getId())
                 .nickname(post.getMember().getNickname())
                 .profileImg(post.getMember().getProfileImg() != null ?
@@ -243,8 +243,8 @@ public class PostConverter {
     /**
      * 선택형 일기를 SelectiveDiary DTO로 변환 (Detail용)
      */
-    private static PostDetailResponseDTO.SelectiveDiary toDetailSelectiveDiary(Post post) {
-        return PostDetailResponseDTO.SelectiveDiary.builder()
+    private static PostDetailDto.SelectiveDiary toDetailSelectiveDiary(Post post) {
+        return PostDetailDto.SelectiveDiary.builder()
                 .who(post.getDailyWho())
                 .where(post.getDailyWhere())
                 .what(post.getDailyWhat())
@@ -255,8 +255,8 @@ public class PostConverter {
     /**
      * 통계 정보를 Statistics DTO로 변환 (Detail용)
      */
-    private static PostDetailResponseDTO.Statistics toDetailStatistics(Post post) {
-        return PostDetailResponseDTO.Statistics.builder()
+    private static PostDetailDto.Statistics toDetailStatistics(Post post) {
+        return PostDetailDto.Statistics.builder()
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
                 .viewCount(post.getViewCount())
@@ -266,7 +266,7 @@ public class PostConverter {
     /**
      * PostAnswer 리스트를 Detail용 Answer DTO 리스트로 변환
      */
-    private static List<PostDetailResponseDTO.Answer> toDetailAnswerResponses(List<PostAnswer> answers) {
+    private static List<PostDetailDto.Answer> toDetailAnswerResponses(List<PostAnswer> answers) {
         return answers.stream()
                 .map(PostConverter::toDetailAnswerResponse)
                 .collect(Collectors.toList());
@@ -275,8 +275,8 @@ public class PostConverter {
     /**
      * PostAnswer를 Detail용 Answer DTO로 변환
      */
-    private static PostDetailResponseDTO.Answer toDetailAnswerResponse(PostAnswer answer) {
-        return PostDetailResponseDTO.Answer.builder()
+    private static PostDetailDto.Answer toDetailAnswerResponse(PostAnswer answer) {
+        return PostDetailDto.Answer.builder()
                 .answerId(answer.getId())
                 .questionContent(answer.getQuestionContent())
                 .answerType(answer.getType())
@@ -288,12 +288,12 @@ public class PostConverter {
     /**
      * PostAnswerImage를 Detail용 ImageAnswer DTO로 변환
      */
-    private static PostDetailResponseDTO.Answer.ImageAnswer toDetailImageAnswerResponse(PostAnswerImage image) {
+    private static PostDetailDto.Answer.ImageAnswer toDetailImageAnswerResponse(PostAnswerImage image) {
         if (image == null) {
             return null;
         }
 
-        return PostDetailResponseDTO.Answer.ImageAnswer.builder()
+        return PostDetailDto.Answer.ImageAnswer.builder()
                 .imageUrl(image.getImgUrl())
                 .thumbnailUrl(image.getThumbnailUrl())
                 .build();
@@ -302,12 +302,12 @@ public class PostConverter {
     /**
      * 텍스트 답변을 Detail용 TextAnswer DTO로 변환
      */
-    private static PostDetailResponseDTO.Answer.TextAnswer toDetailTextAnswerResponse(String textContent) {
+    private static PostDetailDto.Answer.TextAnswer toDetailTextAnswerResponse(String textContent) {
         if (textContent == null || textContent.trim().isEmpty()) {
             return null;
         }
 
-        return PostDetailResponseDTO.Answer.TextAnswer.builder()
+        return PostDetailDto.Answer.TextAnswer.builder()
                 .content(textContent)
                 .build();
     }

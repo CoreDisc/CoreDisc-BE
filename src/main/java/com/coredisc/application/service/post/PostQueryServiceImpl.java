@@ -3,11 +3,12 @@ package com.coredisc.application.service.post;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.PostConverter;
 import com.coredisc.common.exception.handler.PostHandler;
-import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
+import com.coredisc.domain.post.PostLikeRepository;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
@@ -24,6 +25,8 @@ import java.util.List;
 public class PostQueryServiceImpl implements PostQueryService {
 
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final PostLikeRepository postLikeRepository;
 
     @Override
     public PostResponseDTO.TempAnswerPostDto getTempPosts(Member member, LocalDate selectedDate) {
@@ -89,9 +92,30 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     @Override
     public PostResponseDTO.PostDetailDto findPostDetail(Member member, Long postId) {
+        Post post = postRepository.findPostDetail(member,postId);
 
+        // 게시글 존재 여부 예외처리
+        if(post == null) throw new PostHandler(ErrorStatus.POST_NOT_FOUND);
 
-        return null;
+        // 발행 여부 예외처리
+        if(post.isTemp()) throw new PostHandler(ErrorStatus.POST_NOT_READY_TO_PUBLISH);
+
+        // 좋아요 여부 체크
+        boolean isLiked = checkIsLiked(member.getId(),postId);
+
+        return PostConverter.toPostDetailResponse(post, isLiked);
+    }
+
+    /**
+     * 좋아요 여부 확인
+     */
+    private boolean checkIsLiked(Long memberId, Long postId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
+        return postLikeRepository.existsByMemberAndPost(member, post);
     }
 
 
