@@ -222,4 +222,115 @@ public class PostResponseDTO {
     public static class TempAnswerPostDto {
         private List<Long> PostIds;
     }
+
+    @Getter
+    @Builder
+    public static class PostFeedResponseDTO {
+        private List<PostSummary> posts;
+        private Long nextCursor;
+        private Boolean hasNext;
+
+        @Getter
+        @Builder
+        public static class PostSummary {
+            private Long postId;
+            private MemberInfo member;
+            private LocalDate selectedDate;
+            private List<Answer> answers;  // 4개 답변 모두 포함
+            private LocalDateTime createdAt;
+
+            @Getter
+            @Builder
+            public static class MemberInfo {
+                private Long memberId;
+                private String nickname;
+                private String profileImg;
+            }
+
+            @Getter
+            @Builder
+            public static class Answer {
+                private Long answerId;
+                private String questionContent;
+                private AnswerType answerType;
+                private ImageAnswer imageAnswer;  // IMAGE 타입일 때만
+                private TextAnswer textAnswer;    // TEXT 타입일 때만
+
+                @Getter
+                @Builder
+                public static class ImageAnswer {
+                    private String thumbnailUrl;
+                }
+
+                @Getter
+                @Builder
+                public static class TextAnswer {
+                    private String content;
+                }
+            }
+        }
+    }
+
+    @Getter
+    @Builder
+    public static class PostDetailResponseDTO {
+        private Long postId;
+        private MemberInfo member;
+        private LocalDate selectedDate;
+        private PublicityType visibility;
+        private List<Answer> answers;
+        private SelectiveDiary selectiveDiary;
+        private Statistics statistics;
+        private Boolean isLiked;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+        @Getter
+        @Builder
+        public static class MemberInfo {
+            private Long memberId;
+            private String nickname;
+            private String profileImg;
+        }
+
+        @Getter
+        @Builder
+        public static class Answer {
+            private Long answerId;
+            private String questionContent;
+            private AnswerType answerType;
+            private ImageAnswer imageAnswer;
+            private TextAnswer textAnswer;
+
+            @Getter
+            @Builder
+            public static class ImageAnswer {
+                private String imageUrl;
+                private String thumbnailUrl;
+            }
+
+            @Getter
+            @Builder
+            public static class TextAnswer {
+                private String content;
+            }
+        }
+
+        @Getter
+        @Builder
+        public static class SelectiveDiary {
+            private String who;
+            private String where;
+            private String what;
+            private String mood;
+        }
+
+        @Getter
+        @Builder
+        public static class Statistics {
+            private Integer likeCount;
+            private Integer commentCount;
+            private Integer viewCount;
+        }
+    }
 }

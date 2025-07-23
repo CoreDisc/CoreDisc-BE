@@ -1,11 +1,11 @@
 package com.coredisc.presentation.dto.post;
 
-import com.coredisc.domain.common.enums.AnswerType;
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,5 +75,17 @@ public class PostRequestDTO {
         }
     }
 
+    /**
+     * 게시글 조회용 request
+     */
+
+    @Getter
+    @Builder
+    public static class PostFeedRequestDto {
+
+        private FeedType feedType = FeedType.ALL;
+        private Long lastPostId;
+        private Integer size = 10;
+    }
 
 }
