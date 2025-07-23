@@ -30,6 +30,10 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4010", "유효하지 않은 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4011", "토큰이 만료되었습니다."),
     TOKEN_LOGGED_OUT(HttpStatus.UNAUTHORIZED, "AUTH4012", "이 토큰은 로그아웃되어 더 이상 유효하지 않습니다."),
+    SAME_EMAIL_REQUEST(HttpStatus.CONFLICT, "AUTH4013", "현재 사용하고 계신 이메일과 동일합니다."),
+    SAME_USERNAME_REQUEST(HttpStatus.CONFLICT, "AUTH4014", "현재 사용하고 계신 아이디와 동일합니다."),
+    INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4015", "현재 사용하고 계신 비밀번호와 일치하지 않습니다."),
+    PASSWORD_CHECK_NOT_EQUAL(HttpStatus.BAD_REQUEST, "AUTH4016", "재확인 비밀번호가 일치하지 않습니다."),
 
     // 인증코드 메일 전송 관련 에러
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
@@ -66,6 +70,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 멤버 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
 
+
     // 이용 약관 관련 에러
     TERMS_NOT_FOUND(HttpStatus.NOT_FOUND, "TERMS4001", "존재하지 않는 이용 약관 항목입니다."),
 
@@ -76,7 +81,20 @@ public enum ErrorStatus implements BaseErrorCode {
     SELF_PROFILE_REQUEST(HttpStatus.BAD_REQUEST, "MY_HOME4001", "자기 자신의 프로필은 해당 API로 요청할 수 없습니다."),
 
     // 카테고리 관련 에러
-    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "해당 카테고리가 없습니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "헤딩 카테고리가 없습니다."),
+
+    // 질문 관련 에러
+    BASIC_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4001", "해당되는 기본 질문이 없습니다."),
+    OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4002", "해당되는 공유 질문이 없습니다."),
+    PERSONAL_QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4003", "해당되는 저장 질문이 없습니다."),
+    QUESTION_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4004", "해당되는 저장 타입이 없습니다."),
+    DUPLICATE_FIXED_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4005", "해당 순서의 질문이 이번 달에 이미 존재합니다."),
+    DUPLICATE_RANDOM_TODAY_QUESTION_ORDER(HttpStatus.CONFLICT, "QUESTION4006", "이미 오늘 설정한 랜덤 질문이 존재합니다."),
+    UNAUTHORIZED_PERSONAL_QUESTION_ACCESS(HttpStatus.FORBIDDEN, "QUESTION4007", "해당 질문에 대한 수정/삭제 권한이 없습니다."),
+    PERSONAL_QUESTION_USED_IN_TODAY_QUESTION(HttpStatus.CONFLICT, "QUESTION4008", "고정 또는 랜덤 질문으로 사용된 질문은 삭제할 수 없습니다."),
+    CANNOT_SELECT_OWN_OFFICIAL_QUESTION(HttpStatus.FORBIDDEN, "QUESTION4009", "자신이 작성한 공유 질문은 저장할 수 없습니다."),
+    MEMBER_OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION4010", "저장한 공유 질문이 존재하지 않습니다."),
+    ALREADY_SAVED_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4011", "이미 해당 공유 질문을 저장했습니다."),
 
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
@@ -86,13 +104,20 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 차단 관련 에러
     BLOCKED_MEMBER_REQUEST(HttpStatus.BAD_REQUEST, "Block4001", "차단된 사용자입니다."),
+    SELF_BLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4001", "자기 자신은 차단할 수 없습니다."),
+    ALREADY_BLOCKING(HttpStatus.BAD_REQUEST, "BLOCK4002", "이미 차단한 이력이 있습니다."),
+    BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "BLOCK4003", "차단한 이력이 없습니다."),
+    SELF_UNBLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4004", "자기 자신은 차단 취소 할 수 없습니다."),
+
+    // Circle 관련 에러
+    SELF_CIRCLE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "CIRCLE4001", "자기 자신은 친한 친구로 설정할 수 없습니다."),
+    MUST_BE_MUTUAL_FOLLOW_TO_BE_CIRCLE(HttpStatus.BAD_REQUEST, "CIRCLE4002", "서로 맞팔로우 관계여야 친한친구로 등록할 수 있습니다."),
 
     // Disc 관련 에러
     DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
 
     // 페이지 관련 에러
     PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),
-
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");

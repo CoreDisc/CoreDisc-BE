@@ -1,11 +1,11 @@
 package com.coredisc.infrastructure.repository.post.queryDsl;
 
-import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
+import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
@@ -27,4 +27,8 @@ public interface QueryPostRepository {
     List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Long memberId, FeedType feedType, Long lastPostId, Integer size);
 
     Post findPostDetail(Long memberId, Long postId);
+
+
+
+    List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
 }

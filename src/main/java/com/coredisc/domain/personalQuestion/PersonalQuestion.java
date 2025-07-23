@@ -1,6 +1,6 @@
 package com.coredisc.domain.personalQuestion;
 
-import com.coredisc.domain.TodayQuestion;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
@@ -33,4 +33,8 @@ public class PersonalQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "personalQuestion")
     private List<TodayQuestion> todayQuestionList = new ArrayList<>();
+
+    public void updatePersonalQuestion(String content) {
+        this.content = content;
+    }
 }

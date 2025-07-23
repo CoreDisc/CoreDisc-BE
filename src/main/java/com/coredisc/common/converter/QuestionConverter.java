@@ -1,12 +1,22 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
+import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class QuestionConverter {
 
@@ -38,6 +48,148 @@ public class QuestionConverter {
 
         return QuestionResponseDTO.saveOfficialQuestionResultDTO.builder()
                 .id(officialQuestion.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static QuestionResponseDTO.BasicQuestionListResultDTO toBasicQuestionListResultDTO(Page<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList) {
+
+        return QuestionResponseDTO.BasicQuestionListResultDTO.builder()
+                .basicQuestionList(basicQuestionList.getContent())
+                .listSize(basicQuestionList.getNumberOfElements())
+                .totalPage(basicQuestionList.getTotalPages())
+                .totalElements(basicQuestionList.getTotalElements())
+                .isFirst(basicQuestionList.isFirst())
+                .isLast(basicQuestionList.isLast())
+                .build();
+    }
+
+    public static List<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOList(List<OfficialQuestion> officialQuestions) {
+        return officialQuestions.stream()
+                .map(officialQuestion -> {
+                    List<CategoryResponseDTO.CategoryInfoDTO> categories = officialQuestion.getQuestionCategoryList().stream()
+                            .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                                    .categoryId(qc.getCategory().getId())
+                                    .categoryName(qc.getCategory().getName())
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    return QuestionResponseDTO.MySharedQuestionResultDTO.builder()
+                            .id(officialQuestion.getId())
+                            .categories(categories)
+                            .question(officialQuestion.getContents())
+                            .sharedCount(0L) // TODO: 공유 횟수 적용
+                            .createdAt(officialQuestion.getCreatedAt())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    public static Page<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOPage(Page<OfficialQuestion> officialQuestionList, Pageable pageable) {
+        List<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestiondtoList = toMySharedQuestionResultDTOList(officialQuestionList.getContent());
+        return new org.springframework.data.domain.PageImpl<>(mySharedQuestiondtoList, pageable, officialQuestionList.getTotalElements());
+    }
+
+    public static QuestionResponseDTO.MySharedQuestionListResultDTO toMySharedQuestionListResultDTO(Page<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList, Long totalMySharedQuestionCnt) {
+        return QuestionResponseDTO.MySharedQuestionListResultDTO.builder()
+                .mySharedQuestionCnt(totalMySharedQuestionCnt)
+                .mySharedQuestionList(mySharedQuestionList.getContent())
+                .listSize(mySharedQuestionList.getNumberOfElements())
+                .totalPage(mySharedQuestionList.getTotalPages())
+                .totalElements(mySharedQuestionList.getTotalElements())
+                .isFirst(mySharedQuestionList.isFirst())
+                .isLast(mySharedQuestionList.isLast())
+                .build();
+    }
+
+    public static TodayQuestion toFixedTodayQuestionByOfficial(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, OfficialQuestion officialQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDate.now())
+                .questionType(questionType)
+                .questionOrder(request.getQuestionOrder())
+                .member(member)
+                .officialQuestion(officialQuestion)
+                .build();
+    }
+
+    public static TodayQuestion toFixedTodayQuestionByPersonal(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, PersonalQuestion personalQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDate.now())
+                .questionType(questionType)
+                .questionOrder(request.getQuestionOrder())
+                .member(member)
+                .personalQuestion(personalQuestion)
+                .build();
+    }
+
+    public static QuestionResponseDTO.SaveFixedTodayQuestionResultDTO toSaveFixedTodayQuestionResultDTO(TodayQuestion todayQuestion) {
+
+        return QuestionResponseDTO.SaveFixedTodayQuestionResultDTO.builder()
+                .id(todayQuestion.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static TodayQuestion toRandomTodayQuestionByOfficial(QuestionType questionType, OfficialQuestion officialQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDate.now())
+                .questionType(questionType)
+                .questionOrder(4)
+                .member(member)
+                .officialQuestion(officialQuestion)
+                .build();
+    }
+
+    public static TodayQuestion toRandomTodayQuestionByPersonal(QuestionType questionType, PersonalQuestion personalQuestion, Member member){
+
+        return TodayQuestion.builder()
+                .selectedDate(LocalDate.now())
+                .questionType(questionType)
+                .questionOrder(4)
+                .member(member)
+                .personalQuestion(personalQuestion)
+                .build();
+    }
+
+    public static QuestionResponseDTO.SaveRandomTodayQuestionResultDTO toSaveRandomTodayQuestionResultDTO(TodayQuestion todayQuestion) {
+
+        return QuestionResponseDTO.SaveRandomTodayQuestionResultDTO.builder()
+                .id(todayQuestion.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static QuestionResponseDTO.SelectedTodayQuestionResultDTO toSelectedTodayQuestionResultDTO(Optional<TodayQuestion> todayQuestion, int questionOrder) {
+        return todayQuestion
+                .map(q -> QuestionResponseDTO.SelectedTodayQuestionResultDTO.builder()
+                        .id(q.getId())
+                        .questionOrder(questionOrder)
+                        .question(q.getQuestionContent())
+                        .questionType(q.getQuestionType())
+                        .build())
+                .orElseGet(() -> QuestionResponseDTO.SelectedTodayQuestionResultDTO.builder()
+                        .id(null)
+                        .questionOrder(questionOrder)
+                        .question(null)
+                        .questionType(null)
+                        .build());
+    }
+
+    public static MemberOfficialQuestion toMemberOfficialQuestion(Member member, OfficialQuestion officialQuestion){
+
+        return MemberOfficialQuestion.builder()
+                .officialQuestion(officialQuestion)
+                .member(member)
+                .build();
+    }
+
+    public static QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO toSaveMemberOfficialQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
+
+        return QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO.builder()
+                .id(memberOfficialQuestion.getId())
                 .createdAt(LocalDateTime.now())
                 .build();
     }

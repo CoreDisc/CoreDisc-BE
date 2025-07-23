@@ -27,7 +27,7 @@ public class ReportStatResponseDTO {
     public static class MostSelectedQuestionDTO{ //최다 선택한 랜덤 질문
         private int year;
         private int month;
-        private List<SeletedQuestionDTO> questions;
+        private List<SelectedQuestionDTO> questions;
     }
 
     @Builder
@@ -90,7 +90,7 @@ public class ReportStatResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SeletedQuestionDTO{ //선택된 질문
+    public static class SelectedQuestionDTO{ //선택된 질문
         private String questionContent;
         private int selectedCount;
     }

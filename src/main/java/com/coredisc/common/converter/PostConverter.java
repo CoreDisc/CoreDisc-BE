@@ -1,7 +1,7 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.common.util.FileUtil;
-import com.coredisc.domain.TodayQuestion;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;

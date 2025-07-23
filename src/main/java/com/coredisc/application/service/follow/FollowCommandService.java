@@ -10,4 +10,7 @@ public interface FollowCommandService {
 
     // 언팔로우 하기
     void unfollow(Member member, Long targetId);
+
+    // 친한 친구 상태 변경
+    void updateCircleStatus(Member member, Long targetId, boolean isCircle);
 }

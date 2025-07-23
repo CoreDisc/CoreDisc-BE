@@ -9,6 +9,7 @@ import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.infrastructure.repository.post.queryDsl.QueryPostRepository;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
+import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -79,9 +80,12 @@ public class PostRepositoryAdaptor implements PostRepository {
 
     @Override
     public List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Member member, FeedType feedType, Long lastPostId, Integer size) {
-
         return queryPostRepository.findPostFeed(member.getId(), feedType,lastPostId, size);
     }
 
 
+    @Override
+    public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member){
+        return queryPostRepository.findPostInfoByMemberAndMonth(year, month, member);
+    }
 }

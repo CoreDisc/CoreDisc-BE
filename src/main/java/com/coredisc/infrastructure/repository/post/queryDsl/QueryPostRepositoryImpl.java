@@ -2,12 +2,19 @@ package com.coredisc.infrastructure.repository.post.queryDsl;
 
 import com.coredisc.common.converter.PostConverter;
 import com.coredisc.domain.common.enums.FeedType;
+import com.coredisc.common.util.DateUtil;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.querydsl.core.BooleanBuilder;
+import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.QPost;
+import com.coredisc.domain.post.QPostAnswer;
+import com.coredisc.domain.post.QPostAnswerImage;
+import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +22,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,9 +46,9 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     @Override
     public List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable) {
 
-        QPost p = post;
-        QPostAnswer pa = postAnswer;
-        QPostAnswerImage pai = postAnswerImage;
+        QPost p = QPost.post;
+        QPostAnswer pa = QPostAnswer.postAnswer;
+        QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
 
         return jpaQueryFactory
                 .selectFrom(p)
@@ -58,9 +67,9 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     @Override
     public List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable) {
 
-        QPost p = post;
-        QPostAnswer pa = postAnswer;
-        QPostAnswerImage pai = postAnswerImage;
+        QPost p = QPost.post;
+        QPostAnswer pa = QPostAnswer.postAnswer;
+        QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
 
         return jpaQueryFactory
                 .selectFrom(p)
@@ -83,7 +92,7 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     @Override
     public boolean existsByMemberAndIdLessThan(Member member, Long id,
                                                Set<PublicityType> allowTypes) {
-        QPost p = post;
+        QPost p = QPost.post;
         Integer fetchOne = jpaQueryFactory
                 .selectOne()
                 .from(p)
@@ -231,5 +240,34 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                 .where(post.id.eq(postId)
                         .and(post.status.eq(PostStatus.PUBLISHED)))
                 .fetchOne();
+    }
+
+
+
+
+
+
+    // 캘린더 기능에 사용하기 위한 메소드 추가
+    @Override
+    public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member) {
+        QPost p = QPost.post;
+
+        LocalDate start = DateUtil.getStartDate(year, month);
+        LocalDate end = DateUtil.getEndDate(year, month);
+
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        CalendarPostDTO.class,
+                        p.id,
+                        p.createdAt
+                ))
+                .from(p)
+                .where(
+                        p.member.eq(member),
+                        p.status.ne(PostStatus.TEMP),
+                        p.createdAt.between(start.atStartOfDay(), end.atTime(LocalTime.MAX))
+                )
+                .orderBy(p.createdAt.asc())
+                .fetch();
     }
 }

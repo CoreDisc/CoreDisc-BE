@@ -1,8 +1,8 @@
 package com.coredisc.domain.post;
 
-import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import org.springframework.data.domain.Pageable;
 
@@ -33,4 +33,6 @@ public interface PostRepository {
     // 게시글 동적 조회
     List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Member member, FeedType feedType, Long lastPostId, Integer size);
 
+
+    List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
 }

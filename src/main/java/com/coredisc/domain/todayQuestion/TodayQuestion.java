@@ -1,4 +1,4 @@
-package com.coredisc.domain;
+package com.coredisc.domain.todayQuestion;
 
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.QuestionType;
@@ -9,7 +9,7 @@ import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +25,14 @@ public class TodayQuestion extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    protected LocalDateTime selectedDate;
+    private LocalDate selectedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private QuestionType questionType;
+
+    @Column(nullable = false)
+    private Integer questionOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -45,4 +48,16 @@ public class TodayQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "todayQuestion")
     private List<PostAnswer> postAnswers = new ArrayList<>();
+
+
+    public String getQuestionContent() {
+        if (this.officialQuestion != null) {
+            return this.officialQuestion.getContents();
+        } else if (this.personalQuestion != null) {
+            return this.personalQuestion.getContent();
+        } else {
+            return null;
+        }
+    }
 }
+

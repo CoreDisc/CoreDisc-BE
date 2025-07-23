@@ -21,4 +21,15 @@ public class CategoryResponseDTO {
 
         private Long count;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class CategoryInfoDTO {
+
+        private Long categoryId;
+
+        private String categoryName;
+    }
 }
