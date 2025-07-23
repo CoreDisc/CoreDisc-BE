@@ -3,6 +3,7 @@ package com.coredisc.infrastructure.repository.post.queryDsl;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
+import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -15,4 +16,8 @@ public interface QueryPostRepository {
     List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable);
 
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
+
+
+
+    List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
 }

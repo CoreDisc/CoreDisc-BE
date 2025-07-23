@@ -6,6 +6,7 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.infrastructure.repository.post.queryDsl.QueryPostRepository;
+import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -57,4 +58,10 @@ public class PostRepositoryAdaptor implements PostRepository {
         return queryPostRepository.existsByMemberAndIdLessThan(member, id, allowTypes);
     }
 
+
+
+    @Override
+    public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member){
+        return queryPostRepository.findPostInfoByMemberAndMonth(year, month, member);
+    }
 }
