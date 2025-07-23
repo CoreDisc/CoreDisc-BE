@@ -3,6 +3,7 @@ package com.coredisc.presentation.controller;
 import com.coredisc.application.service.post.PostCommandService;
 import com.coredisc.application.service.post.PostQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.PostControllerDocs;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
@@ -11,7 +12,6 @@ import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +32,6 @@ public class PostController implements PostControllerDocs {
         PostResponseDTO.CreatePostResultDto response = postCommandService.createEmptyPost(member, request);
         return ApiResponse.onSuccess(response);
     }
-
 
     /**
      * 텍스트 답변 작성/수정
@@ -126,8 +125,22 @@ public class PostController implements PostControllerDocs {
     }
 
     @GetMapping
-    public ApiResponse<PostResponseDTO.PostListDto> getPosts(String type, Pageable pageable) {
-        return null;
+    public ApiResponse<PostResponseDTO.PostFeedResponseDTO> getPosts(
+            @CurrentMember Member member,
+            FeedType feedType, Long cursor, Integer size) {
+        if(size >30 ) {
+            size =30;
+        }
+
+        PostRequestDTO.PostFeedRequestDto request = PostRequestDTO.PostFeedRequestDto.
+                builder()
+                .feedType(feedType)
+                .lastPostId(cursor)
+                .size(size)
+                .build();
+
+        PostResponseDTO.PostFeedResponseDTO response = postQueryService.findPostFeed(member,request);
+        return ApiResponse.onSuccess(response);
     }
 
     @DeleteMapping("/{postId}")

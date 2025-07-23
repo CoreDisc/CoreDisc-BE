@@ -1,6 +1,7 @@
 package com.coredisc.presentation.controllerdocs;
 
 import com.coredisc.common.apiPayload.ApiResponse;
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
@@ -77,10 +78,24 @@ public interface PostControllerDocs {
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long postId
     );
 
-    @Operation(summary = "게시글 목록 조회 (피드)", description = "게시글 목록을 조회합니다.")
-    ApiResponse<PostResponseDTO.PostListDto> getPosts(
-            @Parameter(description = "피드 타입 (FOLLOWING, PUBLIC)") @RequestParam(defaultValue = "PUBLIC") String type,
-            @Parameter(description = "페이징 정보") Pageable pageable
+    @Operation(
+            summary = "게시글 피드 조회 (Pull 모델)",
+            description = """
+        Pull 모델로 게시글 피드를 실시간 조회합니다.
+        - ALL: 팔로우하는 모든 사용자의 게시글
+        - CORE: 친한친구로 설정한 사용자들의 게시글
+        
+        사용자가 요청할 때마다 실시간으로 팔로우 관계를 확인하여 피드를 생성합니다.
+        cursor pagination을 사용하여 무한 스크롤을 지원합니다.
+        """
+    )
+    ApiResponse<PostResponseDTO.PostFeedResponseDTO> getPosts(
+            @CurrentMember Member member,
+            @Parameter(description = "피드 타입 (ALL: 모든 팔로우, CORE: 친한친구)", example = "ALL") @RequestParam(defaultValue = "ALL") FeedType feedType,
+            @Parameter(description = "커서 (마지막으로 조회한 게시글 ID)", example = "100")
+            @RequestParam(required = false) Long cursor,
+            @Parameter(description = "조회할 게시글 수", example = "10")
+            @RequestParam(defaultValue = "10") Integer size
     );
 
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
