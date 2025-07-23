@@ -1,12 +1,10 @@
 package com.coredisc.infrastructure.repository.post.queryDsl;
 
+import com.coredisc.domain.QTodayQuestion;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
-import com.coredisc.domain.post.Post;
-import com.coredisc.domain.post.QPost;
-import com.coredisc.domain.post.QPostAnswer;
-import com.coredisc.domain.post.QPostAnswerImage;
+import com.coredisc.domain.post.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.coredisc.domain.QTodayQuestion.*;
 import static com.coredisc.domain.post.QPost.*;
+import static com.coredisc.domain.post.QPostAnswer.*;
+import static com.coredisc.domain.post.QPostAnswerImage.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,8 +31,8 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     public List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable) {
 
         QPost p = post;
-        QPostAnswer pa = QPostAnswer.postAnswer;
-        QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
+        QPostAnswer pa = postAnswer;
+        QPostAnswerImage pai = postAnswerImage;
 
         return jpaQueryFactory
                 .selectFrom(p)
@@ -51,8 +52,8 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     public List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable) {
 
         QPost p = post;
-        QPostAnswer pa = QPostAnswer.postAnswer;
-        QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
+        QPostAnswer pa = postAnswer;
+        QPostAnswerImage pai = postAnswerImage;
 
         return jpaQueryFactory
                 .selectFrom(p)
@@ -103,6 +104,17 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                         post.createdAt.goe(start),
                         post.createdAt.lt(end)
                 ).orderBy(post.updatedAt.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<PostAnswer> findTempPostAnswerByPostId(Long postId) {
+
+        return jpaQueryFactory
+                .selectFrom(postAnswer)
+                .join(postAnswer.todayQuestion , todayQuestion).fetchJoin()
+                .where(postAnswer.post.id.eq(postId))
+                .orderBy(todayQuestion.id.asc())
                 .fetch();
     }
 }

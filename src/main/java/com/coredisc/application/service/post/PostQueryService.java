@@ -15,5 +15,7 @@ public interface PostQueryService {
      * @param selectedDate 선택한 날짜 (오늘 기준)
      * @return 임시저장된 게시글 정보
      */
-    PostResponseDTO.TempAnswerPostDto getTempPost(Member member , LocalDate selectedDate);
+    PostResponseDTO.TempAnswerPostDto getTempPosts(Member member , LocalDate selectedDate);
+
+    PostResponseDTO.TempPostDetailDto getTempPost(Member member, Long postId);
 }

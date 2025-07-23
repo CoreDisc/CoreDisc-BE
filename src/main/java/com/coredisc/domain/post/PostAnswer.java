@@ -35,7 +35,7 @@ public class PostAnswer extends BaseEntity {
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
-    private TodayQuestion todayQuestion; // 0,1,2,3
+    private TodayQuestion todayQuestion; // 1,2,3,4
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)

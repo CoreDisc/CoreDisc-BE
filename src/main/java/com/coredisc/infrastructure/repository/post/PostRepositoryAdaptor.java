@@ -4,6 +4,7 @@ package com.coredisc.infrastructure.repository.post;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.infrastructure.repository.post.queryDsl.QueryPostRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -62,6 +62,12 @@ public class PostRepositoryAdaptor implements PostRepository {
     @Override
     public List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate) {
         return queryPostRepository.findTempPostByMemberAndDate(member, selectedDate);
+    }
+
+    @Override
+    public List<PostAnswer> findTempPostWithAnswers(Long postId) {
+
+        return queryPostRepository.findTempPostAnswerByPostId(postId);
     }
 
 

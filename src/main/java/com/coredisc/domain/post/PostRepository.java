@@ -5,7 +5,6 @@ import com.coredisc.domain.member.Member;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,4 +21,6 @@ public interface PostRepository {
     List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable);
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
     List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
+
+    List<PostAnswer> findTempPostWithAnswers(Long postId);
 }

@@ -5,6 +5,7 @@ import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -184,34 +185,34 @@ public class PostResponseDTO {
         private LocalDateTime expiresAt;
     }
 
-
     /**
-     * 임시저장 게시글 상세 응답 DTO
+     * 임시저장 게시글 상세 응답 DTO (postId로 답변들 조회)
      */
     @Builder
     @Getter
+    @JsonInclude(JsonInclude.Include.NON_NULL) // null 값인 필드 제외
     public static class TempPostDetailDto {
         private Long postId;
         private LocalDate selectedDate;
         private PostStatus status;
         private List<TempAnswerDto> answers;
-        private PostDetailDto.SelectiveDiaryDto selectiveDiary;
     }
 
     /**
-     * 임시저장 답변 DTO
+     * 임시저장 답변 DTO (questionOrder 기반)
      */
     @Builder
     @Getter
+    @JsonInclude(JsonInclude.Include.NON_NULL) // null 값인 필드 제외
     public static class TempAnswerDto {
-        private Integer questionId;
-        private String questionContent;
-        private AnswerType answerType;
-        private String textContent;
-        private String imageUrl;
-        private LocalDateTime updatedAt;
+        private Long answerId;              // 답변 ID (없으면 null)
+        private Integer questionOrder;      // 질문 순서 1,2,3,4
+        private AnswerType answerType;      // 답변 타입 (TEXT, IMAGE)
+        private String textContent;         // 텍스트 답변 내용
+        private String imageUrl;           // 이미지 URL
+        private Boolean isAnswered;        // 답변 완료 여부
+        private LocalDateTime updatedAt;   // 마지막 수정 시간
     }
-
     /**
      *  오늘 날짜 기준 임시저잔된 게시글 들만 조회 - 응답
      */

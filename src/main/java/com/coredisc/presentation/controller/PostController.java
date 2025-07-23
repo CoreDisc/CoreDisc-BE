@@ -99,13 +99,13 @@ public class PostController implements PostControllerDocs {
 
     @GetMapping("/posts/temp/{postId}")
     public ApiResponse<PostResponseDTO.TempPostDetailDto> getTempPost(Member member, Long postId) {
-
-        return null;
+        PostResponseDTO.TempPostDetailDto response = postQueryService.getTempPost(member,postId);
+        return ApiResponse.onSuccess(response);
     }
 
     @GetMapping("/posts/temp")
     public ApiResponse<PostResponseDTO.TempAnswerPostDto> getTempPostByDate(Member member, LocalDate selectedDate) {
-        PostResponseDTO.TempAnswerPostDto response = postQueryService.getTempPost(member,selectedDate);
+        PostResponseDTO.TempAnswerPostDto response = postQueryService.getTempPosts(member,selectedDate);
         //Converter 클래스가 변환해야함.
         return ApiResponse.onSuccess(response);
     }

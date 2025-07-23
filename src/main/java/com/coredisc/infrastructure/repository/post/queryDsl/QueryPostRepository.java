@@ -3,10 +3,10 @@ package com.coredisc.infrastructure.repository.post.queryDsl;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostAnswer;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -19,4 +19,6 @@ public interface QueryPostRepository {
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
 
     List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
+
+    List<PostAnswer> findTempPostAnswerByPostId(Long postId);
 }
