@@ -2,6 +2,7 @@ package com.coredisc.application.service.follow;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.FollowConverter;
+import com.coredisc.common.exception.handler.CircleHandler;
 import com.coredisc.common.exception.handler.FollowHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.domain.follow.Follow;
@@ -60,4 +61,31 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         followRepository.delete(follow);
     }
 
+    @Override
+    // 차단 시, Follow 관계가 삭제되기에 친친 설정 로직에서 차단 여부는 체크하지 않음
+    public void updateCircleStatus(Member member, Long targetId, boolean isCircle) {
+
+        // 자기 자신을 친한친구로 설정하려는 경우
+        if (member.getId().equals(targetId)) {
+            throw new CircleHandler(ErrorStatus.SELF_CIRCLE_NOT_ALLOWED);
+        }
+
+        Member target = memberRepository.findById(targetId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 상대방이 나를 팔로우 하고 있는지 확인
+        Follow followFromTarget = followRepository.findByFollowerAndFollowing(target, member);
+        if (followFromTarget == null) {
+            throw new FollowHandler(ErrorStatus.MUST_BE_MUTUAL_FOLLOW_TO_BE_CIRCLE);
+        }
+
+        // 나도 상대방을 팔로우 하고 있는지 확인 (맞팔인 경우에만 친친 가능)
+        Follow followToTarget = followRepository.findByFollowerAndFollowing(member, target);
+        if (followToTarget == null) {
+            throw new FollowHandler(ErrorStatus.MUST_BE_MUTUAL_FOLLOW_TO_BE_CIRCLE);
+        }
+
+        // 나를 팔로우 하고 있는 팔로워 중에서 친한친구 설정 가능
+        followFromTarget.updateCircle(isCircle);
+    }
 }

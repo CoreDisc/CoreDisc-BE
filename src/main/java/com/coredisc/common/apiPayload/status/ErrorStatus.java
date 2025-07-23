@@ -109,6 +109,10 @@ public enum ErrorStatus implements BaseErrorCode {
     BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "BLOCK4003", "차단한 이력이 없습니다."),
     SELF_UNBLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4004", "자기 자신은 차단 취소 할 수 없습니다."),
 
+    // Circle 관련 에러
+    SELF_CIRCLE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "CIRCLE4001", "자기 자신은 친한 친구로 설정할 수 없습니다."),
+    MUST_BE_MUTUAL_FOLLOW_TO_BE_CIRCLE(HttpStatus.BAD_REQUEST, "CIRCLE4002", "서로 맞팔로우 관계여야 친한친구로 등록할 수 있습니다."),
+
     // Disc 관련 에러
     DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
 
