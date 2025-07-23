@@ -19,22 +19,18 @@ public class CircleController implements CircleControllerDocs {
     private final FollowCommandService followCommandService;
     private final FollowQueryService followQueryService;
 
-    @PatchMapping("/api/circle/add/{targetId}")
-    public ApiResponse<String> addToCircle(@CurrentMember Member member,
-                                           @PathVariable Long targetId) {
+    @PatchMapping("/api/circle/{targetId}")
+    public ApiResponse<String> updateCircle(
+            @CurrentMember Member member,
+            @PathVariable Long targetId,
+            @RequestParam(defaultValue = "true") boolean isCircle
+    ) {
 
-        followCommandService.updateCircleStatus(member, targetId, true);
+        followCommandService.updateCircleStatus(member, targetId, isCircle);
 
-        return ApiResponse.onSuccess("성공적으로 친한 친구가 설정되었습니다.");
-    }
-
-    @PatchMapping("/api/circle/remove/{targetId}")
-    public ApiResponse<String> removeToCircle(@CurrentMember Member member,
-                                              @PathVariable Long targetId) {
-
-        followCommandService.updateCircleStatus(member, targetId, false);
-
-        return ApiResponse.onSuccess("성공적으로 친한 친구가 취소되었습니다.");
+        return ApiResponse.onSuccess(
+                isCircle ? "성공적으로 친한 친구가 설정되었습니다.": "성공적으로 친한 친구가 취소되었습니다."
+        );
     }
 
     @GetMapping("/api/circles")
