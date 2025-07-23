@@ -6,8 +6,6 @@ import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.follow.FollowResponseDTO;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FollowConverter {
 
@@ -31,23 +29,10 @@ public class FollowConverter {
                 .build();
     }
 
-    // TODO: 하단의 toFollowerListViewDTO 삭제 후 해당 메서드로 팔로워 목록 조회 시 사용 예정
     public static FollowResponseDTO.FollowerListDTO toFollowerListDTO(int totalCount, CursorDTO cursorDTO) {
         return FollowResponseDTO.FollowerListDTO.builder()
                 .totalCount(totalCount)
                 .followerCursor(cursorDTO)
-                .build();
-    }
-
-    // TODO: 팔로워 목록 조회 - 수정 예정
-    public static FollowResponseDTO.FollowerListViewDTO toFollowerListViewDTO(List<Follow> followers) {
-        List<FollowResponseDTO.FollowerDTO> dtos = followers.stream()
-                .map(FollowConverter::toFollowerDTO)
-                .collect(Collectors.toList());
-
-        return FollowResponseDTO.FollowerListViewDTO.builder()
-                .totalFollowerCount(followers.size())
-                .followers(dtos)
                 .build();
     }
 
@@ -63,19 +48,16 @@ public class FollowConverter {
     public static FollowResponseDTO.FollowingDTO toFollowingDTO(Follow follow) {
         return FollowResponseDTO.FollowingDTO.builder()
                 .followingId(follow.getFollowing().getId())
-                .followingNickname(follow.getFollowing().getNickname())
-                .followingUsername(follow.getFollowing().getUsername())
+                .nickname(follow.getFollowing().getNickname())
+                .username(follow.getFollowing().getUsername())
+                //.profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
                 .build();
     }
-    // TODO: 팔로잉 목록 조회 - 수정 예정
-    public static FollowResponseDTO.FollowingListViewDTO toFollowingListViewDTO(List<Follow> followings) {
-        List<FollowResponseDTO.FollowingDTO> dtos = followings.stream()
-                .map(FollowConverter::toFollowingDTO)
-                .collect(Collectors.toList());
 
-        return FollowResponseDTO.FollowingListViewDTO.builder()
-                .totalFollowingCount(followings.size())
-                .followings(dtos)
+    public static FollowResponseDTO.FollowingListDTO toFollowingListDTO(int totalCount, CursorDTO cursorDTO) {
+        return FollowResponseDTO.FollowingListDTO.builder()
+                .totalCount(totalCount)
+                .followingCursor(cursorDTO)
                 .build();
     }
 }
