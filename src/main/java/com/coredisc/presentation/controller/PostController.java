@@ -142,11 +142,5 @@ public class PostController implements PostControllerDocs {
         return ApiResponse.onSuccess("게시글이 삭제되었습니다.");
     }
 
-    @PutMapping("/posts/{postId}/selective-diary")
-    public ApiResponse<String> saveSelectiveDiary(Long postId, PostRequestDTO.SelectiveDiaryDto request) {
-        return null;
-    }
-
-
 
 }

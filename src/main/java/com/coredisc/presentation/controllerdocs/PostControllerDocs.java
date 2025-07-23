@@ -88,12 +88,6 @@ public interface PostControllerDocs {
             @CurrentMember Member member , @Parameter(description = "게시글 ID", required = true)  @PathVariable Long postId
     );
 
-    @Operation(summary = "선택형 일기 임시 저장", description = "게시글 발행 전 선택형 일기를 임시 저장합니다.")
-    ApiResponse<String> saveSelectiveDiary(
-            @Parameter(description = "게시글 ID", required = true) @PathVariable Long postId,
-            @Parameter(description = "선택형 일기 요청") @RequestBody PostRequestDTO.SelectiveDiaryDto request
-    );
-
     @Schema(name = "ImageUploadSchema", description = "이미지 파일만 전송하는 multipart 요청")
     public class ImageUploadSchema {
         @Schema(description = "이미지 파일", type = "string", format = "binary")
