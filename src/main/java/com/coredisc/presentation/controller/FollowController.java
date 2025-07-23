@@ -32,7 +32,7 @@ public class FollowController implements FollowControllerDocs {
     }
 
     @DeleteMapping("/api/followings/{targetId}")
-    public ApiResponse<?> unfollow(
+    public ApiResponse<String> unfollow(
             @CurrentMember Member member,
             @PathVariable Long targetId
     ) {
