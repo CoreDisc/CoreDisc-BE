@@ -1,21 +1,21 @@
 package com.coredisc.presentation.controller;
 
 import com.coredisc.application.service.post.PostCommandService;
+import com.coredisc.application.service.post.PostQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.PostControllerDocs;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
-import com.coredisc.security.auth.PrincipalDetails;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostController implements PostControllerDocs {
 
     private final PostCommandService postCommandService;
+    private final PostQueryService postQueryService;
 
     @PostMapping
     public ApiResponse<PostResponseDTO.CreatePostResultDto> createPost(@CurrentMember Member member,
@@ -92,6 +93,23 @@ public class PostController implements PostControllerDocs {
     }
 
 
+    /**
+     * 임시 저장된 게시글 조회
+     */
+
+    @GetMapping("/posts/temp/{postId}")
+    public ApiResponse<PostResponseDTO.TempPostDetailDto> getTempPost(Member member, Long postId) {
+
+        return null;
+    }
+
+    @GetMapping("/posts/temp")
+    public ApiResponse<PostResponseDTO.TempAnswerPostDto> getTempPostByDate(Member member, LocalDate selectedDate) {
+        PostResponseDTO.TempAnswerPostDto response = postQueryService.getTempPost(member,selectedDate);
+        //Converter 클래스가 변환해야함.
+        return ApiResponse.onSuccess(response);
+    }
+
     @PutMapping("/{postId}/publish")
     public ApiResponse<PostResponseDTO.PublishResultDto> publishPost(
             @CurrentMember Member member,
@@ -128,5 +146,7 @@ public class PostController implements PostControllerDocs {
     public ApiResponse<String> saveSelectiveDiary(Long postId, PostRequestDTO.SelectiveDiaryDto request) {
         return null;
     }
+
+
 
 }
