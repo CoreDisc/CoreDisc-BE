@@ -16,6 +16,8 @@ public class CalendarResponseDTO {
     public static class CalendarDTO {
         private int year;
         private int month;
+        private String startDay;
+
         private List<DayResultDTO> days;
 
         private int totalDays;

@@ -44,9 +44,12 @@ public class CalendarConverter {
         boolean hasPrevMonth = target.isAfter(YearMonth.from(signupDate));
         boolean hasNextMonth = target.isBefore(YearMonth.now());
 
+        String startDay = target.atDay(1).getDayOfWeek().name().toLowerCase();
+
         return CalendarResponseDTO.CalendarDTO.builder()
                 .year(year)
                 .month(month)
+                .startDay(startDay)
                 .days(days)
                 .totalDays(totalDays)
                 .continuesDays(continuesDays)
