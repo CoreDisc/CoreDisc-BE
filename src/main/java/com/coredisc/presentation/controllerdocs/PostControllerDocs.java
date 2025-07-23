@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,8 +72,16 @@ public interface PostControllerDocs {
             @Parameter(description = "게시글 발행 요청") @RequestBody PostRequestDTO.PublishPostDto request
     );
 
-    @Operation(summary = "게시글 상세 조회", description = "게시글의 모든 정보를 조회합니다.")
-    ApiResponse<PostResponseDTO.PostDetailDto> getPost(
+    @Operation(
+            summary = "게시글 상세 조회",
+            description = """
+        게시글의 상세 정보를 조회합니다.
+        - 4개의 답변과 선택형 일기 내용을 포함
+        - 좋아요 여부도 함께 반환
+        """
+    )
+    ApiResponse<PostResponseDTO.PostDetailDto> getPostDetail(
+            @CurrentMember Member member,
             @Parameter(description = "게시글 ID", required = true) @PathVariable Long postId
     );
 

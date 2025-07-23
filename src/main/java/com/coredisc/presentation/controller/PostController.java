@@ -120,9 +120,10 @@ public class PostController implements PostControllerDocs {
     }
 
     @GetMapping("/{postId}")
-    public ApiResponse<PostResponseDTO.PostDetailDto> getPost(Long postId) {
-        return null;
+    public ApiResponse<PostResponseDTO.PostDetailDto> getPostDetail(@CurrentMember Member member, @PathVariable("postId") Long postId) {
+        return ApiResponse.onSuccess(postQueryService.findPostDetail(member,postId));
     }
+
 
     @GetMapping
     public ApiResponse<PostResponseDTO.PostFeedResponseDTO> getPosts(
