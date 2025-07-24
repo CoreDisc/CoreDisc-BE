@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +49,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         log.info("빈 게시글 생성 시작 - 회원ID: {}, 날짜: {}", member.getId(), selectedDate);
 
-        // 중복 검증 - 해당 날짜에 이미 포스트가 등록되었는지.
-        validatePostNotExists(member,selectedDate);
+        // 중복 검증 - 오늘 날짜에 이미 등록된 게시글이 있다면? 예외를 던진다.
+        validatePostNotExists(member);
 
         // 오늘의 질문 확인 - TODO : todayquestion 더미데이터 대신 실제 DB 에서 가져올 것
         List<TodayQuestion> todayQuestions = validateTodayQuestions(member);
@@ -84,7 +85,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         // 기존 답변 or null
         Optional<PostAnswer> existingAnswer = postAnswerRepository
-                .findByPostAndTodayQuestion(post,todayQuestion);
+                .findByPostAndQuestionOrder(post,);
 
         PostAnswer answer;
 
@@ -311,10 +312,23 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
 
+    /**
+     * 오늘 발행한 게시글이 있는지 검증
+     */
 
-    private void validatePostNotExists(Member member, LocalDate selectedDate) {
-        // TODO : 게시글이 이미 있다면 예외를 던짐. - 오늘 날짜 기준 published 인 게시글이 있다면?
-    }
+    private void validatePostNotExists(Member member) {
+        LocalDate today = LocalDate.now();
+        boolean exists = postRepository.existsByMemberAndStatusAndCreatedAtBetween(
+                member,
+                PostStatus.PUBLISHED,
+                today.atStartOfDay(),
+                today.plusDays(1).atStartOfDay()
+        );
+
+        if(exists)
+        {
+            throw new PostHandler(ErrorStatus.POST_ALREADY_PUBLISHED);
+        }}
 
     private List<TodayQuestion> validateTodayQuestions(Member member) {
 

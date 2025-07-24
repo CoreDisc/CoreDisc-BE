@@ -2,6 +2,7 @@ package com.coredisc.infrastructure.repository.post;
 
 
 import com.coredisc.domain.common.enums.FeedType;
+import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -87,5 +89,13 @@ public class PostRepositoryAdaptor implements PostRepository {
     @Override
     public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member){
         return queryPostRepository.findPostInfoByMemberAndMonth(year, month, member);
+    }
+
+    @Override
+    public boolean existsByMemberAndStatusAndCreatedAtBetween(Member member, PostStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return jpaPostRepository.existsByMemberAndStatusAndCreatedAtBetween(member,
+                status,
+                startOfDay,
+                endOfDay);
     }
 }
