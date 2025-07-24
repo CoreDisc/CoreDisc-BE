@@ -12,8 +12,7 @@ import com.coredisc.domain.post.*;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
-import com.coredisc.infrastructure.file.FileInfo;
-import com.coredisc.infrastructure.file.FileStore;
+import com.coredisc.infrastructure.aws.s3.ImageUploadResult;
 import com.coredisc.infrastructure.repository.question.JpaTodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
@@ -38,7 +37,6 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostAnswerImageRepository postAnswerImageRepository;
     private final JpaTodayQuestionRepository todayQuestionRepository;
     private final AmazonS3Manager amazonS3Manager;
-    private final FileStore fileStore;
 
     //  빈 게시글 생성
     @Override
@@ -78,7 +76,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         log.info("게시판 가져오기 게시글ID: {}",post.getId() );
 
         //  질문 데이터 가져오기
-        TodayQuestion todayQuestion = getQuestion(member, questionOrder);
+        TodayQuestion todayQuestion = validateTodayQuestion(member, questionOrder);
 
         log.info("질문ID: {}",todayQuestion.getId());
 
@@ -93,11 +91,8 @@ public class PostCommandServiceImpl implements PostCommandService {
             // 이미 존재하는 답변이 있는 경우
             answer = existingAnswer.get();
 
-            // 기존이 이미지인 경우 - 데이터 삭제
-            if(answer.isImageAnswer() && answer.getPostAnswerImage() != null) {
-                postAnswerImageRepository.delete(answer.getPostAnswerImage());
-                // TODO : s3 imageUrl 삭제처리
-            }
+            // 기존 답변이 이미지 일 겨우 삭제 처리
+            deleteExistingImageIfPresent(answer);
 
             answer.updateTextAnswer(request.getContent());
 
@@ -124,7 +119,6 @@ public class PostCommandServiceImpl implements PostCommandService {
     /**
      * 이미지 작성 및 수정 로직 구현
      */
-
     @Override
     @Transactional
     public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postId, Integer questionOrder, MultipartFile image) {
@@ -136,17 +130,14 @@ public class PostCommandServiceImpl implements PostCommandService {
         Post post = validatePostOwnership(member, postId);
 
         // 2. 질문 조회 및 검증
-        TodayQuestion todayQuestion = getTodayQuestion(member, questionOrder);
+        TodayQuestion todayQuestion = validateTodayQuestion(member, questionOrder);
 
         // 3. 이미지 파일 저장
-        FileInfo fileInfo = amazonS3Manager.uploadFile(image, member.getId());
-
-        // 임시 저장소
-//        FileInfo fileInfo = fileStore.storeFile(image, "post-answers");
+        ImageUploadResult s3Result = amazonS3Manager.uploadFile(image, member.getId());
 
         // 4. 기존 답변 조회
         Optional<PostAnswer> existingAnswer = postAnswerRepository
-                .findByPostAndTodayQuestion(post, todayQuestion);
+                .findByPostAndQuestionOrder(post,questionOrder);
 
         PostAnswer answer;
 
@@ -158,33 +149,27 @@ public class PostCommandServiceImpl implements PostCommandService {
             deleteExistingImageIfPresent(answer);
 
             // 새 이미지로 교체
-            PostAnswerImage newImage = createPostAnswerImage(answer, fileInfo);
+            PostAnswerImage newImage = createPostAnswerImage(answer, s3Result);
             answer.updateToImageAnswer(newImage);
 
             log.info("기존 이미지 답변 수정 완료 - 답변ID: {}", answer.getId());
 
         } else {
-            // 새로운 이미지 답변 생성
-            String questionContent = extractQuestionContent(todayQuestion);
 
             answer = PostAnswer.builder()
                     .post(post)
-                    .todayQuestion(todayQuestion)
+                    .answerOrder(questionOrder)
                     .type(AnswerType.IMAGE)
-                    .questionContent(questionContent)
                     .build();
 
             // 이미지 엔티티 생성 및 연결
-            PostAnswerImage answerImage = createPostAnswerImage(answer, fileInfo);
+            PostAnswerImage answerImage = createPostAnswerImage(answer, s3Result);
             answer.updateToImageAnswer(answerImage);
 
             log.info("새 이미지 답변 생성 완료");
         }
 
         PostAnswer savedAnswer = postAnswerRepository.save(answer);
-
-        log.info("이미지 답변 처리 완료 - 답변ID: {}, 이미지URL: {}",
-                savedAnswer.getId(), fileInfo.getFileUrl());
 
         return PostConverter.toAnswerResultDto(savedAnswer);
     }
@@ -253,15 +238,12 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
 
-    private PostAnswerImage createPostAnswerImage(PostAnswer answer, FileInfo fileInfo) {
+    private PostAnswerImage createPostAnswerImage(PostAnswer answer, ImageUploadResult s3Result) {
         return PostAnswerImage.builder()
                 .postAnswer(answer)
-                .imgUrl(fileInfo.getFileUrl())
-                .thumbnailUrl(fileInfo.getThumbnailUrl())
-                .originalFileName(fileInfo.getOriginalFileName())
-                .storedFileName(fileInfo.getStoredFileName())
-                .filePath(fileInfo.getFilePath())
-                .fileSize(fileInfo.getFileSize())
+                .imgUrl(s3Result.getOriginalUrl())
+                .thumbnailUrl(s3Result.getThumbnailUrl())
+                .originalFileName(s3Result.getOriginalFileName())
                 .build();
     }
 
@@ -269,32 +251,23 @@ public class PostCommandServiceImpl implements PostCommandService {
      * 기존 이미지 파일 삭제
      */
     private void deleteExistingImageIfPresent(PostAnswer answer) {
+        // 만약 이미지 가 있다면?
         if (answer.getType() == AnswerType.IMAGE && answer.getPostAnswerImage() != null) {
             PostAnswerImage existingImage = answer.getPostAnswerImage();
 
-            // 실제 파일 삭제
-            if (existingImage.getFilePath() != null) {
-                fileStore.deleteFile(existingImage.getFilePath());
+            // 실제 파일 삭제 -> image, thumbnail url 둘 다 삭제
+            if (existingImage.getImgUrl() != null) {
+                amazonS3Manager.deleteImage(existingImage.getImgUrl());
+            }
+            if(existingImage.getThumbnailUrl() != null) {
+                amazonS3Manager.deleteImageByUrl(existingImage.getThumbnailUrl());
             }
 
             // DB에서 이미지 엔티티 삭제
             postAnswerImageRepository.delete(existingImage);
 
-            log.info("기존 이미지 파일 삭제 완료 - 경로: {}", existingImage.getFilePath());
         }
-    }
 
-    /**
-     * 질문 내용 추출
-     */
-    private String extractQuestionContent(TodayQuestion todayQuestion) {
-        if (todayQuestion.getOfficialQuestion() != null) {
-            return todayQuestion.getOfficialQuestion().getContents();
-        } else if (todayQuestion.getPersonalQuestion() != null) {
-            return todayQuestion.getPersonalQuestion().getContent();
-        } else {
-            return "질문 내용을 찾을 수 없습니다.";
-        }
     }
 
 
@@ -361,7 +334,7 @@ public class PostCommandServiceImpl implements PostCommandService {
      * questionOrder 에 해당하는 질문 검증 및 조회
      */
 
-    private TodayQuestion getQuestion(Member member, Integer questionOrder) {
+    private TodayQuestion validateTodayQuestion(Member member, Integer questionOrder) {
         LocalDate today = LocalDate.now();
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
@@ -392,18 +365,6 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         return post;
 
-    }
-
-    private TodayQuestion getTodayQuestion(Member member, Integer questionOrder) {
-        // 실제로는 Post와 연결된 TodayQuestion들 중에서 questionOrder에 해당하는 것을 찾아야 함
-        // 현재는 간단히 구현
-        todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member,questionOrder,)
-
-        if (questionOrder < 0 || questionOrder >= todayQuestions.size()) {
-            throw new PostHandler(ErrorStatus.INVALID_QUESTION_ORDER);
-        }
-
-        return todayQuestions.get(questionOrder);
     }
 
     /**

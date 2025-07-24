@@ -57,16 +57,12 @@ public class PostConverter {
                     .imageUrl(image.getImgUrl())
                     .thumbnailUrl(image.getThumbnailUrl())
                     .originalFileName(image.getOriginalFileName())
-                    .fileSize(image.getFileSize())
-                    .fileSizeFormatted(FileUtil.formatFileSize(image.getFileSize() != null ? image.getFileSize() : 0))
-                    .hasThumbnail(image.hasThumbnail())
                     .build();
         }
 
         if (answer.getType() == AnswerType.TEXT) {
             textAnswer = TextAnswerDto.builder()
                     .content(answer.getTextContent())
-                    .characterCount(answer.getTextContent() != null ? answer.getTextContent().length() : 0)
                     .build();
         }
 
@@ -76,8 +72,6 @@ public class PostConverter {
                 .answerType(answer.getType())
                 .imageAnswer(imageAnswer)
                 .textAnswer(textAnswer)
-                .createdAt(answer.getCreatedAt())
-                .updatedAt(answer.getUpdatedAt())
                 .build();
     }
     /**
