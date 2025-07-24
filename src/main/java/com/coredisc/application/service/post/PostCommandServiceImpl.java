@@ -3,6 +3,7 @@ package com.coredisc.application.service.post;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.PostConverter;
+import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
@@ -17,6 +18,7 @@ import com.coredisc.infrastructure.file.FileStore;
 import com.coredisc.infrastructure.repository.question.JpaTodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
+import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +55,6 @@ public class PostCommandServiceImpl implements PostCommandService {
         // 중복 검증 - 오늘 날짜에 이미 등록된 게시글이 있다면? 예외를 던진다.
         validatePostNotExists(member);
 
-        // 오늘의 질문 확인 - TODO : todayquestion 더미데이터 대신 실제 DB 에서 가져올 것
         List<TodayQuestion> todayQuestions = validateTodayQuestions(member);
 
         Post emptyPost = Post.builder()
@@ -330,15 +332,44 @@ public class PostCommandServiceImpl implements PostCommandService {
             throw new PostHandler(ErrorStatus.POST_ALREADY_PUBLISHED);
         }}
 
+    /**
+     * 오늘의 질문 가져오기
+     */
     private List<TodayQuestion> validateTodayQuestions(Member member) {
 
-        List<TodayQuestion> todayQuestions = todayQuestionRepository.findByMember(member);
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
 
-        if (todayQuestions.size() != 4) {
-            throw new PostHandler(ErrorStatus.INCOMPLETE_TODAY_QUESTIONS);
+        List<TodayQuestion> todayQuestions = new ArrayList<>();
+
+        // 고정질문과 랜덤질문 가져오기
+
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            // 오늘의 질문이 없는 경우
+            if(todayQuestion.isEmpty()) {
+                throw new PostHandler(ErrorStatus.INCOMPLETE_TODAY_QUESTIONS);
+            }
+
+            todayQuestions.add(todayQuestion.get());
 
         }
 
+        // 오늘의 질문이 하나라도 없는 경우 - 예외처리
+        for (TodayQuestion todayQuestion : todayQuestions) {
+            if(todayQuestion.getQuestionContent().isEmpty())
+            {
+                throw new PostHandler(ErrorStatus.INCOMPLETE_TODAY_QUESTIONS);
+            }
+        }
         return todayQuestions;
     }
 
