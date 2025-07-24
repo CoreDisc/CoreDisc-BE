@@ -195,7 +195,6 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         Post savedPost = postRepository.save(post);
 
-
         log.info("게시글 발행 완료 - 게시글 ID: {}, 회원 ID: {}",postId, member.getId());
         return savedPost;
 
@@ -214,14 +213,16 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         post.validateOwnership(member);
         //TODO : 삭제 전 추가 검증 로직
-//        post.validateForDeletion();
+
+        // imageUrl 불러오기
+        List<String> imageUrls = extractImageUrls(post);
+        List<String> thumbnailUrls = extractThumbnailUrls(post);
 
         // S3 이미지 파일들 삭제 (트랜잭션 외부에서 처리)
-        List<String> imageUrls = extractImageUrls(post);
         deleteS3Images(imageUrls);
+        deleteS3Images(thumbnailUrls);
 
         //TODO : 삭제 전 정리 작업 -> 통계 업데이트, 로그 기록,,..
-//        post.prepareForDeletion();
 
         // DB에서 게시글 삭제 (Cascade로 연관 엔티티들 자동 삭제)
         postRepository.delete(post);
@@ -371,6 +372,20 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .filter(url -> url != null && !url.isEmpty())
                 .toList();
     }
+
+    /**
+     * 게시글에서 모든 썸네일 URL 추출
+     */
+
+    private List<String> extractThumbnailUrls(Post post) {
+        return post.getAnswers().stream()
+                .filter(answer -> answer.getType() == AnswerType.IMAGE)
+                .filter(answer -> answer.getPostAnswerImage() != null)
+                .map(answer -> answer.getPostAnswerImage().getThumbnailUrl())
+                .filter(url -> url != null && !url.isEmpty())
+                .toList();
+    }
+
 
     /**
      * S3에서 이미지 파일들 삭제 (실패해도 전체 프로세스 중단하지 않음)
