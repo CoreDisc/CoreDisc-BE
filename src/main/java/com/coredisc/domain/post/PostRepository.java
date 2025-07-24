@@ -25,7 +25,7 @@ public interface PostRepository {
     List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable);
     List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable);
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
-    List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
+    List<Post> findTempPostByMemberAndDate(Member member, LocalDate today);
 
     //단건 조회
     Post findPostDetail(Member member, Long postId);

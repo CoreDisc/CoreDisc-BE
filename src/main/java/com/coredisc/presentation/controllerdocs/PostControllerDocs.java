@@ -13,14 +13,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
 
 @Tag(name = "게시글",description = "게시글 관련 api")
 public interface PostControllerDocs {
@@ -118,12 +115,9 @@ public interface PostControllerDocs {
             @CurrentMember Member member,
             @PathVariable Long postId);
 
-    @Operation(summary = "임시저장 게시글 날짜로 조회", description = "특정 날짜의 임시저장된 게시글을 조회합니다.")
-    @Parameters({
-            @Parameter(name = "selectedDate", description = "조회할 날짜 (YYYY-MM-DD)", example = "2024-01-15")
-    })
+    @Operation(summary = "임시저장 게시글 조회", description = "특정 날짜의 임시저장된 게시글을 조회합니다.")
     ApiResponse<PostResponseDTO.TempAnswerPostDto> getTempPostByDate(
-            @CurrentMember Member member,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate);
+            @CurrentMember Member member
+            );
 
 }

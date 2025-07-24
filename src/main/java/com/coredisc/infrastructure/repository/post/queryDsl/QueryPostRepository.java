@@ -21,7 +21,7 @@ public interface QueryPostRepository {
 
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
 
-    List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
+    List<Post> findTempPostByMemberAndDate(Member member, LocalDate today);
 
     List<PostAnswer> findTempPostAnswerByPostId(Long postId);
 

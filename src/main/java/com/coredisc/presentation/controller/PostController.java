@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -88,9 +89,12 @@ public class PostController implements PostControllerDocs {
     }
 
     @GetMapping("/posts/temp")
-    public ApiResponse<PostResponseDTO.TempAnswerPostDto> getTempPostByDate(Member member, LocalDate selectedDate) {
-        PostResponseDTO.TempAnswerPostDto response = postQueryService.getTempPosts(member,selectedDate);
-        //Converter 클래스가 변환해야함.
+    public ApiResponse<PostResponseDTO.TempAnswerPostDto> getTempPostByDate(Member member) {
+        List<Post> tempPosts = postQueryService.getTempPosts(member);
+
+        //TODO : Converter 클래스가 변환해야함.
+        PostResponseDTO.TempAnswerPostDto response = PostConverter.toTempAnswerPostDto(tempPosts);
+
         return ApiResponse.onSuccess(response);
     }
 

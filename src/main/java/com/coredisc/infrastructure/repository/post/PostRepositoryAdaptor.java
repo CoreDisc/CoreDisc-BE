@@ -65,8 +65,8 @@ public class PostRepositoryAdaptor implements PostRepository {
     }
 
     @Override
-    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate) {
-        return queryPostRepository.findTempPostByMemberAndDate(member, selectedDate);
+    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate today) {
+        return queryPostRepository.findTempPostByMemberAndDate(member, today);
     }
 
     @Override

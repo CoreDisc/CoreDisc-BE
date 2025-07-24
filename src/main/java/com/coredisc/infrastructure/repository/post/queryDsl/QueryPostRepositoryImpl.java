@@ -7,7 +7,6 @@ import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
-import com.coredisc.domain.todayQuestion.QTodayQuestion;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.coredisc.domain.post.Post;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -109,9 +107,9 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     }
 
     @Override
-    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate) {
-        LocalDateTime start = selectedDate.atStartOfDay();
-        LocalDateTime end = selectedDate.plusDays(1).atStartOfDay();
+    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate today) {
+        LocalDateTime start = today.atStartOfDay();
+        LocalDateTime end = today.plusDays(1).atStartOfDay();
 
         return jpaQueryFactory
                 .selectFrom(post)

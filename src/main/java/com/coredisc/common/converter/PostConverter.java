@@ -26,8 +26,8 @@ public class PostConverter {
     }
 
     public static CreatePostResultDto toCreatePostResponse(Post post,
-                                                                           List<TodayQuestion> todayQuestions,
-                                                                           LocalDate selectedDate) {
+                                                           List<TodayQuestion> todayQuestions,
+                                                           LocalDate selectedDate) {
 
         List<TodayQuestionDto> questionDtos = todayQuestions.stream()
                 .map(tq -> TodayQuestionDto.builder()
@@ -74,6 +74,7 @@ public class PostConverter {
                 .textAnswer(textAnswer)
                 .build();
     }
+
     /**
      * 임시저장 게시글 상세 DTO 변환
      * @param post 임시저장 게시글
@@ -90,7 +91,7 @@ public class PostConverter {
                 ));
 
         // 1,2,3,4 순서로 답변 DTO 생성
-        List<TempAnswerDto> answerDtos = IntStream.range(1,5)
+        List<TempAnswerDto> answerDtos = IntStream.range(1, 5)
                 .mapToObj(questionOrder -> {
                     PostAnswer answer = answerMap.get(questionOrder);
 
@@ -309,8 +310,7 @@ public class PostConverter {
     public static PostResponseDTO.PostFeedResponseDTO toPostFeedResponseDto(
             List<PostResponseDTO.PostFeedResponseDTO.PostSummary> posts,
             Long nextCursor,
-            boolean hasNext)
-    {
+            boolean hasNext) {
         return PostResponseDTO.PostFeedResponseDTO.builder()
                 .posts(posts)
                 .nextCursor(nextCursor)
@@ -319,14 +319,22 @@ public class PostConverter {
 
     }
 
-    public static PostResponseDTO.PublishResultDto toPublishResultDto(Post post){
-        return  PostResponseDTO.PublishResultDto.builder()
+    public static PostResponseDTO.PublishResultDto toPublishResultDto(Post post) {
+        return PostResponseDTO.PublishResultDto.builder()
                 .postId(post.getId())
                 .status(post.getStatus())
                 .publishedAt(post.getUpdatedAt())
                 .build();
     }
 
+    public static TempAnswerPostDto toTempAnswerPostDto(List<Post> tempPosts) {
+
+        return PostResponseDTO.TempAnswerPostDto.builder()
+                .PostIds(tempPosts.stream()
+                        .map(Post::getId)
+                        .toList())
+                .build();
+    }
 }
 
 

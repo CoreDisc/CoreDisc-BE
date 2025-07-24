@@ -29,17 +29,15 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final PostLikeRepository postLikeRepository;
 
     @Override
-    public PostResponseDTO.TempAnswerPostDto getTempPosts(Member member, LocalDate selectedDate) {
+    public List<Post> getTempPosts(Member member) {
 
-        List<Post> posts = postRepository.findTempPostByMemberAndDate(member,selectedDate);
+        LocalDate today = LocalDate.now();
+
+        List<Post> posts = postRepository.findTempPostByMemberAndDate(member,today);
+
         if(posts.isEmpty()) throw new PostHandler(ErrorStatus.POST_NOT_FOUND);
 
-        // 가져온 포스트의 id를 반환 -> Converter 간단해서 바로 변환
-        return PostResponseDTO.TempAnswerPostDto.builder()
-                .PostIds(posts.stream()
-                        .map(Post::getId)
-                        .toList())
-                .build();
+        return posts;
     }
 
 
