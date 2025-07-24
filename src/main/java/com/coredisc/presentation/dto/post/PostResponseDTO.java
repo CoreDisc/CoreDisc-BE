@@ -129,7 +129,6 @@ public class PostResponseDTO {
             private MemberInfo member;
             private LocalDate selectedDate;
             private List<Answer> answers;  // 4개 답변 모두 포함
-            private LocalDateTime createdAt;
 
             @Getter
             @Builder
@@ -225,4 +224,7 @@ public class PostResponseDTO {
             private Integer viewCount;
         }
     }
+
+
+
 }

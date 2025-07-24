@@ -138,7 +138,6 @@ public class PostConverter {
                 .member(toMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
                 .answers(toFeedAnswerResponses(answers)) // 4개 답변 모두 포함
-                .createdAt(post.getCreatedAt())
                 .build();
     }
 
@@ -318,6 +317,14 @@ public class PostConverter {
                 .hasNext(hasNext)
                 .build();
 
+    }
+
+    public static PostResponseDTO.PublishResultDto toPublishResultDto(Post post){
+        return  PostResponseDTO.PublishResultDto.builder()
+                .postId(post.getId())
+                .status(post.getStatus())
+                .publishedAt(post.getUpdatedAt())
+                .build();
     }
 
 }

@@ -3,8 +3,10 @@ package com.coredisc.presentation.controller;
 import com.coredisc.application.service.post.PostCommandService;
 import com.coredisc.application.service.post.PostQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
+import com.coredisc.common.converter.PostConverter;
 import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.Post;
 import com.coredisc.presentation.controllerdocs.PostControllerDocs;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
@@ -98,7 +100,9 @@ public class PostController implements PostControllerDocs {
             @PathVariable Long postId,
             @Valid @RequestBody PostRequestDTO.PublishPostDto request) {
 
-        return ApiResponse.onSuccess(postCommandService.publishPost(member, postId, request));
+        Post response = postCommandService.publishPost(member, postId, request);
+
+        return ApiResponse.onSuccess(PostConverter.toPublishResultDto(response));
 
     }
 

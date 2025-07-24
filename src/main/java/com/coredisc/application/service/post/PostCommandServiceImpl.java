@@ -177,7 +177,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     // 게시글 발행하기 - 실제 발행
     @Override
     @Transactional
-    public PostResponseDTO.PublishResultDto publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request) {
+    public Post publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request) {
         Post post = validatePostOwnership(member, postId);
         PostRequestDTO.SelectiveDiaryDto selectiveDiaryDto = request.getSelectiveDiary();
 
@@ -189,6 +189,7 @@ public class PostCommandServiceImpl implements PostCommandService {
                 selectiveDiaryDto.getWhere(),
                 selectiveDiaryDto.getWhat(),
                 selectiveDiaryDto.getDetail());
+
         post.updatePublicity(request.getPublicity());
 
 
@@ -196,15 +197,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 
         log.info("게시글 발행 완료 - 게시글 ID: {}, 회원 ID: {}",postId, member.getId());
-
-
-
-        //TODO : Converter
-        return PostResponseDTO.PublishResultDto.builder()
-                .postId(savedPost.getId())
-                .status(savedPost.getStatus())
-                .publishedAt(savedPost.getUpdatedAt())
-                .build();
+        return savedPost;
 
     }
 
