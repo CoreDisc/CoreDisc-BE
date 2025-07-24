@@ -88,10 +88,10 @@ public class PostConverter {
      */
     public static TempPostDetailDto toTempPostDetailDto(Post post, List<PostAnswer> answers) {
 
-        // 답변을 questionOrder별로 매핑 (1,2,3,4)
+        //
         Map<Integer, PostAnswer> answerMap = answers.stream()
                 .collect(Collectors.toMap(
-                        answer -> answer.getTodayQuestion().getId().intValue(), // questionOrder
+                        answer -> answer.getTodayQuestion().getQuestionOrder(), // questionOrder
                         answer -> answer
                 ));
 
