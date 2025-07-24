@@ -1,16 +1,20 @@
 package com.coredisc.infrastructure.repository.post;
 
 
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.infrastructure.repository.post.queryDsl.QueryPostRepository;
+import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -58,6 +62,26 @@ public class PostRepositoryAdaptor implements PostRepository {
         return queryPostRepository.existsByMemberAndIdLessThan(member, id, allowTypes);
     }
 
+    @Override
+    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate) {
+        return queryPostRepository.findTempPostByMemberAndDate(member, selectedDate);
+    }
+
+    @Override
+    public Post findPostDetail(Member member, Long postId) {
+        return queryPostRepository.findPostDetail(member.getId(),postId);
+    }
+
+    @Override
+    public List<PostAnswer> findTempPostWithAnswers(Long postId) {
+
+        return queryPostRepository.findTempPostAnswerByPostId(postId);
+    }
+
+    @Override
+    public List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Member member, FeedType feedType, Long lastPostId, Integer size) {
+        return queryPostRepository.findPostFeed(member.getId(), feedType,lastPostId, size);
+    }
 
 
     @Override

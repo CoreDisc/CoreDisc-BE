@@ -5,6 +5,7 @@ import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -51,69 +52,6 @@ public class PostResponseDTO {
         private LocalDateTime publishedAt;
     }
 
-    @Getter
-    @Builder
-    public static class PostDetailDto {
-        private Long postId;
-        private MemberDto member;
-        private String selectedDate;
-        private PostStatus status;
-        private PublicityType visibility;
-        private List<AnswerDto> answers;
-        private SelectiveDiaryDto selectiveDiary;
-        private String diaryContent;
-        private StatisticsDto statistics;
-        private Boolean isLiked;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-
-        @Getter
-        @Builder
-        public static class MemberDto {
-            private Long memberId;
-            private String nickname;
-            private String profileImg;
-        }
-
-        @Getter
-        @Builder
-        public static class AnswerDto {
-            private Long answerId;
-            private Integer questionType;
-            private QuestionDto question;
-            private AnswerType answerType;
-            private ImageAnswerDto imageAnswer;
-            private TextAnswerDto textAnswer;
-
-            @Getter
-            @Builder
-            public static class QuestionDto {
-                private Long questionId;
-                private String type;
-                private String content;
-            }
-
-        }
-
-
-
-        @Getter
-        @Builder
-        public static class SelectiveDiaryDto {
-            private String who;
-            private String where;
-            private String what;
-            private String mood;
-        }
-
-        @Getter
-        @Builder
-        public static class StatisticsDto {
-            private Integer likeCount;
-            private Integer commentCount;
-            private Integer viewCount;
-        }
-    }
 
     @Getter
     @Builder
@@ -132,34 +70,6 @@ public class PostResponseDTO {
         private String content;
         private Integer characterCount;
 
-    }
-
-    @Getter
-    @Builder
-    public static class PostListDto {
-        private List<PostSummaryDto> content;
-        private PageDto page;
-
-        @Getter
-        @Builder
-        public static class PostSummaryDto {
-            private Long postId;
-            private PostDetailDto.MemberDto member;
-            private String selectedDate;
-            private String previewImage;
-            private PostDetailDto.SelectiveDiaryDto selectiveDiary;
-            private PostDetailDto.StatisticsDto statistics;
-            private LocalDateTime createdAt;
-        }
-
-        @Getter
-        @Builder
-        public static class PageDto {
-            private Integer number;
-            private Integer size;
-            private Long totalElements;
-            private Integer totalPages;
-        }
     }
 
     @Getter
@@ -184,5 +94,154 @@ public class PostResponseDTO {
         private String uploadUrl;
         private String imageUrl;
         private LocalDateTime expiresAt;
+    }
+
+    /**
+     * 임시저장 게시글 상세 응답 DTO (postId로 답변들 조회)
+     */
+    @Builder
+    @Getter
+    @JsonInclude(JsonInclude.Include.NON_NULL) // null 값인 필드 제외
+    public static class TempPostDetailDto {
+        private Long postId;
+        private LocalDate selectedDate;
+        private PostStatus status;
+        private List<TempAnswerDto> answers;
+    }
+
+    /**
+     * 임시저장 답변 DTO (questionOrder 기반)
+     */
+    @Builder
+    @Getter
+    @JsonInclude(JsonInclude.Include.NON_NULL) // null 값인 필드 제외
+    public static class TempAnswerDto {
+        private Long answerId;              // 답변 ID (없으면 null)
+        private Integer questionOrder;      // 질문 순서 1,2,3,4
+        private AnswerType answerType;      // 답변 타입 (TEXT, IMAGE)
+        private String textContent;         // 텍스트 답변 내용
+        private String imageUrl;           // 이미지 URL
+        private Boolean isAnswered;        // 답변 완료 여부
+        private LocalDateTime updatedAt;   // 마지막 수정 시간
+    }
+    /**
+     *  오늘 날짜 기준 임시저잔된 게시글 들만 조회 - 응답
+     */
+
+    @Builder
+    @Getter
+    public static class TempAnswerPostDto {
+        private List<Long> PostIds;
+    }
+
+    @Getter
+    @Builder
+    public static class PostFeedResponseDTO {
+        private List<PostSummary> posts;
+        private Long nextCursor;
+        private Boolean hasNext;
+
+        @Getter
+        @Builder
+        public static class PostSummary {
+            private Long postId;
+            private MemberInfo member;
+            private LocalDate selectedDate;
+            private List<Answer> answers;  // 4개 답변 모두 포함
+            private LocalDateTime createdAt;
+
+            @Getter
+            @Builder
+            public static class MemberInfo {
+                private Long memberId;
+                private String nickname;
+                private String profileImg;
+            }
+
+            @Getter
+            @Builder
+            public static class Answer {
+                private Long answerId;
+                private String questionContent;
+                private AnswerType answerType;
+                private ImageAnswer imageAnswer;  // IMAGE 타입일 때만
+                private TextAnswer textAnswer;    // TEXT 타입일 때만
+
+                @Getter
+                @Builder
+                public static class ImageAnswer {
+                    private String thumbnailUrl;
+                }
+
+                @Getter
+                @Builder
+                public static class TextAnswer {
+                    private String content;
+                }
+            }
+        }
+    }
+
+    @Getter
+    @Builder
+    public static class PostDetailDto {
+        private Long postId;
+        private MemberInfo member;
+        private LocalDate selectedDate;
+        private PublicityType visibility;
+        private List<Answer> answers;
+        private SelectiveDiary selectiveDiary;
+        private Statistics statistics;
+        private Boolean isLiked;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+        @Getter
+        @Builder
+        public static class MemberInfo {
+            private Long memberId;
+            private String nickname;
+            private String profileImg;
+        }
+
+        @Getter
+        @Builder
+        public static class Answer {
+            private Long answerId;
+            private String questionContent;
+            private AnswerType answerType;
+            private ImageAnswer imageAnswer;
+            private TextAnswer textAnswer;
+
+            @Getter
+            @Builder
+            public static class ImageAnswer {
+                private String imageUrl;
+                private String thumbnailUrl;
+            }
+
+            @Getter
+            @Builder
+            public static class TextAnswer {
+                private String content;
+            }
+        }
+
+        @Getter
+        @Builder
+        public static class SelectiveDiary {
+            private String who;
+            private String where;
+            private String what;
+            private String mood;
+        }
+
+        @Getter
+        @Builder
+        public static class Statistics {
+            private Integer likeCount;
+            private Integer commentCount;
+            private Integer viewCount;
+        }
     }
 }

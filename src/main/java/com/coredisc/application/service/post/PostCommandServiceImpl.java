@@ -12,7 +12,6 @@ import com.coredisc.domain.post.*;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
-import com.coredisc.infrastructure.aws.s3.ImageUploadResult;
 import com.coredisc.infrastructure.file.FileInfo;
 import com.coredisc.infrastructure.file.FileStore;
 import com.coredisc.infrastructure.repository.question.JpaTodayQuestionRepository;
@@ -203,6 +202,69 @@ public class PostCommandServiceImpl implements PostCommandService {
         return PostConverter.toAnswerResultDto(savedAnswer);
     }
 
+    // 게시글 발행하기 - 실제 발행
+    @Override
+    @Transactional
+    public PostResponseDTO.PublishResultDto publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request) {
+        Post post = validatePostOwnership(member, postId);
+        PostRequestDTO.SelectiveDiaryDto selectiveDiaryDto = request.getSelectiveDiary();
+
+        //발행으로 변경
+        post.publish();
+        // 선택형 일기 업데이트
+        post.updateSelectiveDiary(
+                selectiveDiaryDto.getWho(),
+                selectiveDiaryDto.getWhere(),
+                selectiveDiaryDto.getWhat(),
+                selectiveDiaryDto.getDetail());
+        post.updatePublicity(request.getPublicity());
+
+
+        Post savedPost = postRepository.save(post);
+
+
+        log.info("게시글 발행 완료 - 게시글 ID: {}, 회원 ID: {}",postId, member.getId());
+
+
+
+        //TODO : Converter
+        return PostResponseDTO.PublishResultDto.builder()
+                .postId(savedPost.getId())
+                .status(savedPost.getStatus())
+                .publishedAt(savedPost.getUpdatedAt())
+                .build();
+
+    }
+
+    /**
+     * 게시글 삭제
+     */
+    @Transactional
+    @Override
+    public void deletePost(Member member, Long postId) {
+
+        // 1.게시글 조회 및 검증
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
+        post.validateOwnership(member);
+        //TODO : 삭제 전 추가 검증 로직
+//        post.validateForDeletion();
+
+        // S3 이미지 파일들 삭제 (트랜잭션 외부에서 처리)
+        List<String> imageUrls = extractImageUrls(post);
+        deleteS3Images(imageUrls);
+
+        //TODO : 삭제 전 정리 작업 -> 통계 업데이트, 로그 기록,,..
+//        post.prepareForDeletion();
+
+        // DB에서 게시글 삭제 (Cascade로 연관 엔티티들 자동 삭제)
+        postRepository.delete(post);
+
+        log.info("게시글 완전 삭제 완료 - 게시글ID: {}, 회원ID: {}, 삭제된 이미지 수: {}",
+                postId, member.getId(), imageUrls.size());
+    }
+
 
     private PostAnswerImage createPostAnswerImage(PostAnswer answer, FileInfo fileInfo) {
         return PostAnswerImage.builder()
@@ -293,6 +355,44 @@ public class PostCommandServiceImpl implements PostCommandService {
         }
 
         return todayQuestions.get(questionId);
+    }
+
+    /**
+     * 게시글에서 모든 이미지 URL 추출
+     */
+    private List<String> extractImageUrls(Post post) {
+        return post.getAnswers().stream()
+                .filter(answer -> answer.getType() == AnswerType.IMAGE)
+                .filter(answer -> answer.getPostAnswerImage() != null)
+                .map(answer -> answer.getPostAnswerImage().getImgUrl())
+                .filter(url -> url != null && !url.isEmpty())
+                .toList();
+    }
+
+    /**
+     * S3에서 이미지 파일들 삭제 (실패해도 전체 프로세스 중단하지 않음)
+     */
+    private void deleteS3Images(List<String> imageUrls) {
+        for (String imageUrl : imageUrls) {
+            try {
+                amazonS3Manager.deleteImageByUrl(imageUrl);
+                log.info("S3 이미지 파일 삭제 성공: {}", imageUrl);
+            } catch (Exception e) {
+                log.error("S3 이미지 파일 삭제 실패: {}, 에러: {}", imageUrl, e.getMessage());
+                // S3 삭제 실패는 전체 삭제를 중단시키지 않음
+                // 별도의 배치 작업으로 정리하거나 모니터링 필요
+            }
+        }
+    }
+
+    /**
+     * 임시저장 게시글 정리 (배치 작업용)
+     */
+    @Transactional
+    public void cleanupOldTempPosts(int daysOld) {
+        // 일정 기간 이상 된 임시저장 게시글들을 정리
+        // 실제 구현에서는 JpaRepository의 deleteOldTempPosts 메서드 활용
+        log.info("{}일 이전 임시저장 게시글 정리 작업 시작", daysOld);
     }
 
 }

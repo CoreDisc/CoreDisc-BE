@@ -1,21 +1,21 @@
 package com.coredisc.presentation.controller;
 
 import com.coredisc.application.service.post.PostCommandService;
+import com.coredisc.application.service.post.PostQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.PostControllerDocs;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
-import com.coredisc.security.auth.PrincipalDetails;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,16 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostController implements PostControllerDocs {
 
     private final PostCommandService postCommandService;
+    private final PostQueryService postQueryService;
 
     @PostMapping
     public ApiResponse<PostResponseDTO.CreatePostResultDto> createPost(@CurrentMember Member member,
                                                                        @Valid @RequestBody PostRequestDTO.CreatePostDto request) {
-        PostResponseDTO.CreatePostResultDto response = postCommandService.createEmptyPost(member,request);
+        PostResponseDTO.CreatePostResultDto response = postCommandService.createEmptyPost(member, request);
         return ApiResponse.onSuccess(response);
     }
-
-
-
 
     /**
      * 텍스트 답변 작성/수정
@@ -51,7 +49,7 @@ public class PostController implements PostControllerDocs {
                 member.getId(), postId, questionId);
 
         PostResponseDTO.AnswerResultDto response = postCommandService.updateTextAnswer(
-                member,postId, questionId, request);
+                member, postId, questionId, request);
 
 
         return ApiResponse.onSuccess(response);
@@ -94,31 +92,69 @@ public class PostController implements PostControllerDocs {
     }
 
 
+    /**
+     * 임시 저장된 게시글 조회
+     */
 
+    @GetMapping("/temp/{postId}")
+    public ApiResponse<PostResponseDTO.TempPostDetailDto> getTempPost(Member member, Long postId) {
+        PostResponseDTO.TempPostDetailDto response = postQueryService.getTempPost(member,postId);
+        return ApiResponse.onSuccess(response);
+    }
+
+    @GetMapping("/posts/temp")
+    public ApiResponse<PostResponseDTO.TempAnswerPostDto> getTempPostByDate(Member member, LocalDate selectedDate) {
+        PostResponseDTO.TempAnswerPostDto response = postQueryService.getTempPosts(member,selectedDate);
+        //Converter 클래스가 변환해야함.
+        return ApiResponse.onSuccess(response);
+    }
 
     @PutMapping("/{postId}/publish")
-    public ApiResponse<PostResponseDTO.PublishResultDto> publishPost(Long postId, PostRequestDTO.PublishPostDto request) {
-        return null;
+    public ApiResponse<PostResponseDTO.PublishResultDto> publishPost(
+            @CurrentMember Member member,
+            @PathVariable Long postId,
+            @Valid @RequestBody PostRequestDTO.PublishPostDto request) {
+
+        return ApiResponse.onSuccess(postCommandService.publishPost(member, postId, request));
+
     }
 
     @GetMapping("/{postId}")
-    public ApiResponse<PostResponseDTO.PostDetailDto> getPost(Long postId) {
-        return null;
+    public ApiResponse<PostResponseDTO.PostDetailDto> getPostDetail(@CurrentMember Member member, @PathVariable("postId") Long postId) {
+        return ApiResponse.onSuccess(postQueryService.findPostDetail(member,postId));
     }
 
+
     @GetMapping
-    public ApiResponse<PostResponseDTO.PostListDto> getPosts(String type, Pageable pageable) {
-        return null;
+    public ApiResponse<PostResponseDTO.PostFeedResponseDTO> getPosts(
+            @CurrentMember Member member,
+            FeedType feedType, Long cursor, Integer size) {
+        if(size >30 ) {
+            size =30;
+        }
+
+        PostRequestDTO.PostFeedRequestDto request = PostRequestDTO.PostFeedRequestDto.
+                builder()
+                .feedType(feedType)
+                .lastPostId(cursor)
+                .size(size)
+                .build();
+
+        PostResponseDTO.PostFeedResponseDTO response = postQueryService.findPostFeed(member,request);
+        return ApiResponse.onSuccess(response);
     }
 
     @DeleteMapping("/{postId}")
-    public ApiResponse<String> deletePost(Long postId) {
-        return null;
+    public ApiResponse<String> deletePost(
+            @CurrentMember Member member,
+            @PathVariable Long postId
+    ) {
+        log.info("게시글 삭제 요청 - 회원ID: {}, 게시글ID: {}", member.getId(), postId);
+
+        postCommandService.deletePost(member,postId);
+
+        return ApiResponse.onSuccess("게시글이 삭제되었습니다.");
     }
 
-    @PutMapping("/posts/{postId}/selective-diary")
-    public ApiResponse<String> saveSelectiveDiary(Long postId, PostRequestDTO.SelectiveDiaryDto request) {
-        return null;
-    }
 
 }
