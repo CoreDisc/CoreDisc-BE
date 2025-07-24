@@ -7,6 +7,7 @@ import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
+import com.coredisc.domain.todayQuestion.QTodayQuestion;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.coredisc.domain.post.Post;
@@ -29,13 +30,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.coredisc.domain.QTodayQuestion.*;
 import static com.coredisc.domain.follow.QFollow.follow;
 import static com.coredisc.domain.member.QMember.*;
 import static com.coredisc.domain.post.QPost.*;
 import static com.coredisc.domain.post.QPostAnswer.*;
 import static com.coredisc.domain.post.QPostAnswerImage.*;
 import static com.coredisc.domain.profileImg.QProfileImg.*;
+import static com.coredisc.domain.todayQuestion.QTodayQuestion.*;
 
 @Repository
 @RequiredArgsConstructor

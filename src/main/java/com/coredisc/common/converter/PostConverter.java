@@ -312,19 +312,6 @@ public class PostConverter {
                 .build();
     }
 
-    /**
-     * QueryDSL을 활용하여 게시글의 4개 답변 모두 조회
-     */
-    public static List<PostAnswer> getAllAnswers(Long postId, JPAQueryFactory queryFactory) {
-        return queryFactory
-                .selectFrom(postAnswer)
-                .leftJoin(postAnswer.postAnswerImage, postAnswerImage).fetchJoin()
-                .leftJoin(postAnswer.todayQuestion).fetchJoin() // TodayQuestion 조인
-                .where(postAnswer.post.id.eq(postId))
-                .orderBy(postAnswer.id.asc()) // PostAnswer ID 순서대로 (또는 TodayQuestion 순서)
-                .fetch();
-    }
-
 
     public static PostResponseDTO.PostFeedResponseDTO toPostFeedResponseDto(
             List<PostResponseDTO.PostFeedResponseDTO.PostSummary> posts,

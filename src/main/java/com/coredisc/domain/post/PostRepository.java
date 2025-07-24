@@ -1,5 +1,6 @@
 package com.coredisc.domain.post;
 
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.calendar.CalendarPostDTO;

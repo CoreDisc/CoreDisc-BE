@@ -1,5 +1,6 @@
 package com.coredisc.infrastructure.repository.post.queryDsl;
 
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
