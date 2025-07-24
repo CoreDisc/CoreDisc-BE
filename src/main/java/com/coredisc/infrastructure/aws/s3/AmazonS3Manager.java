@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.config.S3Config;
-import com.coredisc.infrastructure.file.FileInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -34,7 +33,7 @@ public class AmazonS3Manager {
 
     private final S3Config s3Config;
 
-    public FileInfo uploadFile(MultipartFile file, Long memberId) {
+    public ImageUploadResult uploadFile(MultipartFile file, Long memberId) {
 
         // 파일 검증
         validateFile(file);
@@ -54,9 +53,12 @@ public class AmazonS3Manager {
 
             log.info("이미지 업로드 완료 - 사용자: {}, 파일키: {}", memberId, fileKey);
 
-            return FileInfo.builder()
-                    .fileUrl(originalUrl)
+            return ImageUploadResult.builder()
+                    .originalUrl(originalUrl)
                     .thumbnailUrl(thumbnailUrl)
+                    .originalKey(originalKey)
+                    .thumbnailKey(thumbnailKey)
+                    .originalFileName(file.getOriginalFilename())
                     .build();
 
         } catch (Exception e) {

@@ -59,17 +59,12 @@ public class PostResponseDTO {
         private String imageUrl;
         private String thumbnailUrl;
         private String originalFileName;
-        private Long fileSize;
-        private String fileSizeFormatted;
-        private Boolean hasThumbnail;
     }
 
     @Getter
     @Builder
     public static class TextAnswerDto {
         private String content;
-        private Integer characterCount;
-
     }
 
     @Getter
@@ -80,20 +75,6 @@ public class PostResponseDTO {
         private AnswerType answerType;
         private ImageAnswerDto imageAnswer;
         private TextAnswerDto textAnswer;
-
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime createdAt;
-
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime updatedAt;
-    }
-
-    @Getter
-    @Builder
-    public static class UploadUrlDto {
-        private String uploadUrl;
-        private String imageUrl;
-        private LocalDateTime expiresAt;
     }
 
     /**
