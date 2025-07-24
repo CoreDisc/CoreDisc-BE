@@ -96,7 +96,7 @@ public class PostController implements PostControllerDocs {
      * 임시 저장된 게시글 조회
      */
 
-    @GetMapping("/posts/temp/{postId}")
+    @GetMapping("/temp/{postId}")
     public ApiResponse<PostResponseDTO.TempPostDetailDto> getTempPost(Member member, Long postId) {
         PostResponseDTO.TempPostDetailDto response = postQueryService.getTempPost(member,postId);
         return ApiResponse.onSuccess(response);
