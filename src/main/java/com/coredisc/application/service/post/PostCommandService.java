@@ -9,9 +9,9 @@ public interface PostCommandService {
 
     public PostResponseDTO.CreatePostResultDto createEmptyPost(Member member, PostRequestDTO.CreatePostDto req);
 
-    public PostResponseDTO.AnswerResultDto updateTextAnswer(Member member,Long postId, Integer questionId, PostRequestDTO.TextAnswerDto request);
+    public PostResponseDTO.AnswerResultDto updateTextAnswer(Member member,Long postId, Integer questionOrder, PostRequestDTO.TextAnswerDto request);
 
-    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postID, Integer questionId, MultipartFile image);
+    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postID, Integer questionOrder, MultipartFile image);
 
     public PostResponseDTO.PublishResultDto publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request);
 

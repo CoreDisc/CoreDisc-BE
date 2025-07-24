@@ -3,7 +3,6 @@ package com.coredisc.application.service.post;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.PostConverter;
-import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
@@ -18,7 +17,6 @@ import com.coredisc.infrastructure.file.FileStore;
 import com.coredisc.infrastructure.repository.question.JpaTodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
-import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +70,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 
     @Override
-    public PostResponseDTO.AnswerResultDto updateTextAnswer(Member member,Long postId, Integer questionId, PostRequestDTO.TextAnswerDto request) {
+    public PostResponseDTO.AnswerResultDto updateTextAnswer(Member member,Long postId, Integer questionOrder, PostRequestDTO.TextAnswerDto request) {
 
         //게시글 및 권한 확인
         Post post = validatePostOwnership(member,postId);
@@ -81,7 +78,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         log.info("게시판 가져오기 게시글ID: {}",post.getId() );
 
         // 질문 조회 + 검증
-        TodayQuestion todayQuestion = getTodayQuestion(member,questionId);
+        TodayQuestion todayQuestion = getTodayQuestion(member,questionOrder);
 
         log.info("질문ID: {}",todayQuestion.getId());
 
@@ -143,16 +140,16 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     @Override
     @Transactional
-    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postId, Integer questionType, MultipartFile image) {
+    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postId, Integer questionOrder, MultipartFile image) {
 
         log.info("이미지 답변 수정 시작 - 회원ID: {}, 게시글ID: {}, 질문타입: {}, 파일: {}",
-                member.getId(), postId, questionType, image.getOriginalFilename());
+                member.getId(), postId, questionOrder, image.getOriginalFilename());
 
         // 1. 게시글 및 권한 확인
         Post post = validatePostOwnership(member, postId);
 
         // 2. 질문 조회 및 검증
-        TodayQuestion todayQuestion = getTodayQuestion(member, questionType);
+        TodayQuestion todayQuestion = getTodayQuestion(member, questionOrder);
 
         // 3. 이미지 파일 저장
         FileInfo fileInfo = amazonS3Manager.uploadFile(image, member.getId());
@@ -390,16 +387,16 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     }
 
-    private TodayQuestion getTodayQuestion(Member member, Integer questionId) {
+    private TodayQuestion getTodayQuestion(Member member, Integer questionOrder) {
         // 실제로는 Post와 연결된 TodayQuestion들 중에서 questionOrder에 해당하는 것을 찾아야 함
         // 현재는 간단히 구현
         List<TodayQuestion> todayQuestions = todayQuestionRepository.findByMember(member);
 
-        if (questionId < 0 || questionId >= todayQuestions.size()) {
+        if (questionOrder < 0 || questionOrder >= todayQuestions.size()) {
             throw new PostHandler(ErrorStatus.INVALID_QUESTION_ORDER);
         }
 
-        return todayQuestions.get(questionId);
+        return todayQuestions.get(questionOrder);
     }
 
     /**

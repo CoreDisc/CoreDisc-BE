@@ -38,18 +38,18 @@ public class PostController implements PostControllerDocs {
      * Content-Type: application/json
      */
 
-    @PutMapping("/{postId}/answers/{questionId}/text")
+    @PutMapping("/{postId}/answers/{questionOrder}/text")
     public ApiResponse<PostResponseDTO.AnswerResultDto> updateTextAnswer(
             @CurrentMember Member member,
             @PathVariable Long postId,
-            @PathVariable Integer questionId,
+            @PathVariable Integer questionOrder,
             @Valid @RequestBody PostRequestDTO.TextAnswerDto request) {
 
         log.info("텍스트 답변 수정 - 회원ID: {}, 게시글ID: {}, 질문타입: {}",
-                member.getId(), postId, questionId);
+                member.getId(), postId, questionOrder);
 
         PostResponseDTO.AnswerResultDto response = postCommandService.updateTextAnswer(
-                member, postId, questionId, request);
+                member, postId, questionOrder, request);
 
 
         return ApiResponse.onSuccess(response);
@@ -59,38 +59,21 @@ public class PostController implements PostControllerDocs {
      * 이미지 답변 작성/수정
      * Content-Type: multipart/form-data
      */
-    @PutMapping("/{postId}/answers/{questionId}/image")
+    @PutMapping("/{postId}/answers/{questionOrder}/image")
     public ApiResponse<PostResponseDTO.AnswerResultDto> updateImageAnswer(
             @CurrentMember Member member,
             @PathVariable Long postId,
-            @PathVariable Integer questionId,
+            @PathVariable Integer questionOrder,
             @RequestPart("image") MultipartFile image) {
 
         log.info("이미지 답변 수정 - 회원ID: {}, 게시글ID: {}, 질문타입: {}, 파일명: {}",
-                member.getId(), postId, questionId, image.getOriginalFilename());
+                member.getId(), postId, questionOrder, image.getOriginalFilename());
 
         PostResponseDTO.AnswerResultDto response = postCommandService.updateImageAnswer(
-                member, postId, questionId, image);
+                member, postId, questionOrder, image);
 
         return ApiResponse.onSuccess(response);
     }
-
-    /**
-     * 답변 삭제 (텍스트/이미지 공통)
-     */
-    @DeleteMapping("/{postId}/answers/{questionId}")
-    public ApiResponse<String> deleteAnswer(
-            @CurrentMember Member member,
-            @PathVariable Long postId,
-            @PathVariable Integer questionId) {
-
-        log.info("답변 삭제 - 회원ID: {}, 게시글ID: {}, 질문타입: {}",
-                member.getId(), postId, questionId);
-
-//        postCommandService.deleteAnswer(member, postId, questionId);
-        return ApiResponse.onSuccess("답변이 삭제되었습니다.");
-    }
-
 
     /**
      * 임시 저장된 게시글 조회
