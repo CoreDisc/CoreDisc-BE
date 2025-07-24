@@ -1,5 +1,6 @@
 package com.coredisc.infrastructure.repository.answer;
 
+import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
@@ -8,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,14 +36,27 @@ public class PostAnswerRepositoryAdaptor implements PostAnswerRepository {
 
     }
 
+    /**
+     * questionOrder 에 해당하는 답변 찾기 - 오늘
+     */
     @Override
-    public void deleteById(Long id) {
-        jpaPostAnswerRepository.deleteById(id);
+    public Optional<PostAnswer> findByPostAndQuestionOrder(Post post, Integer questionOrder) {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.plusDays(1).atStartOfDay();
+
+
+        return jpaPostAnswerRepository.findPostAnswerByPostAndAnswerOrderAndCreatedAtBetween(
+                post,
+                questionOrder,
+                startOfDay,
+                endOfDay
+        );
     }
 
     @Override
-    public Optional<PostAnswer> findByPostAndTodayQuestion(Post post, TodayQuestion todayQuestion) {
-        return jpaPostAnswerRepository.findPostAnswerByPostAndTodayQuestion(post , todayQuestion );
+    public List<PostAnswer> findByPostOrderByQuestionOrder(Post post) {
+        return List.of();
     }
 
 

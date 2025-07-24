@@ -76,7 +76,7 @@ public class PostResponseDTO {
     @Builder
     public static class AnswerResultDto {
         private Long answerId;
-        private Integer questionId;
+        private Integer questionOrder;
         private AnswerType answerType;
         private ImageAnswerDto imageAnswer;
         private TextAnswerDto textAnswer;

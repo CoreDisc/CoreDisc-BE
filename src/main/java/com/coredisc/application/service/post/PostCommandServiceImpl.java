@@ -77,53 +77,40 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         log.info("게시판 가져오기 게시글ID: {}",post.getId() );
 
-        // 질문 조회 + 검증
-        TodayQuestion todayQuestion = getTodayQuestion(member,questionOrder);
+        //  질문 데이터 가져오기
+        TodayQuestion todayQuestion = getQuestion(member, questionOrder);
 
         log.info("질문ID: {}",todayQuestion.getId());
 
-        // 기존 답변 or null
+        // 답변 데이터 가져오기
         Optional<PostAnswer> existingAnswer = postAnswerRepository
-                .findByPostAndQuestionOrder(post,);
+                .findByPostAndQuestionOrder(post,questionOrder);
 
         PostAnswer answer;
 
         if(existingAnswer.isPresent()) {
 
-            log.info("답변이 이미 존재해 수정을 진행합니다.");
-            // 수정
+            // 이미 존재하는 답변이 있는 경우
             answer = existingAnswer.get();
 
-
-            // 기존이 이미지인 경우 - 삭제
+            // 기존이 이미지인 경우 - 데이터 삭제
             if(answer.isImageAnswer() && answer.getPostAnswerImage() != null) {
                 postAnswerImageRepository.delete(answer.getPostAnswerImage());
+                // TODO : s3 imageUrl 삭제처리
             }
 
             answer.updateTextAnswer(request.getContent());
 
         } else {
-            log.info("답변을 생성합니다.");
             // 질문 저장 - > 만약 질문이 발행 질문이라면? 발행 질문 content 를 가져온다.
-            String questionContent;
-
-            if(todayQuestion.getOfficialQuestion() != null) {
-                questionContent = todayQuestion.getOfficialQuestion().getContents();
-            } else if(todayQuestion.getPersonalQuestion() != null) {
-                questionContent = todayQuestion.getPersonalQuestion().getContent();
-            } else {
-                //TODO: 어떤 질문도 참고하지 않을 때 - 에러
-                questionContent= "nothing";
-            }
-
-            log.info("questioinContent:{}",questionContent);
+            String questionContent = todayQuestion.getQuestionContent();
+            log.info("questionContent:{}",questionContent);
 
             answer = PostAnswer.builder()
                     .post(post)
-                    .todayQuestion(todayQuestion)
+                    .answerOrder(questionOrder)
                     .type(AnswerType.TEXT)
                     .textContent(request.getContent())
-                    .questionContent(questionContent)
                     .build();
 
         }
@@ -133,10 +120,10 @@ public class PostCommandServiceImpl implements PostCommandService {
         return PostConverter.toAnswerResultDto(savedAnswer);
     }
 
+
     /**
      * 이미지 작성 및 수정 로직 구현
      */
-
 
     @Override
     @Transactional
@@ -330,7 +317,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         }}
 
     /**
-     * 오늘의 질문 가져오기
+     * 오늘의 질문 리스트 가져오기
      */
     private List<TodayQuestion> validateTodayQuestions(Member member) {
 
@@ -370,6 +357,26 @@ public class PostCommandServiceImpl implements PostCommandService {
         return todayQuestions;
     }
 
+    /**
+     * questionOrder 에 해당하는 질문 검증 및 조회
+     */
+
+    private TodayQuestion getQuestion(Member member, Integer questionOrder) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+
+        Optional<TodayQuestion> todayQuestion = questionOrder == 4 ?
+                todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, questionOrder,today)
+                : todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, questionOrder,startOfMonth,endOfMonth);
+
+        if(todayQuestion.isEmpty()) throw new PostHandler(ErrorStatus.QUESTION_TYPE_NOT_FOUND);
+
+        return todayQuestion.get();
+    }
+
+
     private Post validatePostOwnership(Member member, Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow( () -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
@@ -390,7 +397,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private TodayQuestion getTodayQuestion(Member member, Integer questionOrder) {
         // 실제로는 Post와 연결된 TodayQuestion들 중에서 questionOrder에 해당하는 것을 찾아야 함
         // 현재는 간단히 구현
-        List<TodayQuestion> todayQuestions = todayQuestionRepository.findByMember(member);
+        todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member,questionOrder,)
 
         if (questionOrder < 0 || questionOrder >= todayQuestions.size()) {
             throw new PostHandler(ErrorStatus.INVALID_QUESTION_ORDER);

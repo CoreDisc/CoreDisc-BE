@@ -72,7 +72,7 @@ public class PostConverter {
 
         return AnswerResultDto.builder()
                 .answerId(answer.getId())
-                .questionId(answer.getTodayQuestion().getId().intValue())
+                .questionOrder(answer.getAnswerOrder())
                 .answerType(answer.getType())
                 .imageAnswer(imageAnswer)
                 .textAnswer(textAnswer)
