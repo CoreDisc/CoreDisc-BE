@@ -2,13 +2,13 @@ package com.coredisc.presentation.controllerdocs;
 
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,10 +28,20 @@ public interface QuestionControllerDocs {
 
     @Operation(summary = "기본 질문 리스트 조회 (카테고리별)  [수정중, 사용XXX]", description = "카테고리별로 기본 질문 리스트를 조회하는 기능입니다.")
     @Parameters({
-            @Parameter(name = "categoryId", description = "카테고리ID pathVariable입니다.", in = ParameterIn.PATH),
-            @Parameter(name = "page", description = "페이지 번호 (0부터 시작)"),
+            @Parameter(name = "categoryId", description = "카테고리ID", required = true),
+            @Parameter(name = "cursorCreatedAt", description = "커서 - 마지막 질문 생성일자 (ISO 8601 형식), 첫 요청 때는 null", required = false),
+            @Parameter(name = "cursorQuestionType", description = "커서 - 마지막 질문 타입 (PERSONAL, OFFICIAL, DEFAULT), 첫 요청 때는 null", required = false),
+            @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null", required = false),
+            @Parameter(name = "size", description = "한 페이지당 조회할 질문 수, 기본값 10", required = false)
     })
-    ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionList(@CurrentMember Member member, @PathVariable(name = "categoryId") Long categoryId, @RequestParam(name = "page") Integer page);
+    ApiResponse<CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO>> getBasicQuestionList(
+            @CurrentMember Member member,
+            @RequestParam(name = "categoryId") Long categoryId,
+            @RequestParam(name = "cursorCreatedAt", required = false) String cursorCreatedAt,
+            @RequestParam(name = "cursorQuestionType", required = false) String cursorQuestionType,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size
+    );
 
     @Operation(summary = "기본 질문 리스트 검색 조회  [수정중, 사용XXX]", description = "기본 질문을 검색하는 기능입니다. (키워드가 카테고리명과 일치 시 해당 카테고리에 속하는 기본 질문들도 포함)")
     @Parameters({

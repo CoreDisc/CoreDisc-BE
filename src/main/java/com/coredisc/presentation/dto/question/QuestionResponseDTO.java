@@ -58,6 +58,8 @@ public class QuestionResponseDTO {
         private String questionType;
 
         private String question;
+
+        private LocalDateTime createdAt;
     }
 
     @Builder

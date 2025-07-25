@@ -12,6 +12,8 @@ import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
 import com.coredisc.domain.personalQuestion.PersonalQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
+import com.coredisc.infrastructure.repository.question.CustomQuestionRepository;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,17 +33,23 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     private final PersonalQuestionRepository personalQuestionRepository;
     private final OfficialQuestionRepository officialQuestionRepository;
+    private final CustomQuestionRepository customQuestionRepository;
     private final TodayQuestionRepository todayQuestionRepository;
     private final CategoryRepository categoryRepository;
 
     // 기본 질문 리스트 조회 (카테고리별)
     @Override
-    public Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionList(Member member, Long categoryId, Pageable pageable){
+    public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionList(
+            Long categoryId,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize){
 
-        Category category = categoryRepository.findById(categoryId)
+        categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
-        return personalQuestionRepository.findBasicQuestionListByCategories(member, category, pageable);
+        return customQuestionRepository.findBasicQuestionListByCategories(categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
 
     // 기본 질문 검색 리스트 조회

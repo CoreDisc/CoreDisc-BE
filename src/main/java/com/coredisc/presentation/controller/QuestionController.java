@@ -6,6 +6,7 @@ import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.QuestionControllerDocs;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,7 +25,7 @@ public class QuestionController implements QuestionControllerDocs {
 
     private final QuestionCommandService questionCommandService;
     private final QuestionQueryService questionQueryService;
-    private static final int DEFAULT_PAGE_SIZE = 15; // 한페이지당 질문 개수
+    private static final int DEFAULT_PAGE_SIZE = 10; // 한페이지당 질문 개수
 
     // 내가 작성한 질문 저장
     @PostMapping("/personal")
@@ -40,11 +42,29 @@ public class QuestionController implements QuestionControllerDocs {
     }
 
     // 기본 질문 리스트 조회 (카테고리별)
-    @GetMapping("/basic/categories/{categoryId}")
-    public ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionList(@CurrentMember Member member, @PathVariable(name = "categoryId") Long categoryId,  @RequestParam(name = "page") Integer page) {
+    @GetMapping("/basic")
+    public ApiResponse<CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO>> getBasicQuestionList(
+            @CurrentMember Member member,
+            @RequestParam(name = "categoryId") Long categoryId,
+            @RequestParam(name = "cursorCreatedAt", required = false) String cursorCreatedAtStr,
+            @RequestParam(name = "cursorQuestionType", required = false) String cursorQuestionType,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size
+    ) {
 
-        return ApiResponse.onSuccess(QuestionConverter.toBasicQuestionListResultDTO(questionQueryService.getBasicQuestionList(member, categoryId, PageRequest.of(page, DEFAULT_PAGE_SIZE))));
+        LocalDateTime cursorCreatedAt = null;
+        if (cursorCreatedAtStr != null && !cursorCreatedAtStr.isEmpty()) {
+            cursorCreatedAt = LocalDateTime.parse(cursorCreatedAtStr);
+        }
+
+        if (size == null)
+            size = DEFAULT_PAGE_SIZE;
+
+        return ApiResponse.onSuccess(
+                        questionQueryService.getBasicQuestionList(categoryId, cursorCreatedAt, cursorQuestionType, cursorId, size)
+        );
     }
+
     
     // 기본 질문 검색 리스트 조회
     @GetMapping("/basic/search")
