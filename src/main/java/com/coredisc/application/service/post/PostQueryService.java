@@ -5,7 +5,6 @@ import com.coredisc.domain.post.Post;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface PostQueryService {

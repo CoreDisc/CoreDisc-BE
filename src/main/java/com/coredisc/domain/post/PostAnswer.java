@@ -1,7 +1,6 @@
 package com.coredisc.domain.post;
 
 
-import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.AnswerType;
 import jakarta.persistence.*;
