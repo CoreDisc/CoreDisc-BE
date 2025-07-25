@@ -27,7 +27,7 @@ public class PostAnswerImage extends BaseEntity {
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;  // S3 썸네일 URL (선택사항)
 
-    @Column(name = "s3_key", nullable = false)
+    @Column(name = "s3_key")
     private String s3Key;  // S3 객체 키 (삭제 시 필요)
 
     @Column(name = "original_file_name")

@@ -29,7 +29,5 @@ public interface QueryPostRepository {
 
     Post findPostDetail(Long memberId, Long postId);
 
-
-
     List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
 }

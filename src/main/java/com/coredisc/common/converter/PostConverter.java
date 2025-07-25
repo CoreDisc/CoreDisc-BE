@@ -86,7 +86,7 @@ public class PostConverter {
         //
         Map<Integer, PostAnswer> answerMap = answers.stream()
                 .collect(Collectors.toMap(
-                        answer -> answer.getTodayQuestion().getQuestionOrder(), // questionOrder
+                        PostAnswer::getAnswerOrder, // questionOrder
                         answer -> answer
                 ));
 
@@ -123,7 +123,6 @@ public class PostConverter {
 
         return TempPostDetailDto.builder()
                 .postId(post.getId())
-                .selectedDate(post.getCreatedAt().toLocalDate())
                 .status(post.getStatus())
                 .answers(answerDtos)
                 .build();
@@ -133,25 +132,25 @@ public class PostConverter {
     /**
      * Post 엔티티를 PostSummary DTO로 변환 (4개 답변 포함)
      */
-    public static PostFeedResponseDTO.PostSummary toPostSummary(Post post, List<PostAnswer> answers) {
+    public static PostFeedResponseDTO.PostSummary toPostSummary(Post post, List<PostAnswer> answers, List<String> questions) {
         return PostFeedResponseDTO.PostSummary.builder()
                 .postId(post.getId())
                 .member(toMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
-                .answers(toFeedAnswerResponses(answers)) // 4개 답변 모두 포함
+                .answers(toFeedAnswerResponses(answers,questions)) // 4개 답변 모두 포함
                 .build();
     }
 
     /**
      * Post 엔티티를 PostDetailResponseDTO로 변환
      */
-    public static PostDetailDto toPostDetailResponse(Post post, boolean isLiked) {
+    public static PostDetailDto toPostDetailResponse(Post post, List<String> questions, boolean isLiked) {
         return PostDetailDto.builder()
                 .postId(post.getId())
                 .member(toDetailMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
                 .visibility(post.getPublicity())
-                .answers(toDetailAnswerResponses(post.getAnswers()))
+                .answers(toFeedAnswerResponses(post.getAnswers(),questions))
                 .selectiveDiary(toDetailSelectiveDiary(post))
                 .statistics(toDetailStatistics(post))
                 .isLiked(isLiked)
@@ -187,20 +186,32 @@ public class PostConverter {
     /**
      * 4개 답변을 Feed용 Answer DTO 리스트로 변환
      */
-    private static List<PostFeedResponseDTO.PostSummary.Answer> toFeedAnswerResponses(List<PostAnswer> answers) {
-        return answers.stream()
-                .map(PostConverter::toFeedAnswerResponse)
-                .collect(Collectors.toList());
+    private static List<PostFeedResponseDTO.PostSummary.Answer> toFeedAnswerResponses(List<PostAnswer> answers, List<String> questions) {
+
+        // 두 리스트 모두 1,2,3,4 questionOrder 순으로 저장되었다면?
+
+        return IntStream.range(0,answers.size())
+                .mapToObj( i ->
+                        {
+                            PostAnswer answer = answers.get(i);
+                            String questionContent = questions.get(i);
+
+                            return toFeedAnswerResponse(answer,questionContent);
+                        }
+                )
+                .toList();
+
     }
 
     /**
      * PostAnswer를 Feed용 Answer DTO로 변환
      */
-    private static PostFeedResponseDTO.PostSummary.Answer toFeedAnswerResponse(PostAnswer answer) {
+    private static PostFeedResponseDTO.PostSummary.Answer toFeedAnswerResponse(PostAnswer answer, String questionContent) {
+
         return PostFeedResponseDTO.PostSummary.Answer.builder()
                 .answerId(answer.getId())
-                .questionContent(answer.getQuestionContent())
                 .answerType(answer.getType())
+                .questionContent(questionContent)
                 .imageAnswer(answer.getType() == AnswerType.IMAGE ?
                         toFeedImageAnswerResponse(answer.getPostAnswerImage()) : null)
                 .textAnswer(answer.getType() == AnswerType.TEXT ?
@@ -254,28 +265,6 @@ public class PostConverter {
                 .likeCount(post.getLikeCount())
                 .commentCount(post.getCommentCount())
                 .viewCount(post.getViewCount())
-                .build();
-    }
-
-    /**
-     * PostAnswer 리스트를 Detail용 Answer DTO 리스트로 변환
-     */
-    private static List<PostDetailDto.Answer> toDetailAnswerResponses(List<PostAnswer> answers) {
-        return answers.stream()
-                .map(PostConverter::toDetailAnswerResponse)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * PostAnswer를 Detail용 Answer DTO로 변환
-     */
-    private static PostDetailDto.Answer toDetailAnswerResponse(PostAnswer answer) {
-        return PostDetailDto.Answer.builder()
-                .answerId(answer.getId())
-                .questionContent(answer.getQuestionContent())
-                .answerType(answer.getType())
-                .imageAnswer(toDetailImageAnswerResponse(answer.getPostAnswerImage()))
-                .textAnswer(toDetailTextAnswerResponse(answer.getTextContent()))
                 .build();
     }
 

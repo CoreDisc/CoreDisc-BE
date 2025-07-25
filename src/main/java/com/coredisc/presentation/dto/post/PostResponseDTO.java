@@ -85,7 +85,6 @@ public class PostResponseDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL) // null 값인 필드 제외
     public static class TempPostDetailDto {
         private Long postId;
-        private LocalDate selectedDate;
         private PostStatus status;
         private List<TempAnswerDto> answers;
     }
@@ -169,7 +168,7 @@ public class PostResponseDTO {
         private MemberInfo member;
         private LocalDate selectedDate;
         private PublicityType visibility;
-        private List<Answer> answers;
+        private List<PostFeedResponseDTO.PostSummary.Answer> answers;
         private SelectiveDiary selectiveDiary;
         private Statistics statistics;
         private Boolean isLiked;
