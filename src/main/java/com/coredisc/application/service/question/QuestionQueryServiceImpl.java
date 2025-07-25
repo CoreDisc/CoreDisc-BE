@@ -54,9 +54,15 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 기본 질문 검색 리스트 조회
     @Override
-    public Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(Member member, String keyword, Pageable pageable){
+    public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(
+            Member member,
+            String keyword,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize){
 
-        return personalQuestionRepository.findBasicQuestionListByKeyword(member, keyword, pageable);
+        return customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
 
     // 내가 발행한 공유 질문 리스트 조회

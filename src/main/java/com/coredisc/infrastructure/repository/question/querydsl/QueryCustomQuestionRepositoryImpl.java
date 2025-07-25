@@ -80,4 +80,75 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
 
         return new CursorDTO<>(values, hasNext);
     }
+
+    public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
+            Long memberId,
+            String keyword,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize
+    ) {
+        String nativeSql =
+                "SELECT * FROM (" +
+                        "   SELECT p.id AS id, 'PERSONAL' AS question_type, p.content AS question, p.created_at AS created_at " +
+                        "   FROM personal_question p " +
+                        "   LEFT JOIN question_category qc ON qc.personal_question_id = p.id " +
+                        "   LEFT JOIN category c ON qc.category_id = c.id " +
+                        "   WHERE p.member_id = :memberId " +
+                        "     AND (LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                        "          OR c.name = :keyword) " +
+                        "   UNION ALL " +
+                        "   SELECT o.id AS id, " +
+                        "          CASE WHEN o.is_shared = TRUE THEN 'OFFICIAL' ELSE 'DEFAULT' END AS question_type, " +
+                        "          o.contents AS question, o.created_at AS created_at " +
+                        "   FROM official_question o " +
+                        "   LEFT JOIN question_category qc2 ON qc2.official_question_id = o.id " +
+                        "   LEFT JOIN category c2 ON qc2.category_id = c2.id " +
+                        "   WHERE LOWER(o.contents) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                        "      OR c2.name = :keyword " +
+                        ") AS combined " +
+                        (cursorCreatedAt != null ?
+                                "WHERE (combined.created_at < :cursorCreatedAt) " +
+                                        "   OR (combined.created_at = :cursorCreatedAt AND combined.question_type < :cursorQuestionType) " +
+                                        "   OR (combined.created_at = :cursorCreatedAt AND combined.question_type = :cursorQuestionType AND combined.id < :cursorId) "
+                                : "") +
+                        "ORDER BY combined.created_at DESC, combined.question_type DESC, combined.id DESC " +
+                        "LIMIT :limit";
+
+        Query query = entityManager.createNativeQuery(nativeSql);
+
+        query.setParameter("memberId", memberId);
+        query.setParameter("keyword", keyword);
+        query.setParameter("limit", pageSize + 1);
+
+        // (생성날짜, 질문타입, 질문id)를 커서 구분 기준으로
+        if (cursorCreatedAt != null) {
+            query.setParameter("cursorCreatedAt", Timestamp.valueOf(cursorCreatedAt));
+            query.setParameter("cursorQuestionType", cursorQuestionType);
+            query.setParameter("cursorId", cursorId);
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> questionList = query.getResultList();
+
+        boolean hasNext = questionList.size() > pageSize;
+
+        if (hasNext) {
+            questionList = questionList.subList(0, pageSize);
+        }
+
+        List<QuestionResponseDTO.BasicQuestionResultDTO> values = questionList.stream()
+                .map(row -> new QuestionResponseDTO.BasicQuestionResultDTO(
+                        ((Number) row[0]).longValue(),          // id
+                        (String) row[1],                        // questionType
+                        (String) row[2],                        // question
+                        ((Timestamp) row[3]).toLocalDateTime()  // createdAt
+                ))
+                .toList();
+
+        return new CursorDTO<>(values, hasNext);
+    }
+
+
 }

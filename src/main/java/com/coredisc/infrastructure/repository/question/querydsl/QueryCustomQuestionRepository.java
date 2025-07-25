@@ -15,4 +15,13 @@ public interface QueryCustomQuestionRepository {
             Long cursorId,
             int pageSize
     );
+
+    public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
+            Long memberId,
+            String keyword,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize
+    );
 }

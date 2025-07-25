@@ -52,18 +52,6 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.BasicQuestionListResultDTO toBasicQuestionListResultDTO(Page<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList) {
-
-        return QuestionResponseDTO.BasicQuestionListResultDTO.builder()
-                .basicQuestionList(basicQuestionList.getContent())
-                .listSize(basicQuestionList.getNumberOfElements())
-                .totalPage(basicQuestionList.getTotalPages())
-                .totalElements(basicQuestionList.getTotalElements())
-                .isFirst(basicQuestionList.isFirst())
-                .isLast(basicQuestionList.isLast())
-                .build();
-    }
-
     public static List<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOList(List<OfficialQuestion> officialQuestions) {
         return officialQuestions.stream()
                 .map(officialQuestion -> {

@@ -21,7 +21,13 @@ public interface QuestionQueryService {
             int pageSize);
 
     // 기본 질문 검색 리스트 조회
-    Page<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(Member member, String keyword, Pageable pageable);
+    CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionSearchList(
+            Member member,
+            String keyword,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize);
 
 
     // 내가 발행한 공유질문 리스트 조회 (카테고리 필터링 포함)

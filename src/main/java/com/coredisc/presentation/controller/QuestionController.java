@@ -68,9 +68,23 @@ public class QuestionController implements QuestionControllerDocs {
     
     // 기본 질문 검색 리스트 조회
     @GetMapping("/basic/search")
-    public ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionSearchList(@CurrentMember Member member, @RequestParam(name = "keyword") String keyword, @RequestParam(name = "page") Integer page){
+    public ApiResponse<CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO>> getBasicQuestionSearchList(
+            @CurrentMember Member member,
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "cursorCreatedAt", required = false) String cursorCreatedAtStr,
+            @RequestParam(name = "cursorQuestionType", required = false) String cursorQuestionType,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size) {
 
-        return ApiResponse.onSuccess(QuestionConverter.toBasicQuestionListResultDTO(questionQueryService.getBasicQuestionSearchList(member, keyword, PageRequest.of(page, DEFAULT_PAGE_SIZE))));
+        LocalDateTime cursorCreatedAt = null;
+        if (cursorCreatedAtStr != null && !cursorCreatedAtStr.isEmpty()) {
+            cursorCreatedAt = LocalDateTime.parse(cursorCreatedAtStr);
+        }
+
+        if (size == null)
+            size = DEFAULT_PAGE_SIZE;
+
+        return ApiResponse.onSuccess( questionQueryService.getBasicQuestionSearchList(member, keyword, cursorCreatedAt, cursorQuestionType, cursorId, size) );
     }
 
     // 내가 발행한 공유 질문 리스트 조회 (카테고리 구분 포함)

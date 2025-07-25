@@ -26,4 +26,16 @@ public class CustomQuestionRepositoryAdapter implements CustomQuestionRepository
     ) {
         return queryCustomQuestionRepository.findBasicQuestionListByCategories(categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
+
+    @Override
+    public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
+            Long memberId,
+            String keyword,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize
+    ) {
+        return queryCustomQuestionRepository.findBasicQuestionListByKeyword(memberId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+    }
 }

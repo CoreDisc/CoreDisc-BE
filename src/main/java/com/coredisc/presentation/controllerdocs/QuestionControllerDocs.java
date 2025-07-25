@@ -46,9 +46,18 @@ public interface QuestionControllerDocs {
     @Operation(summary = "기본 질문 리스트 검색 조회  [수정중, 사용XXX]", description = "기본 질문을 검색하는 기능입니다. (키워드가 카테고리명과 일치 시 해당 카테고리에 속하는 기본 질문들도 포함)")
     @Parameters({
             @Parameter(name = "keyword", description = "검색어입니다."),
-            @Parameter(name = "page", description = "페이지 번호 (0부터 시작)"),
+            @Parameter(name = "cursorCreatedAt", description = "커서 - 마지막 질문 생성일자 (ISO 8601 형식), 첫 요청 때는 null", required = false),
+            @Parameter(name = "cursorQuestionType", description = "커서 - 마지막 질문 타입 (PERSONAL, OFFICIAL, DEFAULT), 첫 요청 때는 null", required = false),
+            @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null", required = false),
+            @Parameter(name = "size", description = "한 페이지당 조회할 질문 수, 기본값 10", required = false)
     })
-    ApiResponse<QuestionResponseDTO.BasicQuestionListResultDTO> getBasicQuestionSearchList(@CurrentMember Member member, @RequestParam(name = "keyword") String keyword, @RequestParam(name = "page") Integer page);
+    ApiResponse<CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO>> getBasicQuestionSearchList(
+            @CurrentMember Member member,
+            @RequestParam(name = "keyword") String keyword,
+            @RequestParam(name = "cursorCreatedAt", required = false) String cursorCreatedAt,
+            @RequestParam(name = "cursorQuestionType", required = false) String cursorQuestionType,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size);
 
     @Operation(summary = "내가 발행한 공유질문 리스트 조회 (카테고리 필터링 가능)  [수정중, 사용XXX]", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다. (카테고리 필터링 가능)")
     @Parameters({

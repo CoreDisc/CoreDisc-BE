@@ -34,19 +34,6 @@ public class QuestionResponseDTO {
         private LocalDateTime createdAt;
     }
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BasicQuestionListResultDTO {
-        List<BasicQuestionResultDTO> basicQuestionList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
-    }
-
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
