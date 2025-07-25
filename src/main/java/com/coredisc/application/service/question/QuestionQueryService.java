@@ -14,6 +14,7 @@ public interface QuestionQueryService {
 
     // 기본 질문 리스트 조회 (카테고리별)
     CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionList(
+            Member member,
             Long categoryId,
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,

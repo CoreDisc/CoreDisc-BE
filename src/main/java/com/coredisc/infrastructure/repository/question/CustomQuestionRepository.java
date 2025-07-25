@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 public interface CustomQuestionRepository {
     CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByCategories (
+            Long memberId,
             Long categoryId,
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,

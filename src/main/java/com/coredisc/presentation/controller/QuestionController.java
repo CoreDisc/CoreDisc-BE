@@ -60,9 +60,7 @@ public class QuestionController implements QuestionControllerDocs {
         if (size == null)
             size = DEFAULT_PAGE_SIZE;
 
-        return ApiResponse.onSuccess(
-                        questionQueryService.getBasicQuestionList(categoryId, cursorCreatedAt, cursorQuestionType, cursorId, size)
-        );
+        return ApiResponse.onSuccess( questionQueryService.getBasicQuestionList(member, categoryId, cursorCreatedAt, cursorQuestionType, cursorId, size) );
     }
 
     

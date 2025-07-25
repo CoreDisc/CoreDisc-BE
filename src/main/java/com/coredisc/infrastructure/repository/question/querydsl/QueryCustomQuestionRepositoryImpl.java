@@ -19,6 +19,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
 
     @Override
     public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByCategories(
+            Long memberId,
             Long categoryId,
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,
@@ -31,7 +32,8 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                         "    SELECT p.id AS id, 'PERSONAL' AS question_type, p.content AS question, p.created_at AS created_at " +
                         "    FROM personal_question p " +
                         "    JOIN question_category qc ON qc.personal_question_id = p.id " +
-                        "    WHERE qc.category_id = :categoryId " +
+                        "    WHERE p.member_id = :memberId " +
+                        "      AND qc.category_id = :categoryId " +
                         "  UNION ALL " +
                         "    SELECT o.id AS id, " +
                         "           CASE WHEN o.is_shared = true THEN 'OFFICIAL' ELSE 'DEFAULT' END AS question_type, " +
@@ -50,6 +52,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
 
         Query query = entityManager.createNativeQuery(nativeSql);
 
+        query.setParameter("memberId", memberId);
         query.setParameter("categoryId", categoryId);
         query.setParameter("pageSize", pageSize + 1);
 

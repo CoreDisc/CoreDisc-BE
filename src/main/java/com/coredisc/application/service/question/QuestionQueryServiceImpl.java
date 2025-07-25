@@ -40,6 +40,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     // 기본 질문 리스트 조회 (카테고리별)
     @Override
     public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionList(
+            Member member,
             Long categoryId,
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,
@@ -49,7 +50,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
-        return customQuestionRepository.findBasicQuestionListByCategories(categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+        return customQuestionRepository.findBasicQuestionListByCategories(member.getId(), categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
 
     // 기본 질문 검색 리스트 조회
