@@ -1,5 +1,6 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.domain.category.Category;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
@@ -71,23 +72,6 @@ public class QuestionConverter {
                             .build();
                 })
                 .collect(Collectors.toList());
-    }
-
-    public static Page<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOPage(Page<OfficialQuestion> officialQuestionList, Pageable pageable) {
-        List<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestiondtoList = toMySharedQuestionResultDTOList(officialQuestionList.getContent());
-        return new org.springframework.data.domain.PageImpl<>(mySharedQuestiondtoList, pageable, officialQuestionList.getTotalElements());
-    }
-
-    public static QuestionResponseDTO.MySharedQuestionListResultDTO toMySharedQuestionListResultDTO(Page<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList, Long totalMySharedQuestionCnt) {
-        return QuestionResponseDTO.MySharedQuestionListResultDTO.builder()
-                .mySharedQuestionCnt(totalMySharedQuestionCnt)
-                .mySharedQuestionList(mySharedQuestionList.getContent())
-                .listSize(mySharedQuestionList.getNumberOfElements())
-                .totalPage(mySharedQuestionList.getTotalPages())
-                .totalElements(mySharedQuestionList.getTotalElements())
-                .isFirst(mySharedQuestionList.isFirst())
-                .isLast(mySharedQuestionList.isLast())
-                .build();
     }
 
     public static TodayQuestion toFixedTodayQuestionByOfficial(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, OfficialQuestion officialQuestion, Member member){

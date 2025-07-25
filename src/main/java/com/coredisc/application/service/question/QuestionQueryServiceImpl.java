@@ -5,19 +5,15 @@ import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.category.Category;
 import com.coredisc.domain.category.CategoryRepository;
-import com.coredisc.domain.mapping.questionCategory.QuestionCategoryRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
-import com.coredisc.domain.personalQuestion.PersonalQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.infrastructure.repository.question.CustomQuestionRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,7 +27,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QuestionQueryServiceImpl implements QuestionQueryService {
 
-    private final PersonalQuestionRepository personalQuestionRepository;
     private final OfficialQuestionRepository officialQuestionRepository;
     private final CustomQuestionRepository customQuestionRepository;
     private final TodayQuestionRepository todayQuestionRepository;
@@ -68,24 +63,36 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 내가 발행한 공유 질문 리스트 조회
     @Override
-    public QuestionResponseDTO.MySharedQuestionListResultDTO getMySharedQuestionList(Member member, Long categoryId, Pageable pageable){
+    public QuestionResponseDTO.MySharedQuestionListResultDTO getMySharedQuestionList(Member member, Long categoryId, Long cursorId, int pageSize){
 
         Long mySharedQuestionTotal = officialQuestionRepository.countOfficialQuestionByMember(member);
 
-        Page<OfficialQuestion> mySharedQuestionsList;
+        List<OfficialQuestion> mySharedQuestionsList;
 
         if (categoryId == null || categoryId == 0) {    // 전체 조회
-            mySharedQuestionsList = officialQuestionRepository.findAllByMemberOrderByCreatedAtDesc(member, pageable);
+            mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별 조회
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
-            mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCategory(member, category, pageable);
+            mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCategory(member, category, cursorId, pageSize);
         }
 
-        Page<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionPage =
-                QuestionConverter.toMySharedQuestionResultDTOPage(mySharedQuestionsList, pageable);
+        boolean hasNext = mySharedQuestionsList.size() > pageSize;
 
-        return QuestionConverter.toMySharedQuestionListResultDTO(mySharedQuestionPage, mySharedQuestionTotal);
+        if (hasNext) {
+            mySharedQuestionsList = mySharedQuestionsList.subList(0, pageSize);
+        }
+
+        List<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionDTOList =
+                QuestionConverter.toMySharedQuestionResultDTOList(mySharedQuestionsList);
+
+        CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> cursorDTO =
+                new CursorDTO<>(mySharedQuestionDTOList, hasNext);
+
+        return QuestionResponseDTO.MySharedQuestionListResultDTO.builder()
+                .mySharedQuestionCnt(mySharedQuestionTotal)
+                .mySharedQuestionList(cursorDTO)
+                .build();
     }
 
     // 선택한 고정&랜덤 질문 조회

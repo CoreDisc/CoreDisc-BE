@@ -61,10 +61,15 @@ public interface QuestionControllerDocs {
 
     @Operation(summary = "내가 발행한 공유질문 리스트 조회 (카테고리 필터링 가능)  [수정중, 사용XXX]", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다. (카테고리 필터링 가능)")
     @Parameters({
-            @Parameter(name = "category", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),
-            @Parameter(name = "page", description = "페이지 번호 (0부터 시작)"),
+            @Parameter(name = "categoryId", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),
+            @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null"),
+            @Parameter(name = "size", description = "한 페이지당 조회할 질문 수, 기본값 10", required = false),
     })
-    ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(@CurrentMember Member member, @RequestParam(name = "category", required = false) Long category, @RequestParam(name = "page") Integer page);
+    ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(
+            @CurrentMember Member member,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size);
 
     @Operation(summary = "고정 질문 선택", description = "고정 질문을 선택하는 기능입니다.")
     ApiResponse<QuestionResponseDTO.SaveFixedTodayQuestionResultDTO> saveFixedTodayQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveFixedTodayQuestionDTO request);

@@ -5,6 +5,7 @@ import com.coredisc.domain.mapping.questionCategory.QQuestionCategory;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.QOfficialQuestion;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,31 +24,44 @@ public class QueryOfficialQuestionRepositoryImpl implements QueryOfficialQuestio
     private final QOfficialQuestion qOfficialQuestion = QOfficialQuestion.officialQuestion;
     private final QQuestionCategory qQuestionCategory = QQuestionCategory.questionCategory;
 
-    @Override
-    public Page<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Pageable pageable) {
+    public List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize) {
+        BooleanExpression cursorCondition = null;
 
-        List<OfficialQuestion> sharedQuestionList = jpaQueryFactory
+        if (cursorId != null) {
+            cursorCondition = qOfficialQuestion.id.lt(cursorId);
+        }
+
+        List<OfficialQuestion> officialQuestionList = jpaQueryFactory.selectFrom(qOfficialQuestion)
+                .where(qOfficialQuestion.member.eq(member)
+                        .and(cursorCondition))
+                .orderBy(qOfficialQuestion.createdAt.desc(), qOfficialQuestion.id.desc())
+                .limit(pageSize + 1)
+                .fetch();
+
+        return officialQuestionList;
+    }
+
+    @Override
+    public List<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Long cursorId, int pageSize) {
+
+        BooleanExpression cursorCondition = null;
+
+        if (cursorId != null) {
+            cursorCondition = qOfficialQuestion.id.lt(cursorId);
+        }
+
+        List<OfficialQuestion> officialQuestionList = jpaQueryFactory
                 .selectFrom(qOfficialQuestion)
                 .join(qOfficialQuestion.questionCategoryList, qQuestionCategory)
                 .where(
                         qOfficialQuestion.member.eq(member),
-                        qQuestionCategory.category.eq(category)
+                        qQuestionCategory.category.eq(category),
+                        cursorCondition
                 )
-                .orderBy(qOfficialQuestion.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .orderBy(qOfficialQuestion.id.desc())
+                .limit(pageSize + 1)
                 .fetch();
 
-        Long totalCount = jpaQueryFactory
-                .select(qOfficialQuestion.count())
-                .from(qOfficialQuestion)
-                .join(qOfficialQuestion.questionCategoryList, qQuestionCategory)
-                .where(
-                        qOfficialQuestion.member.eq(member),
-                        qQuestionCategory.category.eq(category)
-                )
-                .fetchOne();
-
-        return new PageImpl<>(sharedQuestionList, pageable, totalCount != null ? totalCount : 0);
+        return officialQuestionList;
     }
 }

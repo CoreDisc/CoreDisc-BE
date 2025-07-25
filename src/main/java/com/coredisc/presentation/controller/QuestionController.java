@@ -87,9 +87,16 @@ public class QuestionController implements QuestionControllerDocs {
 
     // 내가 발행한 공유 질문 리스트 조회 (카테고리 구분 포함)
     @GetMapping("/official/mine")
-    public ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(@CurrentMember Member member, @RequestParam(name = "category", required = false) Long categoryId, @RequestParam(name = "page") Integer page){
+    public ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(
+            @CurrentMember Member member,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size) {
 
-        return ApiResponse.onSuccess(questionQueryService.getMySharedQuestionList(member, categoryId, PageRequest.of(page, DEFAULT_PAGE_SIZE)));
+        if (size == null)
+            size = DEFAULT_PAGE_SIZE;
+
+        return ApiResponse.onSuccess(questionQueryService.getMySharedQuestionList(member, categoryId, cursorId, size));
 
     }
 
