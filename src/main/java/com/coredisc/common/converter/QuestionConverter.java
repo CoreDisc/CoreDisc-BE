@@ -53,25 +53,21 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static List<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOList(List<OfficialQuestion> officialQuestions) {
-        return officialQuestions.stream()
-                .map(officialQuestion -> {
-                    List<CategoryResponseDTO.CategoryInfoDTO> categories = officialQuestion.getQuestionCategoryList().stream()
-                            .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
-                                    .categoryId(qc.getCategory().getId())
-                                    .categoryName(qc.getCategory().getName())
-                                    .build())
-                            .collect(Collectors.toList());
+    public static QuestionResponseDTO.MySharedQuestionResultDTO toMySharedQuestionResultDTO(OfficialQuestion question, long sharedCount) {
+        List<CategoryResponseDTO.CategoryInfoDTO> categories = question.getQuestionCategoryList().stream()
+                .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                        .categoryId(qc.getCategory().getId())
+                        .categoryName(qc.getCategory().getName())
+                        .build())
+                .toList();
 
-                    return QuestionResponseDTO.MySharedQuestionResultDTO.builder()
-                            .id(officialQuestion.getId())
-                            .categories(categories)
-                            .question(officialQuestion.getContents())
-                            .sharedCount(0L) // TODO: 공유 횟수 적용
-                            .createdAt(officialQuestion.getCreatedAt())
-                            .build();
-                })
-                .collect(Collectors.toList());
+        return QuestionResponseDTO.MySharedQuestionResultDTO.builder()
+                .id(question.getId())
+                .categories(categories)
+                .question(question.getContents())
+                .sharedCount(sharedCount)
+                .createdAt(question.getCreatedAt())
+                .build();
     }
 
     public static TodayQuestion toFixedTodayQuestionByOfficial(QuestionRequestDTO.SaveFixedTodayQuestionDTO request, QuestionType questionType, OfficialQuestion officialQuestion, Member member){

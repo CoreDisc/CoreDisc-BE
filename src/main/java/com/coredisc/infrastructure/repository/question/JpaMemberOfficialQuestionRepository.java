@@ -12,4 +12,6 @@ public interface JpaMemberOfficialQuestionRepository extends JpaRepository<Membe
     Optional<MemberOfficialQuestion> findByMemberAndId(Member member, Long id);
 
     Optional<MemberOfficialQuestion> findByMemberAndOfficialQuestion(Member member, OfficialQuestion officialQuestion);
+
+    long countByOfficialQuestion(OfficialQuestion officialQuestion);
 }
