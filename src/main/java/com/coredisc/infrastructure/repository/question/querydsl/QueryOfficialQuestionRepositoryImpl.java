@@ -34,7 +34,7 @@ public class QueryOfficialQuestionRepositoryImpl implements QueryOfficialQuestio
         List<OfficialQuestion> officialQuestionList = jpaQueryFactory.selectFrom(qOfficialQuestion)
                 .where(qOfficialQuestion.member.eq(member)
                         .and(cursorCondition))
-                .orderBy(qOfficialQuestion.createdAt.desc(), qOfficialQuestion.id.desc())
+                .orderBy(qOfficialQuestion.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
 
