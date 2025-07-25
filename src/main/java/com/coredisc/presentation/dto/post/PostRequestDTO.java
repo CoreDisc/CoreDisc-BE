@@ -1,11 +1,11 @@
 package com.coredisc.presentation.dto.post;
 
-import com.coredisc.domain.common.enums.AnswerType;
+import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,29 +27,12 @@ public class PostRequestDTO {
     @NoArgsConstructor
     public static class PublishPostDto {
         @NotNull(message = "공개 범위는 필수입니다.")
-        private PublicityType visibility;
+        private PublicityType publicity;
 
         @NotNull(message = "선택형 일기는 필수입니다.")
         private SelectiveDiaryDto selectiveDiary;
 
-        private String diaryContent;
 
-
-        @Getter
-        @NoArgsConstructor
-        public static class SelectiveDiaryDto {
-            @NotNull(message = "누구와는 필수입니다.")
-            private String who;
-
-            @NotNull(message = "어디서는 필수입니다.")
-            private String where;
-
-            @NotNull(message = "무엇을은 필수입니다.")
-            private String what;
-
-            @NotNull(message = "기분은 필수입니다.")
-            private String mood;
-        }
     }
 
     @Getter
@@ -63,10 +46,17 @@ public class PostRequestDTO {
     @Getter
     @NoArgsConstructor
     public static class SelectiveDiaryDto {
+        @NotNull(message = "누구와는 필수입니다.")
         private String who;
+
+        @NotNull(message = "어디서는 필수입니다.")
         private String where;
+
+        @NotNull(message = "무엇을은 필수입니다.")
         private String what;
-        private String mood;
+
+        @NotNull(message = "추가정보는 필수입니다.")
+        private String detail;
     }
 
     /**
@@ -85,5 +75,17 @@ public class PostRequestDTO {
         }
     }
 
+    /**
+     * 게시글 조회용 request
+     */
+
+    @Getter
+    @Builder
+    public static class PostFeedRequestDto {
+
+        private FeedType feedType = FeedType.ALL;
+        private Long lastPostId;
+        private Integer size = 10;
+    }
 
 }
