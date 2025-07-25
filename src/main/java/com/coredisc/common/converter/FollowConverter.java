@@ -19,13 +19,14 @@ public class FollowConverter {
     }
 
     // 팔로워, 친한 친구
-    public static FollowResponseDTO.FollowerDTO toFollowerDTO(Follow follow) {
+    public static FollowResponseDTO.FollowerDTO toFollowerDTO(Follow follow, Boolean isMutual) {
         return FollowResponseDTO.FollowerDTO.builder()
                 .followerId(follow.getFollower().getId())
                 .nickname(follow.getFollower().getNickname())
                 .username(follow.getFollower().getUsername())
                 //.profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
                 .isCircle(follow.isCircle())
+                .isMutual(isMutual)
                 .build();
     }
 

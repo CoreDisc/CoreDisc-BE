@@ -2,6 +2,7 @@ package com.coredisc.application.service.follow;
 
 import com.coredisc.common.converter.FollowConverter;
 import com.coredisc.domain.follow.Follow;
+import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.infrastructure.repository.follow.queryDSL.QueryFollowRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class FollowQueryServiceImpl implements FollowQueryService {
 
     private final QueryFollowRepository queryFollowRepository;
+    private final FollowRepository followRepository;
 
     @Override
     public FollowResponseDTO.FollowerListDTO getFollowers(Member member, Long cursorId, Pageable pageable) {
@@ -28,7 +30,11 @@ public class FollowQueryServiceImpl implements FollowQueryService {
         if (hasNext) result.remove(pageable.getPageSize());
 
         List<FollowResponseDTO.FollowerDTO> dtos = result.stream()
-                .map(FollowConverter::toFollowerDTO)
+                .map(follow -> {
+                    Member follower = follow.getFollower();
+                    boolean isMutual = followRepository.existsByFollowerAndFollowing(member, follower);
+                    return FollowConverter.toFollowerDTO(follow, isMutual);
+                })
                 .collect(Collectors.toList());
 
         CursorDTO<FollowResponseDTO.FollowerDTO> cursorDTO = new CursorDTO<>(dtos, hasNext);
@@ -64,7 +70,7 @@ public class FollowQueryServiceImpl implements FollowQueryService {
         if (hasNext) result.remove(pageable.getPageSize());
 
         List<FollowResponseDTO.FollowerDTO> dtos = result.stream()
-                .map(FollowConverter::toFollowerDTO)
+                .map(follow -> FollowConverter.toFollowerDTO(follow, null))
                 .collect(Collectors.toList());
 
         CursorDTO<FollowResponseDTO.FollowerDTO> cursorDTO = new CursorDTO<>(dtos, hasNext);

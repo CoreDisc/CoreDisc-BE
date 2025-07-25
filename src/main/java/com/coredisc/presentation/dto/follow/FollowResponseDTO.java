@@ -2,6 +2,7 @@ package com.coredisc.presentation.dto.follow;
 
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,13 +16,15 @@ public class FollowResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    // TODO: 해당 DTO를 팔로워,친한친구 목록 조회 때 쓰는 것으로 수정할 예정
     public static class FollowerDTO {
         private Long followerId;
         private String nickname;
         private String username;
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
         private boolean isCircle;
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private Boolean isMutual;
     }
 
     @Getter
