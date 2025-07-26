@@ -30,10 +30,10 @@ public interface MemberControllerDocs {
     @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
     ApiResponse<String> resignMember(@CurrentMember Member member);
 
-    @Operation(summary = "[수정 중] 마이홈 본인 정보 조회", description = "마이홈 사용자 본인 정보 조회 기능입니다.")
+    @Operation(summary = "마이홈 본인 정보 조회", description = "마이홈 사용자 본인 정보 조회 기능입니다.")
     ApiResponse<MemberResponseDTO.MyHomeInfoDTO> getMyHomeInfo(@CurrentMember Member member);
 
-    @Operation(summary = "[수정 중] 마이홈 타사용자 정보 조회", description = "마이홈 타사용자 정보 조회 기능입니다.")
+    @Operation(summary = "마이홈 타사용자 정보 조회", description = "마이홈 타사용자 정보 조회 기능입니다.")
     @Parameter(name = "targetUsername", description = "타사용자의 username(로그인 아이디)")
     ApiResponse<MemberResponseDTO.UserHomeInfoDTO> getUserHomeInfo(@CurrentMember Member member, @PathVariable String targetUsername);
 
