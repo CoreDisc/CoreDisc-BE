@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,4 +52,8 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "[수정 중] 비밀번호 변경을 위한 사용자 검증", description = "비밀변호 변경을 위해 사용자 검증을 진행합니다. 사용자가 존재하면 인증코드 메일을 보냅니다.")
     ApiResponse<String> verifyUser(@RequestBody @Valid AuthRequestDTO.VerifyUserDTO request);
+
+    @Operation(summary = "카카오 소셜 로그인", description = "카카오 인가 코드를 입력받아 로그인을 처리합니다.")
+    @PostMapping("/socail/kakao")
+    ApiResponse<AuthResponseDTO.LoginResultDTO> kakaoLogin(@Valid @RequestBody AuthRequestDTO.SocialLoginDTO request);
 }

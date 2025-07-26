@@ -3,6 +3,7 @@ package com.coredisc.presentation.controller;
 import com.coredisc.application.service.auth.AuthCommandService;
 import com.coredisc.application.service.auth.AuthQueryService;
 import com.coredisc.application.service.auth.MailService;
+import com.coredisc.application.service.auth.SocialAuthService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
@@ -28,6 +29,7 @@ public class AuthController implements AuthControllerDocs {
     private final AuthCommandService authCommandService;
     private final AuthQueryService authQueryService;
     private final MailService mailService;
+    private final SocialAuthService socialAuthService;
 
     // 회원가입
     @PostMapping("/signup")
@@ -133,5 +135,13 @@ public class AuthController implements AuthControllerDocs {
 
         // 사용자 존재 여부와 관계 없이 항상 200으로 (사용자 유추 공격 방어)
         return ApiResponse.onSuccess("이메일이 전송되었습니다.");
+    }
+
+    // 카카오 소셜 로그인
+    @Override
+    @PostMapping("/social/kakao")
+    public ApiResponse<AuthResponseDTO.LoginResultDTO> kakaoLogin(@Valid @RequestBody AuthRequestDTO.SocialLoginDTO request) {
+
+        return ApiResponse.onSuccess(socialAuthService.login("kakao", request));
     }
 }
