@@ -34,8 +34,10 @@ public enum ErrorStatus implements BaseErrorCode {
     SAME_USERNAME_REQUEST(HttpStatus.CONFLICT, "AUTH4014", "현재 사용하고 계신 아이디와 동일합니다."),
     INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4015", "현재 사용하고 계신 비밀번호와 일치하지 않습니다."),
     PASSWORD_CHECK_NOT_EQUAL(HttpStatus.BAD_REQUEST, "AUTH4016", "재확인 비밀번호가 일치하지 않습니다."),
+    UNSUPPORTED_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH4017", "지원하지 않는 provider입니다."),
 
     // 인증코드 메일 전송 관련 에러
+    UNSUPPORTED_EMAIL_REQUEST_TYPE(HttpStatus.BAD_REQUEST, "EMAIL4001", "지원하지 않는 EmailRequestType 입니다."),
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
     EMAIL_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5002", "메일 작성에 실패했습니다."),
 
@@ -108,6 +110,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_BLOCKING(HttpStatus.BAD_REQUEST, "BLOCK4002", "이미 차단한 이력이 있습니다."),
     BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "BLOCK4003", "차단한 이력이 없습니다."),
     SELF_UNBLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4004", "자기 자신은 차단 취소 할 수 없습니다."),
+    BLOCK_RELATIONSHIP_EXISTS(HttpStatus.BAD_REQUEST, "BLOCK4005", "차단 관계가 존재합니다."),
 
     // Circle 관련 에러
     SELF_CIRCLE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "CIRCLE4001", "자기 자신은 친한 친구로 설정할 수 없습니다."),

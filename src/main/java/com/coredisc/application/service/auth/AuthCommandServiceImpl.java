@@ -136,19 +136,37 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         }
     }
 
-    // 코드 인증
+    // 코드 인증 (회원가입)
     @Override
-    public boolean verifyCode(AuthRequestDTO.VerifyCodeDTO request) {
+    public boolean verifyCodeForSignUp(AuthRequestDTO.VerifyCodeForSignUpDTO request) {
 
-        String authCode = (String) redisUtil.get("auth:" + request.getUsername() + ":" + request.getEmailRequestType());
+        verifyAuthCode(request.getEmail(), String.valueOf(request.getEmailRequestType()), request.getCode());
 
-        if (authCode == null) {
+        return true;
+    }
+
+    // 코드 인증 (비밀번호 변경)
+    @Override
+    public boolean verifyCodeForResetPwd(AuthRequestDTO.VerifyCodeForResetPwdDTO request) {
+
+        Member member = memberRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        verifyAuthCode(member.getEmail(), String.valueOf(request.getEmailRequestType()), request.getCode());
+        return true;
+    }
+
+    private void verifyAuthCode(String email, String requestType, String code) {
+
+        String key = "auth:" + email + ":" + requestType;
+        String storedCode = (String) redisUtil.get(key);
+
+        if (storedCode == null) {
             throw new AuthHandler(ErrorStatus.EMAIL_CODE_EXPIRED);
         }
-        if (!authCode.equals(request.getCode())) {
+        if (!storedCode.equals(code)) {
             throw new AuthHandler(ErrorStatus.CODE_NOT_EQUAL);
         }
-        return true;
     }
 
     // 로그인

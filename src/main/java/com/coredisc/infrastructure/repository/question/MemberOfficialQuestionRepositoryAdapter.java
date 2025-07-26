@@ -35,4 +35,9 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
         return jpaMemberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, officialQuestion);
     }
 
+    @Override
+    public long countByOfficialQuestion(OfficialQuestion officialQuestion) {
+        return jpaMemberOfficialQuestionRepository.countByOfficialQuestion(officialQuestion);
+    }
+
 }

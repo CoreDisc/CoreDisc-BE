@@ -31,11 +31,14 @@ public interface AuthControllerDocs {
     @Parameter(name = "nickname", description = "닉네임")
     ApiResponse<AuthResponseDTO.CheckNicknameResultDTO> checkNickname(@RequestParam String nickname);
 
-    @Operation(summary = "[수정 중] 이메일 인증 메일 전송", description = "이메일 인증을 위한 메일 전송 기능입니다.")
+    @Operation(summary = "회원가입 이메일 인증 메일 전송", description = "회원가입 시 이메일 인증을 위한 메일 전송 기능입니다.")
     ApiResponse<String> sendCode(@RequestBody @Valid AuthRequestDTO.VerifyEmailDTO request);
 
-    @Operation(summary = "[수정 중] 이메일 코드 인증", description = "회원가입 시 이메일 코드 인증 기능입니다.")
-    ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCode(@RequestBody @Valid AuthRequestDTO.VerifyCodeDTO request);
+    @Operation(summary = "회원가입 이메일 코드 인증", description = "회원가입 시 이메일 코드 인증 기능입니다.")
+    ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCodeForSignUp(@RequestBody @Valid AuthRequestDTO.VerifyCodeForSignUpDTO request);
+
+    @Operation(summary = "비밀번호 변경 이메일 코드 인증", description = "비밀번호 변경 시 이메일 코드 인증 기능입니다.")
+    ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCodeForResetPwd(@Valid @RequestBody AuthRequestDTO.VerifyCodeForResetPwdDTO request);
 
     @Operation(summary = "일반 로그인", description = "일반 로그인 기능입니다.")
     ApiResponse<AuthResponseDTO.LoginResultDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request);
@@ -49,6 +52,9 @@ public interface AuthControllerDocs {
     @Operation(summary = "아이디 찾기", description = "아이디 찾기 기능입니다. 이름과 이메일을 입력합니다.")
     ApiResponse<AuthResponseDTO.FindUsernameResultDTO> findUsername(@RequestBody @Valid AuthRequestDTO.FindUsernameDTO request);
 
-    @Operation(summary = "[수정 중] 비밀번호 변경을 위한 사용자 검증", description = "비밀변호 변경을 위해 사용자 검증을 진행합니다. 사용자가 존재하면 인증코드 메일을 보냅니다.")
+    @Operation(summary = "비밀번호 변경을 위한 사용자 검증", description = "비밀변호 변경을 위해 사용자 검증을 진행합니다. 사용자가 존재하면 인증코드 메일을 보냅니다.")
     ApiResponse<String> verifyUser(@RequestBody @Valid AuthRequestDTO.VerifyUserDTO request);
+
+    @Operation(summary = "카카오 소셜 로그인", description = "카카오 인가 코드를 입력받아 로그인을 처리합니다.")
+    ApiResponse<AuthResponseDTO.LoginResultDTO> kakaoLogin(@Valid @RequestBody AuthRequestDTO.SocialLoginDTO request);
 }

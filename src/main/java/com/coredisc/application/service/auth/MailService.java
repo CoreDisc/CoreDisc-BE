@@ -4,7 +4,6 @@ import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.util.RedisUtil;
 import com.coredisc.domain.common.enums.EmailRequestType;
-import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -52,7 +51,7 @@ public class MailService {
     }
 
     // 이메일 폼 생성
-    private MimeMessage createEmailForm(String username, String email, String code, EmailRequestType emailRequestType) throws MessagingException {
+    private MimeMessage createEmailForm(String email, String code, EmailRequestType emailRequestType) throws MessagingException {
 
         MimeMessage message = javaMailSender.createMimeMessage();
 
@@ -69,6 +68,8 @@ public class MailService {
                 message.setSubject("CoreDisc 비밀번호 변경 이메일 인증 코드 안내");
                 body += "<h3>비밀번호 변경을 위한 이메일 인증을 진행합니다.</h3>";
                 break;
+            default:
+                throw new AuthHandler(ErrorStatus.UNSUPPORTED_EMAIL_REQUEST_TYPE);
         }
 
         body += "<hr/>";
@@ -79,7 +80,7 @@ public class MailService {
         message.setText(body, "UTF-8", "html");
 
         // Redis에 해당 인증코드 인증 시간 설정(10분)
-        String redisKey = "auth:" + username + ":" + emailRequestType; // SIGNUP or RESET_PASSWORD 구분
+        String redisKey = "auth:" + email + ":" + emailRequestType; // SIGNUP or RESET_PASSWORD 구분
         redisUtil.set(redisKey, code);
         redisUtil.expire(redisKey, codeExpiration, TimeUnit.MILLISECONDS);
 
@@ -90,11 +91,12 @@ public class MailService {
     @Async
     public void sendEmail(String sendEmail, EmailRequestType emailRequestType) throws MessagingException {
 
-        Member member = memberRepository.findByEmail(sendEmail)
-                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if(emailRequestType.equals(EmailRequestType.RESET_PASSWORD)) {
+            memberRepository.findByEmail(sendEmail)
+                    .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
 
-        String username = member.getUsername();
-        String redisKey = "auth:" + username + ":" + emailRequestType;;
+        String redisKey = "auth:" + sendEmail + ":" + emailRequestType;
         if (redisUtil.exists(redisKey)) {
             redisUtil.delete(redisKey);
         }
@@ -102,7 +104,7 @@ public class MailService {
         String authCode = createCode();
         try {
             // 메일 생성
-            MimeMessage message = createEmailForm(username, sendEmail, authCode, emailRequestType);
+            MimeMessage message = createEmailForm(sendEmail, authCode, emailRequestType);
             // 메일 발송
             javaMailSender.send(message);
         } catch (MessagingException | MailSendException e) {
