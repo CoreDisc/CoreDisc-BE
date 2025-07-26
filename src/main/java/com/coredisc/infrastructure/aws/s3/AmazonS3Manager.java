@@ -221,7 +221,7 @@ public class AmazonS3Manager {
     /**
      * 파일 검증
      */
-    private void validateFile(MultipartFile file) {
+    public void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new PostHandler(ErrorStatus.FILE_NOT_FOUND);
         }
@@ -241,7 +241,7 @@ public class AmazonS3Manager {
     /**
      * 파일키 생성 (user_memberId_uuid)
      */
-    private String generateFileKey(Long memberId) {
+    public String generateFileKey(Long memberId) {
         String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         return String.format("user_%d_%s", memberId, uuid);
     }
@@ -251,7 +251,7 @@ public class AmazonS3Manager {
      * S3에 원본 이미지 업로드
      * @return 원본 이미지 url
      */
-    private String uploadToS3(MultipartFile file, String s3Key) throws IOException {
+    public String uploadToS3(MultipartFile file, String s3Key) throws IOException {
         // 메타데이터 설정
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
