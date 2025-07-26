@@ -34,4 +34,21 @@ public class DiscCommandServiceImpl implements DiscCommandService {
         disc.setCoverColor(coverColor);
         return discRepository.save(disc);
     }
+
+    @Transactional
+    public boolean createDiscIfNotExists(Member member, int year, int month) {
+        boolean exists = discRepository.existsByMemberAndYearAndMonth(member, year, month);
+        if (!exists) {
+            Disc disc = Disc.builder()
+                    .member(member)
+                    .year(year)
+                    .month(month)
+                    .coverColor(DiscCoverColor.WHITE)
+                    .coverImgUrl(null)
+                    .build();
+            discRepository.save(disc);
+            return true; // 생성됨
+        }
+        return false; // 이미 존재
+    }
 }
