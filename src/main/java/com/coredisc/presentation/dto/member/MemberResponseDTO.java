@@ -25,7 +25,7 @@ public class MemberResponseDTO {
 
         private String followingCount;
 
-        private String discCount;
+        private String postCount;
 
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
@@ -46,7 +46,7 @@ public class MemberResponseDTO {
 
         private String followingCount;
 
-        private String discCount;
+        private String postCount;
 
         private Boolean isFollowing;
 

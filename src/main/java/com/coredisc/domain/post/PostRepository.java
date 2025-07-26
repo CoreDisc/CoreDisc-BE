@@ -1,6 +1,7 @@
 package com.coredisc.domain.post;
 
 import com.coredisc.domain.common.enums.FeedType;
+import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
@@ -18,6 +19,9 @@ public interface PostRepository {
     Optional<Post> findById(Long id);
     void delete(Post post);
     void deleteById(Long id);
+    long countByMemberAndStatus(Member member, PostStatus status);
+    long countByMemberAndStatusAndPublicityIn(Member member, PostStatus status, List<PublicityType> publicityTypes);
+
 
     // QueryDSL
     List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable);
