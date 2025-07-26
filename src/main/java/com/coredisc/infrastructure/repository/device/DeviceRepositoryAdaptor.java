@@ -25,6 +25,11 @@ public class DeviceRepositoryAdaptor implements DeviceRepository {
     }
 
     @Override
+    public void deleteAllByMember(Member member) {
+        jpaDeviceRepository.deleteAllByMember(member);
+    }
+
+    @Override
     public List<Device> findAllByMember(Member member) {
         return jpaDeviceRepository.findAllByMember(member);
     }
