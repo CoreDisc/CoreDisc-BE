@@ -16,6 +16,7 @@ import com.coredisc.domain.post.QPostAnswer;
 import com.coredisc.domain.post.QPostAnswerImage;
 import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -269,6 +270,58 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                         p.createdAt.between(start.atStartOfDay(), end.atTime(LocalTime.MAX))
                 )
                 .orderBy(p.createdAt.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<Post> findPostsByCreatedDate(LocalDate targetDate) {
+        QPost post = QPost.post;
+
+        return jpaQueryFactory
+                .selectFrom(post)
+                .where(post.createdAt.between(
+                        targetDate.atStartOfDay(),
+                        targetDate.plusDays(1).atStartOfDay().minusNanos(1))
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
+        QPost post = QPost.post;
+
+        return jpaQueryFactory
+                .selectFrom(post)
+                .where(post.createdAt.between(start, end))
+                .fetch();
+    }
+
+    @Override
+    public List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end) {
+        QPost post = QPost.post;
+
+        return jpaQueryFactory
+                .selectFrom(post)
+                .where(post.createdAt.between(start, end))
+                .where(
+                        post.createdAt.eq(
+                                JPAExpressions
+                                        .select(post.createdAt.min())
+                                        .from(post)
+                                        .where(post.member.id.eq(post.member.id)) // 같은 멤버
+                                        .where(post.createdAt.between(start, end))
+                        )
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<PostAnswer> findByCreatedAtBetweenAndTodayQuestionId(LocalDateTime start, LocalDateTime end, Long todayQuestionId) {
+        QPostAnswer postAnswer = QPostAnswer.postAnswer;
+
+        return jpaQueryFactory.selectFrom(postAnswer)
+                .where(postAnswer.createdAt.between(start, end)
+                        .and(postAnswer.todayQuestion.id.eq(todayQuestionId)))
                 .fetch();
     }
 }

@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -40,6 +42,11 @@ public class PostAnswerRepositoryAdaptor implements PostAnswerRepository {
     @Override
     public Optional<PostAnswer> findByPostAndTodayQuestion(Post post, TodayQuestion todayQuestion) {
         return jpaPostAnswerRepository.findPostAnswerByPostAndTodayQuestion(post , todayQuestion );
+    }
+
+    @Override
+    public List<PostAnswer> findByCreatedAtBetweenAndTodayQuestionId(LocalDateTime start, LocalDateTime end, Long todayQuestionId) {
+        return jpaPostAnswerRepository.findByCreatedAtBetweenAndTodayQuestionId(start, end, todayQuestionId);
     }
 
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -36,5 +37,11 @@ public class TodayQuestionRepositoryAdapter  implements TodayQuestionRepository 
     public boolean existsByPersonalQuestion(PersonalQuestion personalQuestion) {
         return jpaTodayQuestionRepository.existsByPersonalQuestion(personalQuestion);
     }
+
+    @Override
+    public List<TodayQuestion> findByQuestionOrderInAndSelectedDateBetween(List<Integer> questionOrders, LocalDate startDate, LocalDate endDate) {
+        return jpaTodayQuestionRepository.findByQuestionOrderInAndSelectedDateBetween(questionOrders, startDate, endDate);
+    }
+
 
 }

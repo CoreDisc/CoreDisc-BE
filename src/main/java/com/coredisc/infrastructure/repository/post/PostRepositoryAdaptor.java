@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,4 +89,20 @@ public class PostRepositoryAdaptor implements PostRepository {
     public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member){
         return queryPostRepository.findPostInfoByMemberAndMonth(year, month, member);
     }
+
+    @Override
+    public List<Post> findPostsByCreatedDate(LocalDate targetDate) {
+        return queryPostRepository.findPostsByCreatedDate(targetDate);
+    }
+
+    @Override
+    public List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end){
+        return queryPostRepository.findPostsByCreatedAtBetween(start, end);
+    }
+
+    @Override
+    public List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end) {
+        return queryPostRepository.findFirstPostPerMemberInMonth(start, end);
+    }
+
 }

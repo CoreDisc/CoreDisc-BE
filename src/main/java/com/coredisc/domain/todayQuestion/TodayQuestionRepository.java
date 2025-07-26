@@ -4,6 +4,7 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.personalQuestion.PersonalQuestion;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface TodayQuestionRepository {
@@ -16,4 +17,5 @@ public interface TodayQuestionRepository {
 
     boolean existsByPersonalQuestion(PersonalQuestion personalQuestion);
 
+    List<TodayQuestion> findByQuestionOrderInAndSelectedDateBetween(List<Integer> questionOrders, LocalDate startDate, LocalDate endDate);
 }

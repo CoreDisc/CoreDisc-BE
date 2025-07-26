@@ -8,6 +8,7 @@ import com.coredisc.presentation.dto.post.PostResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,6 +26,7 @@ public interface PostRepository {
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
     List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
 
+
     //단건 조회
     Post findPostDetail(Member member, Long postId);
 
@@ -34,6 +36,9 @@ public interface PostRepository {
     // 게시글 동적 조회
     List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Member member, FeedType feedType, Long lastPostId, Integer size);
 
-
+    // 디스크, 캘린더, 통계용
     List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
+    List<Post> findPostsByCreatedDate(LocalDate targetDate);
+    List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end);
 }
