@@ -4,7 +4,6 @@ import com.coredisc.application.service.disc.DiscCommandService;
 import com.coredisc.application.service.disc.DiscQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.DiscConverter;
-import com.coredisc.common.exception.handler.DiscHandler;
 import com.coredisc.domain.disc.Disc;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.DiscControllerDocs;

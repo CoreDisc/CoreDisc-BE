@@ -33,7 +33,7 @@ public interface DiscControllerDocs {
     @Operation(summary = "디스크 커버 이미지 변경", description = "디스크 커버 이미지를 변경합니다.")
     ApiResponse<DiscResponseDTO.DiscDTO> updateDiscCoverImage(
             @Parameter(description = "디스크 ID", example = "1") @PathVariable(name = "discId") Long discId,
-            @RequestPart("coverImageFile") MultipartFile coverImageFile,
+            @Parameter(description = "커버 이미지 파일") @RequestPart("coverImageFile") MultipartFile coverImageFile,
             @Parameter(hidden = true) @CurrentMember Member member
     );
 
