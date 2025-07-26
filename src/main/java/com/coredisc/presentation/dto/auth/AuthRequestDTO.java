@@ -97,4 +97,11 @@ public class AuthRequestDTO {
         @NotBlank(message = "아이디 입력은 필수입니다.")
         private String username;
     }
+
+    @Getter
+    public static class SocialLoginDTO {
+
+        @NotBlank(message = "인가 코드 입력은 필수입니다.")
+        String code;
+    }
 }

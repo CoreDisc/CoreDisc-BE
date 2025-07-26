@@ -1,5 +1,6 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.domain.common.enums.OauthType;
 import com.coredisc.domain.common.enums.Role;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
@@ -7,6 +8,7 @@ import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
+import com.coredisc.presentation.dto.auth.KakaoUserInfo;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 
 import java.time.LocalDateTime;
@@ -174,6 +176,21 @@ public class MemberConverter {
         return MemberResponseDTO.PostTextThumbnailDTO.builder()
                 .createdAt(createdDate)
                 .weekday(weekday)
+                .build();
+    }
+
+    public static Member toKakaoMember(KakaoUserInfo kakaoUserInfo, String randomNickname,
+                                       String randomUsername, String password) {
+        return Member.builder()
+                .username(randomUsername)
+                .password(password)
+                .name(kakaoUserInfo.getKakaoAccount().getProfile().getNickname())
+                .nickname(randomNickname)
+                .email(kakaoUserInfo.getKakaoAccount().getEmail())
+                .isSocialLogin(true)
+                .oauthType(OauthType.KAKAO)
+                .status(true)
+                .role(Role.USER)
                 .build();
     }
 }

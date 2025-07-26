@@ -34,6 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SAME_USERNAME_REQUEST(HttpStatus.CONFLICT, "AUTH4014", "현재 사용하고 계신 아이디와 동일합니다."),
     INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4015", "현재 사용하고 계신 비밀번호와 일치하지 않습니다."),
     PASSWORD_CHECK_NOT_EQUAL(HttpStatus.BAD_REQUEST, "AUTH4016", "재확인 비밀번호가 일치하지 않습니다."),
+    UNSUPPORTED_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH4017", "지원하지 않는 provider입니다."),
 
     // 인증코드 메일 전송 관련 에러
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
