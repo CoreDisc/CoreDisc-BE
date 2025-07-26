@@ -1,7 +1,6 @@
 package com.coredisc.presentation.dto.post;
 
-import com.coredisc.domain.common.enums.FeedType;
-import com.coredisc.domain.common.enums.PublicityType;
+import com.coredisc.domain.common.enums.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -46,14 +45,14 @@ public class PostRequestDTO {
     @Getter
     @NoArgsConstructor
     public static class SelectiveDiaryDto {
-        @NotNull(message = "누구와는 필수입니다.")
-        private String who;
+        @NotNull(message = "누구와 보냈는지 선택하세요.")
+        private DiaryWho who;
 
-        @NotNull(message = "어디서는 필수입니다.")
-        private String where;
+        @NotNull(message = "장소를 선택하세요.")
+        private DiaryWhere where;
 
-        @NotNull(message = "무엇을은 필수입니다.")
-        private String what;
+        @NotNull(message = "무엇을 했는 지 선택하세요.")
+        private DiaryWhat what;
 
         @NotNull(message = "추가정보는 필수입니다.")
         private String detail;

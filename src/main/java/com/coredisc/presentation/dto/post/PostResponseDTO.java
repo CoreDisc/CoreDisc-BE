@@ -1,9 +1,6 @@
 package com.coredisc.presentation.dto.post;
 
-import com.coredisc.domain.common.enums.AnswerType;
-import com.coredisc.domain.common.enums.PostStatus;
-import com.coredisc.domain.common.enums.PublicityType;
-import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.common.enums.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -209,9 +206,9 @@ public class PostResponseDTO {
         @Getter
         @Builder
         public static class SelectiveDiary {
-            private String who;
-            private String where;
-            private String what;
+            private DiaryWho who;
+            private DiaryWhere where;
+            private DiaryWhat what;
             private String mood;
         }
 
