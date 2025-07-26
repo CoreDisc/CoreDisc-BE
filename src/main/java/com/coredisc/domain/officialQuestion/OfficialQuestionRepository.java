@@ -13,9 +13,9 @@ public interface OfficialQuestionRepository {
 
     OfficialQuestion save(OfficialQuestion officialQuestion);
 
-    Page<OfficialQuestion> findAllByMemberOrderByCreatedAtDesc(Member member, Pageable pageable);
+    List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize);
 
-    Page<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Pageable pageable);
+    List<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Long cursorId, int pageSize);
 
     Long countOfficialQuestionByMember(Member member);
 

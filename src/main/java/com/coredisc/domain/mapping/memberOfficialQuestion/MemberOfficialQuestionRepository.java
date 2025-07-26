@@ -15,4 +15,5 @@ public interface MemberOfficialQuestionRepository {
 
     Optional<MemberOfficialQuestion> findByMemberAndOfficialQuestion(Member member, OfficialQuestion officialQuestion);
 
+    long countByOfficialQuestion(OfficialQuestion officialQuestion);
 }
