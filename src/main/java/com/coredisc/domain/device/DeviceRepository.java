@@ -8,5 +8,5 @@ public interface DeviceRepository {
 
     Optional<Device> findByMemberAndToken(Member member, String token);
     Device save(Device device);
-
+    void deleteAllByMember(Member member);
 }

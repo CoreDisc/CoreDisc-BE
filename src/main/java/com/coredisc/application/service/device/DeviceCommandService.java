@@ -10,4 +10,6 @@ public interface DeviceCommandService {
 
     // 디바이스 토큰 비활성화 시키기
     void deactivateDeviceToken(String username, String token);
+
+    void deleteDeviceToken(Member member);
 }
