@@ -52,16 +52,32 @@ public class AuthRequestDTO {
     }
 
     @Getter
-    public static class VerifyCodeDTO {
+    public static class VerifyCodeForSignUpDTO {
+
+        @NotBlank(message = "이메일 입력은 필수입니다.")
+        @Email(message = "이메일 형식이 맞지 않습니다.")
+        private String email;
+
+        @NotBlank(message = "인증 코드 입력은 필수입니다.")
+        private String code;
+
+        @NotNull
+        @Schema(description = "회원가입/비밀번호 변경 인증번호를 구분합니다.", example = "SIGNUP")
+        private EmailRequestType emailRequestType;
+    }
+
+    @Getter
+    public static class VerifyCodeForResetPwdDTO {
 
         @NotBlank(message = "아이디 입력은 필수입니다.")
+        @Schema(description = "username", example = "my_coredisc")
         private String username;
 
         @NotBlank(message = "인증 코드 입력은 필수입니다.")
         private String code;
 
         @NotNull
-        @Schema(description = "회원가입/비밀번호 변경 인증번호를 구분합니다. SIGNUP 또는 RESET_PASSWORD", example = "SIGNUP")
+        @Schema(description = "회원가입/비밀번호 변경 인증번호를 구분합니다.", example = "RESET_PASSWORD")
         private EmailRequestType emailRequestType;
     }
 
