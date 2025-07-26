@@ -37,6 +37,7 @@ public enum ErrorStatus implements BaseErrorCode {
     UNSUPPORTED_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH4017", "지원하지 않는 provider입니다."),
 
     // 인증코드 메일 전송 관련 에러
+    UNSUPPORTED_EMAIL_REQUEST_TYPE(HttpStatus.BAD_REQUEST, "EMAIL4001", "지원하지 않는 EmailRequestType 입니다."),
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5001", "메일 전송에 실패했습니다."),
     EMAIL_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EMAIL5002", "메일 작성에 실패했습니다."),
 
