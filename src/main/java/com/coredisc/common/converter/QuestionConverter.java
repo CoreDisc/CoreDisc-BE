@@ -1,5 +1,6 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.domain.category.Category;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
@@ -52,53 +53,20 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.BasicQuestionListResultDTO toBasicQuestionListResultDTO(Page<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList) {
+    public static QuestionResponseDTO.MySharedQuestionResultDTO toMySharedQuestionResultDTO(OfficialQuestion question, long sharedCount) {
+        List<CategoryResponseDTO.CategoryInfoDTO> categories = question.getQuestionCategoryList().stream()
+                .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                        .categoryId(qc.getCategory().getId())
+                        .categoryName(qc.getCategory().getName())
+                        .build())
+                .toList();
 
-        return QuestionResponseDTO.BasicQuestionListResultDTO.builder()
-                .basicQuestionList(basicQuestionList.getContent())
-                .listSize(basicQuestionList.getNumberOfElements())
-                .totalPage(basicQuestionList.getTotalPages())
-                .totalElements(basicQuestionList.getTotalElements())
-                .isFirst(basicQuestionList.isFirst())
-                .isLast(basicQuestionList.isLast())
-                .build();
-    }
-
-    public static List<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOList(List<OfficialQuestion> officialQuestions) {
-        return officialQuestions.stream()
-                .map(officialQuestion -> {
-                    List<CategoryResponseDTO.CategoryInfoDTO> categories = officialQuestion.getQuestionCategoryList().stream()
-                            .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
-                                    .categoryId(qc.getCategory().getId())
-                                    .categoryName(qc.getCategory().getName())
-                                    .build())
-                            .collect(Collectors.toList());
-
-                    return QuestionResponseDTO.MySharedQuestionResultDTO.builder()
-                            .id(officialQuestion.getId())
-                            .categories(categories)
-                            .question(officialQuestion.getContents())
-                            .sharedCount(0L) // TODO: 공유 횟수 적용
-                            .createdAt(officialQuestion.getCreatedAt())
-                            .build();
-                })
-                .collect(Collectors.toList());
-    }
-
-    public static Page<QuestionResponseDTO.MySharedQuestionResultDTO> toMySharedQuestionResultDTOPage(Page<OfficialQuestion> officialQuestionList, Pageable pageable) {
-        List<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestiondtoList = toMySharedQuestionResultDTOList(officialQuestionList.getContent());
-        return new org.springframework.data.domain.PageImpl<>(mySharedQuestiondtoList, pageable, officialQuestionList.getTotalElements());
-    }
-
-    public static QuestionResponseDTO.MySharedQuestionListResultDTO toMySharedQuestionListResultDTO(Page<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList, Long totalMySharedQuestionCnt) {
-        return QuestionResponseDTO.MySharedQuestionListResultDTO.builder()
-                .mySharedQuestionCnt(totalMySharedQuestionCnt)
-                .mySharedQuestionList(mySharedQuestionList.getContent())
-                .listSize(mySharedQuestionList.getNumberOfElements())
-                .totalPage(mySharedQuestionList.getTotalPages())
-                .totalElements(mySharedQuestionList.getTotalElements())
-                .isFirst(mySharedQuestionList.isFirst())
-                .isLast(mySharedQuestionList.isLast())
+        return QuestionResponseDTO.MySharedQuestionResultDTO.builder()
+                .id(question.getId())
+                .categories(categories)
+                .question(question.getContents())
+                .sharedCount(sharedCount)
+                .createdAt(question.getCreatedAt())
                 .build();
     }
 
