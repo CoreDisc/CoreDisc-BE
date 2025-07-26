@@ -75,12 +75,21 @@ public class AuthController implements AuthControllerDocs {
         return ApiResponse.onSuccess("인증 메일이 성공적으로 전송되었습니다.");
     }
 
-    // 인증코드 검증
-    @PostMapping("/verify-code")
-    public ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCode(@RequestBody @Valid AuthRequestDTO.VerifyCodeDTO request) {
+    // 회원가입 인증코드 검증
+    @PostMapping("/signup/verify-code")
+    public ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCodeForSignUp(@RequestBody @Valid AuthRequestDTO.VerifyCodeForSignUpDTO request) {
 
         return ApiResponse.onSuccess(MemberConverter.toVerifyCodeResultDTO(
-                authCommandService.verifyCode(request)
+                authCommandService.verifyCodeForSignUp(request)
+        ));
+    }
+
+    // 비밀번호 변경 인증코드 검증
+    @PostMapping("/reset-password/verify-code")
+    public ApiResponse<AuthResponseDTO.VerifyCodeResultDTO> verifyCodeForResetPwd(AuthRequestDTO.VerifyCodeForResetPwdDTO request) {
+
+        return ApiResponse.onSuccess(MemberConverter.toVerifyCodeResultDTO(
+                authCommandService.verifyCodeForResetPwd(request)
         ));
     }
 
