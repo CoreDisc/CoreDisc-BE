@@ -60,6 +60,7 @@ public enum ErrorStatus implements BaseErrorCode {
     FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "FILE4002", "파일 크기가 너무 큽니다. (최대 10MB)"),
     INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FILE4003", "잘못된 파일명입니다."),
     INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE4004", "지원하지 않는 파일 형식입니다. (jpg, jpeg, png, gif, webp만 허용)"),
+    UNKNOWN_ERROR(HttpStatus.BAD_REQUEST, "FILE4005", "예외가 발생했습니다.(DB 에러, NullPointer 등)"),
 
     //통계 관련 에러
     STATS_NOT_FOUND(HttpStatus.NOT_FOUND, "STATS4001","요청한 통계 데이터를 찾을 수 없습니다."),
