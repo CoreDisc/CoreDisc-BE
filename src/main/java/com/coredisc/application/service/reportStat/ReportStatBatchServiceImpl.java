@@ -1,5 +1,6 @@
 package com.coredisc.application.service.reportStat;
 
+import com.coredisc.common.converter.ReportStatConverter;
 import com.coredisc.common.util.DateUtil;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
@@ -45,14 +46,7 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
 
         List<Post> posts = postRepository.findPostsByCreatedDate(targetDate);
 
-        List<DailyAnswerHourStat> stats = posts.stream()
-                .map(post -> DailyAnswerHourStat.builder()
-                        .memberId(post.getMember().getId())
-                        .answerDate(targetDate)
-                        .hourOfDay(post.getCreatedAt().getHour())
-                        .answerCount(1)
-                        .build())
-                .toList();
+        List<DailyAnswerHourStat> stats = ReportStatConverter.toDailyAnswerHourStats(posts, targetDate);
 
         dailyAnswerHourStatRepository.saveAll(stats);
     }
@@ -66,13 +60,7 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
 
         List<PostAnswer> postAnswers = postAnswerRepository.findByCreatedAtBetweenAndTodayQuestionId(startOfDay, endOfDay, RANDOM_QUESTION_ORDER);
 
-        List<DailyRandomQuestionStat> stats = postAnswers.stream()
-                .map(pa -> DailyRandomQuestionStat.builder()
-                        .memberId(pa.getPost().getMember().getId())
-                        .selectedDate(targetDate)
-                        .questionContent(pa.getQuestionContent())
-                        .build())
-                .toList();
+        List<DailyRandomQuestionStat> stats = ReportStatConverter.toDailyRandomQuestionStats(postAnswers, targetDate);
 
         dailyRandomQuestionStatRepository.saveAll(stats);
     }
@@ -107,16 +95,7 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
                 .findByQuestionOrderInAndSelectedDateBetween(List.of(1, 2, 3), startOfMonth.toLocalDate(), endOfMonth.toLocalDate());
 
         // 멤버 별 고정 질문 내용 저장
-        List<MonthlyFixedQuestionStat> stats = questions.stream()
-                .filter(q -> memberIds.contains(q.getMember().getId()))
-                .map(q -> MonthlyFixedQuestionStat.builder()
-                        .memberId(q.getMember().getId())
-                        .year(year)
-                        .month(month)
-                        .questionOrder(q.getQuestionOrder())
-                        .questionContent(q.getQuestionContent())
-                        .build())
-                .toList();
+        List<MonthlyFixedQuestionStat> stats = ReportStatConverter.toMonthlyFixedQuestionStats(questions, memberIds, year, month);
 
         monthlyFixedQuestionStatRepository.saveAll(stats);
     }
@@ -129,6 +108,7 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
 
         List<Post> posts = postRepository.findPostsByCreatedDate(targetDate);
 
+        // TODO: 컨버터로 분리하기
         List<MonthlySelectionDiaryStat> stats = posts.stream().map(post -> MonthlySelectionDiaryStat.builder()
                 .memberId(post.getMember().getId())
                 .year(post.getCreatedAt().getYear())
