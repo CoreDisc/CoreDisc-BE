@@ -2,6 +2,7 @@ package com.coredisc.presentation.dto.question;
 
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.presentation.dto.category.CategoryResponseDTO;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,19 +35,6 @@ public class QuestionResponseDTO {
         private LocalDateTime createdAt;
     }
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BasicQuestionListResultDTO {
-        List<BasicQuestionResultDTO> basicQuestionList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
-    }
-
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -58,6 +46,8 @@ public class QuestionResponseDTO {
         private String questionType;
 
         private String question;
+
+        private LocalDateTime createdAt;
     }
 
     @Builder
@@ -65,13 +55,8 @@ public class QuestionResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MySharedQuestionListResultDTO {
-        Long mySharedQuestionCnt;
-        List<MySharedQuestionResultDTO> mySharedQuestionList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
+        private Long mySharedQuestionCnt;
+        private CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList;
     }
 
     @Getter
