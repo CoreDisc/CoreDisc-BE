@@ -9,6 +9,7 @@ import com.coredisc.common.util.DateUtil;
 import com.coredisc.common.util.FormatNumberUtil;
 import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.common.enums.AnswerType;
+import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.follow.FollowRepository;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -61,15 +63,15 @@ public class MemberQueryServiceImpl implements MemberQueryService {
                 followRepository.countByFollowerId(member.getId())
         );
 
-        // 총 디스크 수(월별 리포트 수)
-        String discCount = FormatNumberUtil.formatNumberUnit(
-                discRepository.countByMember(member)
+        // 총 게시글 수 (PUBLISHED인 것만)
+        String postCount = FormatNumberUtil.formatNumberUnit(
+                postRepository.countByMemberAndStatus(member, PostStatus.PUBLISHED)
         );
 
         // 사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(member);
 
-        return MemberConverter.toMyHomeInfoDTO(member, followerCount, followingCount, discCount, profileImg);
+        return MemberConverter.toMyHomeInfoDTO(member, followerCount, followingCount, postCount, profileImg);
     }
 
     @Override
@@ -94,12 +96,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
                 followRepository.countByFollowerId(targetMember.getId())
         );
 
-        // 총 디스크 수(월별 리포트 수)
-        String discCount = FormatNumberUtil.formatNumberUnit(
-                discRepository.countByMember(targetMember)
-        );
-
-
         // 타사용자의 프로필 이미지
         ProfileImg profileImg = profileImgRepository.findByMember(targetMember);
 
@@ -109,9 +105,25 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         // 차단 여부
         boolean isBlocked = blockRepository.existsByBlockerAndBlocked(member, targetMember);
 
+        // Member가 targetMember의 Circle인지 여부
+        boolean isCircle = followRepository.existsByFollowerAndFollowingAndIsCircle(targetMember, member, true);
+
+        List<PublicityType> visibleTypes;
+        if (!isCircle) {
+            // Circle이 아니면 총 게시글 수 == PUBLISHED면서 OFFICIAL
+            visibleTypes = List.of(PublicityType.OFFICIAL);
+        } else {
+            // Circle이면 총 게시글 수 == PUBLISHED면서 OFFICIAL + CIRCLE
+            visibleTypes = Arrays.asList(PublicityType.OFFICIAL, PublicityType.CIRCLE);
+        }
+
+        String postCount = FormatNumberUtil.formatNumberUnit(
+                postRepository.countByMemberAndStatusAndPublicityIn(targetMember, PostStatus.PUBLISHED, visibleTypes)
+        );
+
         return MemberConverter.toUserHomeInfoDTO(
                 targetMember, followerCount, followingCount,
-                discCount, profileImg, isFollowing, isBlocked
+                postCount, profileImg, isFollowing, isBlocked
         );
     }
 

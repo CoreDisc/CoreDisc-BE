@@ -90,7 +90,7 @@ public class MemberConverter {
     }
 
     public static MemberResponseDTO.MyHomeInfoDTO toMyHomeInfoDTO(Member member, String followerCount,
-                                                                  String followingCount, String discCount,
+                                                                  String followingCount, String postCount,
                                                                   ProfileImg profileImg) {
 
         return MemberResponseDTO.MyHomeInfoDTO.builder()
@@ -99,13 +99,13 @@ public class MemberConverter {
                 .nickname(member.getNickname())
                 .followerCount(followerCount)
                 .followingCount(followingCount)
-                .discCount(discCount)
+                .postCount(postCount)
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
                 .build();
     }
 
     public static MemberResponseDTO.UserHomeInfoDTO toUserHomeInfoDTO(Member targetMember, String followerCount,
-                                                                      String followingCount, String discCount,
+                                                                      String followingCount, String postCount,
                                                                       ProfileImg profileImg, boolean isFollowing,
                                                                       boolean isBlocked) {
 
@@ -115,7 +115,7 @@ public class MemberConverter {
                 .nickname(targetMember.getNickname())
                 .followerCount(followerCount)
                 .followingCount(followingCount)
-                .discCount(discCount)
+                .postCount(postCount)
                 .isFollowing(isFollowing)
                 .isBlocked(isBlocked)
                 .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
