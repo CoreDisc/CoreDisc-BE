@@ -26,4 +26,12 @@ public class ProfileImgConverter {
                 .member(member)
                 .build();
     }
+
+    public static ProfileImg toNewProfileImg(Member member, String newUrl) {
+
+        return ProfileImg.builder()
+                .member(member)
+                .imgUrl(newUrl)
+                .build();
+    }
 }
