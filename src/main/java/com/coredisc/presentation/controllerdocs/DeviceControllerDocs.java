@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @Tag(name = "Device", description = "디바이스 관련 API")
 public interface DeviceControllerDocs {
 
@@ -18,4 +20,6 @@ public interface DeviceControllerDocs {
             @RequestBody DeviceRequestDTO.registerDeviceDTO request
     );
 
+    @Operation(summary = "[테스트용] 디바이스 토큰 목록 조회", description = "유저의 디바이스 토큰 목록 조회 기능입니다.")
+    ApiResponse<List<DeviceResponseDTO.DeviceResultDTO>> getDevices(@CurrentMember Member member);
 }

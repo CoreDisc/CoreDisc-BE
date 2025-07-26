@@ -6,6 +6,7 @@ import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,5 +22,10 @@ public class DeviceRepositoryAdaptor implements DeviceRepository {
     @Override
     public Device save(Device device) {
         return jpaDeviceRepository.save(device);
+    }
+
+    @Override
+    public List<Device> findAllByMember(Member member) {
+        return jpaDeviceRepository.findAllByMember(member);
     }
 }
