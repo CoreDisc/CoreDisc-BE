@@ -1,7 +1,6 @@
 package com.coredisc.domain.post;
 
 
-import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.AnswerType;
 import jakarta.persistence.*;
@@ -10,7 +9,7 @@ import lombok.*;
 @Entity
 @Table(name = "post_answer",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"post_id", "question_id"})
+            @UniqueConstraint(columnNames = {"post_id", "answer_order"})
         })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,8 +21,8 @@ public class PostAnswer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String questionContent;
+    @Column(name = "answer_order", nullable = false)
+    private Integer answerOrder;  // 1, 2, 3, 4
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -32,10 +31,6 @@ public class PostAnswer extends BaseEntity {
     // 텍스트 답변인 경우
     @Column(length = 50)
     private String textContent;
-
-    @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "question_id", nullable = false)
-    private TodayQuestion todayQuestion; // 1,2,3,4
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
