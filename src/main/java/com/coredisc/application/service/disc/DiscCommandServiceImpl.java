@@ -6,9 +6,13 @@ import com.coredisc.domain.common.enums.DiscCoverColor;
 import com.coredisc.domain.disc.Disc;
 import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.member.Member;
+import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -16,13 +20,37 @@ import org.springframework.stereotype.Service;
 public class DiscCommandServiceImpl implements DiscCommandService {
 
     private final DiscRepository discRepository;
+    private final AmazonS3Manager amazonS3Manager;
 
     @Override
-    public Disc updateDiscCoverImage(Long discId, String coverImageUrl, Member member) {
+    public Disc updateDiscCoverImage(Long discId, MultipartFile coverImageFile, Member member) {
         Disc disc = discRepository.findByIdAndMember(discId, member)
                 .orElseThrow(() -> new DiscHandler(ErrorStatus.DISC_NOT_FOUND));
 
-        disc.setCoverImgUrl(coverImageUrl);
+        String oldUrl = disc.getCoverImgUrl();
+
+        try {
+            // 기존에 설정한 이미지가 있으면 s3에서 삭제
+            if (disc.hasCoverImage()) {
+                if (amazonS3Manager.isValidS3Url(oldUrl)) {
+                    amazonS3Manager.deleteImageByUrl(oldUrl);
+                }
+            }
+
+            // 새로 저장
+            amazonS3Manager.validateFile(coverImageFile);
+            String fileKey = amazonS3Manager.generateFileKey(member.getId());
+            String s3Key = "discCoverImages/" + fileKey + ".jpg";
+            String newUrl = amazonS3Manager.uploadToS3(coverImageFile, s3Key);
+
+            disc.setCoverImgUrl(newUrl);
+
+        } catch (IOException e) {
+            // 실패하면 다시 기존 URL로
+            disc.setCoverImgUrl(oldUrl);
+            throw new DiscHandler(ErrorStatus.FILE_UPLOAD_FAILED);
+        }
+
         return discRepository.save(disc);
     }
 
