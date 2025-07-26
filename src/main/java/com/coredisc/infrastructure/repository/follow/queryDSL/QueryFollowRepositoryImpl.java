@@ -33,6 +33,36 @@ public class QueryFollowRepositoryImpl implements QueryFollowRepository {
     }
 
     @Override
+    public List<Follow> findFollowers(Member member, Long cursorId, Pageable pageable) {
+        QFollow follow = QFollow.follow;
+
+        return queryFactory
+                .selectFrom(follow)
+                .where(
+                        follow.following.eq(member),
+                        cursorId != null ? follow.id.lt(cursorId) : null
+                )
+                .orderBy(follow.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+    }
+
+    @Override
+    public List<Follow> findFollowings(Member member, Long cursorId, Pageable pageable) {
+        QFollow follow = QFollow.follow;
+
+        return queryFactory
+                .selectFrom(follow)
+                .where(
+                        follow.follower.eq(member),
+                        cursorId != null ? follow.id.lt(cursorId) : null
+                )
+                .orderBy(follow.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+    }
+
+    @Override
     public int countCircleFollowers(Member member) {
         QFollow follow = QFollow.follow;
 
@@ -43,6 +73,32 @@ public class QueryFollowRepositoryImpl implements QueryFollowRepository {
                         follow.following.eq(member),
                         follow.isCircle.isTrue()
                 )
+                .fetchOne();
+
+        return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public int countFollowers(Member member) {
+        QFollow follow = QFollow.follow;
+
+        Long count = queryFactory
+                .select(follow.count())
+                .from(follow)
+                .where(follow.following.eq(member))
+                .fetchOne();
+
+        return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public int countFollowings(Member member) {
+        QFollow follow = QFollow.follow;
+
+        Long count = queryFactory
+                .select(follow.count())
+                .from(follow)
+                .where(follow.follower.eq(member))
                 .fetchOne();
 
         return count != null ? count.intValue() : 0;
