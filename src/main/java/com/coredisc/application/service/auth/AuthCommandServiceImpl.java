@@ -1,5 +1,6 @@
 package com.coredisc.application.service.auth;
 
+import com.coredisc.application.service.device.DeviceCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.converter.MemberTermsConverter;
@@ -48,6 +49,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final MailService mailService;
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
+    private final DeviceCommandService deviceCommandService;
 
     // 회원가입
     @Override
@@ -205,12 +207,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
-    public void logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request, String deviceToken) {
 
         try {
             String accessToken = jwtProvider.resolveAccessToken(request);
 
             if(jwtProvider.validateAccessToken(accessToken)) {
+                // 디바이스 토큰 비활성화
+                deviceCommandService.deactivateDeviceToken(jwtProvider.getUsername(accessToken), accessToken);
                 // 블랙리스트에 저장
                 redisUtil.set(accessToken, "logout");
                 redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
