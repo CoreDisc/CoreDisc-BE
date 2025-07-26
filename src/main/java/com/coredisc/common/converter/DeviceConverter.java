@@ -20,6 +20,7 @@ public class DeviceConverter {
                 .id(device.getId())
                 .token(device.getToken())
                 .deviceType(device.getDeviceType())
+                .isActive(device.isActive())
                 .createdAt(device.getCreatedAt())
                 .build();
     }

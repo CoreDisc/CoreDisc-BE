@@ -17,6 +17,7 @@ public class DeviceResponseDTO {
         private Long id;
         private String token;
         private String deviceType;
+        private boolean isActive;
         private LocalDateTime createdAt;
     }
 }
