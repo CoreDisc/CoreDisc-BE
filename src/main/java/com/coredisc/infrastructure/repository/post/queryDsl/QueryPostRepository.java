@@ -21,15 +21,13 @@ public interface QueryPostRepository {
 
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
 
-    List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
+    List<Post> findTempPostByMemberAndDate(Member member, LocalDate today);
 
     List<PostAnswer> findTempPostAnswerByPostId(Long postId);
 
     List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Long memberId, FeedType feedType, Long lastPostId, Integer size);
 
     Post findPostDetail(Long memberId, Long postId);
-
-
 
     List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
 }

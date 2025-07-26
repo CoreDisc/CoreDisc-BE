@@ -5,9 +5,7 @@ import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.domain.Comment;
 import com.coredisc.domain.common.BaseEntity;
-import com.coredisc.domain.common.enums.AnswerType;
-import com.coredisc.domain.common.enums.PostStatus;
-import com.coredisc.domain.common.enums.PublicityType;
+import com.coredisc.domain.common.enums.*;
 import com.coredisc.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,15 +33,18 @@ public class Post extends BaseEntity {
 
     // 선택형 일기 -> enum 타입으로 관리
     @Column(name = "daily_who", length = 50)
-    private String dailyWho;
+    @Enumerated(value = EnumType.STRING)
+    private DiaryWho dailyWho;
 
     @Column(name = "daily_where", length = 50)
-    private String dailyWhere;
+    @Enumerated(value = EnumType.STRING)
+    private DiaryWhere dailyWhere;
 
     @Column(name = "daily_what", length = 50)
-    private String dailyWhat;
+    @Enumerated(value = EnumType.STRING)
+    private DiaryWhat dailyWhat;
 
-    @Column(name = "daily_detail", length = 50)
+    @Column(name = "daily_detail", length = 200)
     private String dailyDetail;  // mood로 변경 고려
 
     // 통계
@@ -92,7 +93,7 @@ public class Post extends BaseEntity {
     }
 
     // 선택형 일기 저장
-    public void updateSelectiveDiary(String who, String where, String what, String detail) {
+    public void updateSelectiveDiary(DiaryWho who, DiaryWhere where, DiaryWhat what, String detail) {
         this.dailyWho = who;
         this.dailyWhere = where;
         this.dailyWhat  = what;

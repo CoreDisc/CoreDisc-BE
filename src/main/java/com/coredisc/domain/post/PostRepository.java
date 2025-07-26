@@ -9,6 +9,7 @@ import com.coredisc.presentation.dto.post.PostResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +28,7 @@ public interface PostRepository {
     List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable);
     List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable);
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
-    List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
+    List<Post> findTempPostByMemberAndDate(Member member, LocalDate today);
 
     //단건 조회
     Post findPostDetail(Member member, Long postId);
@@ -40,4 +41,7 @@ public interface PostRepository {
 
 
     List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
+
+    // 특정 회원이 특정 날짜에 발행한 게시글이 있는가?
+    boolean existsByMemberAndStatusAndCreatedAtBetween(Member member, PostStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

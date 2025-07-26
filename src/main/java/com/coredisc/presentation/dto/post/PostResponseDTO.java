@@ -1,9 +1,6 @@
 package com.coredisc.presentation.dto.post;
 
-import com.coredisc.domain.common.enums.AnswerType;
-import com.coredisc.domain.common.enums.PostStatus;
-import com.coredisc.domain.common.enums.PublicityType;
-import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.common.enums.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -59,41 +56,22 @@ public class PostResponseDTO {
         private String imageUrl;
         private String thumbnailUrl;
         private String originalFileName;
-        private Long fileSize;
-        private String fileSizeFormatted;
-        private Boolean hasThumbnail;
     }
 
     @Getter
     @Builder
     public static class TextAnswerDto {
         private String content;
-        private Integer characterCount;
-
     }
 
     @Getter
     @Builder
     public static class AnswerResultDto {
         private Long answerId;
-        private Integer questionId;
+        private Integer questionOrder;
         private AnswerType answerType;
         private ImageAnswerDto imageAnswer;
         private TextAnswerDto textAnswer;
-
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime createdAt;
-
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime updatedAt;
-    }
-
-    @Getter
-    @Builder
-    public static class UploadUrlDto {
-        private String uploadUrl;
-        private String imageUrl;
-        private LocalDateTime expiresAt;
     }
 
     /**
@@ -104,7 +82,6 @@ public class PostResponseDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL) // null 값인 필드 제외
     public static class TempPostDetailDto {
         private Long postId;
-        private LocalDate selectedDate;
         private PostStatus status;
         private List<TempAnswerDto> answers;
     }
@@ -148,7 +125,6 @@ public class PostResponseDTO {
             private MemberInfo member;
             private LocalDate selectedDate;
             private List<Answer> answers;  // 4개 답변 모두 포함
-            private LocalDateTime createdAt;
 
             @Getter
             @Builder
@@ -189,7 +165,7 @@ public class PostResponseDTO {
         private MemberInfo member;
         private LocalDate selectedDate;
         private PublicityType visibility;
-        private List<Answer> answers;
+        private List<PostFeedResponseDTO.PostSummary.Answer> answers;
         private SelectiveDiary selectiveDiary;
         private Statistics statistics;
         private Boolean isLiked;
@@ -230,9 +206,9 @@ public class PostResponseDTO {
         @Getter
         @Builder
         public static class SelectiveDiary {
-            private String who;
-            private String where;
-            private String what;
+            private DiaryWho who;
+            private DiaryWhere where;
+            private DiaryWhat what;
             private String mood;
         }
 
@@ -244,4 +220,7 @@ public class PostResponseDTO {
             private Integer viewCount;
         }
     }
+
+
+
 }
