@@ -2,18 +2,26 @@ package com.coredisc.application.service.member;
 
 import com.coredisc.application.service.device.DeviceCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.converter.ProfileImgConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
+import com.coredisc.common.exception.handler.ProfileImgHandler;
 import com.coredisc.common.util.RedisUtil;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import com.coredisc.domain.profileImg.ProfileImg;
+import com.coredisc.domain.profileImg.ProfileImgRepository;
+import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
+import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
 import com.coredisc.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -22,10 +30,12 @@ import java.util.concurrent.TimeUnit;
 public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
+    private final ProfileImgRepository profileImgRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
     private final DeviceCommandService deviceCommandService;
+    private final AmazonS3Manager amazonS3Manager;
 
     @Override
     public void resetPassword(MemberRequestDTO.ResetPasswordDTO request) {
@@ -127,6 +137,47 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         memberRepository.save(member);
 
         logoutMember(accessToken);
+    }
+
+    @Override
+    public ProfileImgResponseDTO.ProfileImgDTO resetProfileImg(Member member, MultipartFile newProfileImg) {
+        try {
+            if (newProfileImg == null || newProfileImg.isEmpty()) {
+                throw new ProfileImgHandler(ErrorStatus.FILE_NOT_FOUND);
+            }
+
+            // 1. 기존 이미지가 기본 프로필 이미지인지 판단
+            ProfileImg defaultImg = profileImgRepository.findById(1L)
+                    .orElseThrow(() -> new ProfileImgHandler(ErrorStatus.DEFAULT_PROFILE_IMG_NOT_FOUND));
+            ProfileImg oldProfileImg = member.getProfileImg();
+
+            // 2. 기존 프로필 이미지가 유저 개인 이미지라면 S3에서 삭제
+            if (oldProfileImg != null && !oldProfileImg.getImgUrl().equals(defaultImg.getImgUrl())) {
+                String oldUrl = oldProfileImg.getImgUrl();
+                if (!oldUrl.isEmpty()) {
+                    String oldFileKey = amazonS3Manager.extractFileKeyFromUrl(oldUrl);
+                    if (oldFileKey != null) {
+                        amazonS3Manager.deleteImageByKey("profiles/" + oldFileKey + ".jpg");
+                    }
+                }
+            }
+
+            // 3. 프로필 이미지 신규 업로드 및 저장
+            amazonS3Manager.validateFile(newProfileImg);
+            String fileKey = amazonS3Manager.generateFileKey(member.getId());
+            String s3Key = "profiles/" + fileKey + ".jpg";
+            String newUrl = amazonS3Manager.uploadToS3(newProfileImg, s3Key);
+
+            oldProfileImg.setImgUrl(newUrl);
+            profileImgRepository.save(oldProfileImg);
+
+            return ProfileImgConverter.toProfileImgDTO(oldProfileImg);
+
+        } catch (IOException e) {
+            throw new ProfileImgHandler(ErrorStatus.FILE_UPLOAD_FAILED);
+        } catch (Exception e) {
+            throw new ProfileImgHandler(ErrorStatus.UNKNOWN_ERROR);
+        }
     }
 
 
