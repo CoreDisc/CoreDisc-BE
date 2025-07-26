@@ -5,6 +5,7 @@ import com.coredisc.common.converter.FollowConverter;
 import com.coredisc.common.exception.handler.CircleHandler;
 import com.coredisc.common.exception.handler.FollowHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
+import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
@@ -20,6 +21,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final BlockRepository blockRepository;
 
     @Override
     public Follow follow(Member member, Long targetId) {
@@ -34,6 +36,11 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         // 이미 팔로우한 이력이 있을 경우
         if (followRepository.existsByFollowerAndFollowing(member, target)){
             throw new FollowHandler(ErrorStatus.ALREADY_FOLLOWING);
+        }
+
+        // 차단 관계인지 확인
+        if (blockRepository.existsByBlockerAndBlocked(member, target) || blockRepository.existsByBlockerAndBlocked(target, member)) {
+            throw new FollowHandler(ErrorStatus.BLOCK_RELATIONSHIP_EXISTS);
         }
 
         Follow follow = FollowConverter.toFollow(member, target);

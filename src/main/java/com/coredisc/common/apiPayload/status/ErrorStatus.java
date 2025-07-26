@@ -109,6 +109,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_BLOCKING(HttpStatus.BAD_REQUEST, "BLOCK4002", "이미 차단한 이력이 있습니다."),
     BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "BLOCK4003", "차단한 이력이 없습니다."),
     SELF_UNBLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "BLOCK4004", "자기 자신은 차단 취소 할 수 없습니다."),
+    BLOCK_RELATIONSHIP_EXISTS(HttpStatus.BAD_REQUEST, "BLOCK4005", "차단 관계가 존재합니다."),
 
     // Circle 관련 에러
     SELF_CIRCLE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "CIRCLE4001", "자기 자신은 친한 친구로 설정할 수 없습니다."),

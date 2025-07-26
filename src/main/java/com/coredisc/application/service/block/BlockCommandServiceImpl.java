@@ -38,10 +38,16 @@ public class BlockCommandServiceImpl implements BlockCommandService {
             throw new BlockHandler(ErrorStatus.ALREADY_BLOCKING);
         }
 
-        // 팔로우 관계였다면 팔로우 취소
-        Follow follow = followRepository.findByFollowerAndFollowing(member, target);
-        if (follow != null) {
-            followRepository.delete(follow);
+        // 팔로우 취소 : 내가 상대방을 팔로우 하고 있는 걸 끊기
+        Follow followToTarget = followRepository.findByFollowerAndFollowing(member, target);
+        if (followToTarget != null) {
+            followRepository.delete(followToTarget);
+        }
+
+        // 팔로우 취소 : 상대방이 나를 팔로우 하고 있는 걸 끊기
+        Follow followFromTarget = followRepository.findByFollowerAndFollowing(target, member);
+        if (followFromTarget != null) {
+            followRepository.delete(followFromTarget);
         }
 
         Block block = BlockConverter.toBlock(member, target);
