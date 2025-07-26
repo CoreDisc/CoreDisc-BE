@@ -8,4 +8,6 @@ public interface ProfileImgRepository {
 
     ProfileImg findByMember(Member member);
     Optional<ProfileImg> findById(Long profileImgId);
+    void delete(ProfileImg profileImg);
+    void save(ProfileImg newProfileImg);
 }

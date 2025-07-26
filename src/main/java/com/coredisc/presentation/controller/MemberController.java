@@ -8,11 +8,13 @@ import com.coredisc.presentation.controllerdocs.MemberControllerDocs;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
+import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/members")
@@ -120,5 +122,13 @@ public class MemberController implements MemberControllerDocs {
 
         memberCommandService.resetUsernameMyHome(accessToken, member, request);
         return ApiResponse.onSuccess("아이디가 변경되어 인증이 만료되었습니다. 다시 로그인 해주세요.");
+    }
+
+    @Override
+    @PatchMapping("/profile-image")
+    public ApiResponse<ProfileImgResponseDTO.ProfileImgDTO> resetProfileImg(@CurrentMember Member member,
+                                                                            @RequestPart("image")MultipartFile image) {
+
+        return ApiResponse.onSuccess(memberCommandService.resetProfileImg(member, image));
     }
 }
