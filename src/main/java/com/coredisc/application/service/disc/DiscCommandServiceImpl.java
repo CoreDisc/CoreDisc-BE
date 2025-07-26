@@ -1,6 +1,7 @@
 package com.coredisc.application.service.disc;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.converter.DiscConverter;
 import com.coredisc.common.exception.handler.DiscHandler;
 import com.coredisc.domain.common.enums.DiscCoverColor;
 import com.coredisc.domain.disc.Disc;
@@ -39,13 +40,7 @@ public class DiscCommandServiceImpl implements DiscCommandService {
     public boolean createDiscIfNotExists(Member member, int year, int month) {
         boolean exists = discRepository.existsByMemberAndYearAndMonth(member, year, month);
         if (!exists) {
-            Disc disc = Disc.builder()
-                    .member(member)
-                    .year(year)
-                    .month(month)
-                    .coverColor(DiscCoverColor.WHITE)
-                    .coverImgUrl(null)
-                    .build();
+            Disc disc = DiscConverter.toDisc(member, year, month);
             discRepository.save(disc);
             return true; // 생성됨
         }
