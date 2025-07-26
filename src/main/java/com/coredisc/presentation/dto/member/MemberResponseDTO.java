@@ -65,9 +65,9 @@ public class MemberResponseDTO {
 
         private PublicityType publicityType;
 
-        private PostImageThumbnailDTO postImageThumbnailDTO; // 4개의 답변 중 이미지 답변이 존재할 경우
+        private PostImageThumbnailDTO postImageThumbnailDTO; // 4개의 답변 중 첫 번째 답변이 이미지 답변안 경우
 
-        private PostTextThumbnailDTO postTextThumbnailDTO; // 4개의 답변 모두 텍스트 답변일 경우
+        private PostTextThumbnailDTO postTextThumbnailDTO; // 4개의 답변 중 첫 번째 답변이 텍스트 답변인 경우
     }
 
     @Getter
@@ -78,9 +78,9 @@ public class MemberResponseDTO {
 
         private Long postId;
 
-        private PostImageThumbnailDTO postImageThumbnailDTO; // 4개의 답변 중 이미지 답변이 존재할 경우
+        private PostImageThumbnailDTO postImageThumbnailDTO; // 4개의 답변 중 첫 번째 답변이 이미지 답변안 경우
 
-        private PostTextThumbnailDTO postTextThumbnailDTO; // 4개의 답변 모두 텍스트 답변일 경우
+        private PostTextThumbnailDTO postTextThumbnailDTO; // 4개의 답변 중 첫 번째 답변이 텍스트 답변인 경우
     }
 
     @Getter
