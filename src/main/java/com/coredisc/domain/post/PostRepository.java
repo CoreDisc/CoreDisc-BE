@@ -20,6 +20,9 @@ public interface PostRepository {
     Optional<Post> findById(Long id);
     void delete(Post post);
     void deleteById(Long id);
+    long countByMemberAndStatus(Member member, PostStatus status);
+    long countByMemberAndStatusAndPublicityIn(Member member, PostStatus status, List<PublicityType> publicityTypes);
+
 
     // QueryDSL
     List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable);

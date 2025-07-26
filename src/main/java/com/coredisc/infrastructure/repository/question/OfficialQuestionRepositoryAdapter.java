@@ -27,13 +27,13 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     }
 
     @Override
-    public Page<OfficialQuestion> findAllByMemberOrderByCreatedAtDesc(Member member, Pageable pageable){
-        return jpaOfficialQuestionRepository.findAllByMemberOrderByCreatedAtDesc(member, pageable);
+    public List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize){
+        return queryOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
     }
 
     @Override
-    public Page<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Pageable pageable) {
-        return queryOfficialQuestionRepository.findAllByMemberAndCategory(member, category, pageable);
+    public List<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Long cursorId, int pageSize) {
+        return queryOfficialQuestionRepository.findAllByMemberAndCategory(member, category, cursorId, pageSize);
     }
 
     @Override

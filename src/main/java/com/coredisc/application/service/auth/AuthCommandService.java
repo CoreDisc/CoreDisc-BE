@@ -15,8 +15,11 @@ public interface AuthCommandService {
     // 이메일 코드 전송
     void sendCode(AuthRequestDTO.VerifyEmailDTO request, EmailRequestType requestType);
 
-    // 코드 인증
-    boolean verifyCode(AuthRequestDTO.VerifyCodeDTO request);
+    // 코드 인증 (회원가입)
+    boolean verifyCodeForSignUp(AuthRequestDTO.VerifyCodeForSignUpDTO request);
+
+    // 코드 인증 (비밀번호 변경)
+    boolean verifyCodeForResetPwd(AuthRequestDTO.VerifyCodeForResetPwdDTO request);
 
     // 로그인
     AuthResponseDTO.LoginResultDTO login(AuthRequestDTO.LoginDTO request);

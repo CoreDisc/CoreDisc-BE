@@ -9,6 +9,10 @@ import java.util.List;
 public interface QueryFollowRepository {
 
     List<Follow> findCircleFollowers(Member member, Long cursorId, Pageable pageable);
+    List<Follow> findFollowers(Member member, Long cursorId, Pageable pageable);
+    List<Follow> findFollowings(Member member, Long cursorId, Pageable pageable);
 
     int countCircleFollowers(Member member);
+    int countFollowers(Member member);
+    int countFollowings(Member member);
 }

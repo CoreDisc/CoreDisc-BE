@@ -5,16 +5,18 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
+import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Member", description = "멤버 관련 API")
 public interface MemberControllerDocs {
@@ -30,10 +32,10 @@ public interface MemberControllerDocs {
     @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
     ApiResponse<String> resignMember(@CurrentMember Member member);
 
-    @Operation(summary = "[수정 중] 마이홈 본인 정보 조회", description = "마이홈 사용자 본인 정보 조회 기능입니다.")
+    @Operation(summary = "마이홈 본인 정보 조회", description = "마이홈 사용자 본인 정보 조회 기능입니다.")
     ApiResponse<MemberResponseDTO.MyHomeInfoDTO> getMyHomeInfo(@CurrentMember Member member);
 
-    @Operation(summary = "[수정 중] 마이홈 타사용자 정보 조회", description = "마이홈 타사용자 정보 조회 기능입니다.")
+    @Operation(summary = "마이홈 타사용자 정보 조회", description = "마이홈 타사용자 정보 조회 기능입니다.")
     @Parameter(name = "targetUsername", description = "타사용자의 username(로그인 아이디)")
     ApiResponse<MemberResponseDTO.UserHomeInfoDTO> getUserHomeInfo(@CurrentMember Member member, @PathVariable String targetUsername);
 
@@ -67,4 +69,23 @@ public interface MemberControllerDocs {
     ApiResponse<String> resetUsernameMyHome(@RequestHeader("accessToken") String accessToken,
                                             @CurrentMember Member member,
                                             @RequestBody MemberRequestDTO.MyHomeResetUsernameDTO request);
+
+    @Schema(name = "ImageUploadSchema", description = "이미지 파일만 전송하는 multipart 요청")
+    public class ImageUploadSchema {
+        @Schema(description = "이미지 파일", type = "string", format = "binary")
+        public MultipartFile image;
+    }
+
+    @Operation(summary = "프로필 사진 변경",
+            description = "사용자 프로필 사진 변경 기능입니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = MemberControllerDocs.ImageUploadSchema.class))
+            )
+    )
+    ApiResponse<ProfileImgResponseDTO.ProfileImgDTO> resetProfileImg(@CurrentMember Member member,
+                                                                     @Parameter(description = "이미지 파일 (jpeg, jpg, png, gif, webp, 최대 10MB)",
+                                                                             content = @Content(mediaType = "multipart/form-data"))
+                                                                     @RequestPart("image") MultipartFile image);
 }

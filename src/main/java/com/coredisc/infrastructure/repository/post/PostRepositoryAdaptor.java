@@ -9,8 +9,8 @@ import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.infrastructure.repository.post.queryDsl.QueryPostRepository;
-import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
+import com.coredisc.presentation.dto.post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -47,6 +47,16 @@ public class PostRepositoryAdaptor implements PostRepository {
     @Override
     public void deleteById(Long id) {
 
+    }
+
+    @Override
+    public long countByMemberAndStatus(Member member, PostStatus status) {
+        return jpaPostRepository.countByMemberAndStatus(member, PostStatus.PUBLISHED);
+    }
+
+    @Override
+    public long countByMemberAndStatusAndPublicityIn(Member member, PostStatus status, List<PublicityType> publicityTypes) {
+        return jpaPostRepository.countByMemberAndStatusAndPublicityIn(member, status, publicityTypes);
     }
 
     @Override
@@ -98,4 +108,6 @@ public class PostRepositoryAdaptor implements PostRepository {
                 startOfDay,
                 endOfDay);
     }
+
+
 }
