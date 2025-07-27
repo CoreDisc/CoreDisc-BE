@@ -1,11 +1,9 @@
 package com.coredisc.domain.postAnswer;
 
-import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 
 import java.util.List;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PostAnswerRepository {

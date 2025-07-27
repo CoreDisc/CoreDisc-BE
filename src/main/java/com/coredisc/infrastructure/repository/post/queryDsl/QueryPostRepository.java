@@ -8,7 +8,6 @@ import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

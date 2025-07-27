@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 @Table(name = "daily_answer_hour_stat",
         indexes = @Index(name = "idx_member_date_hour", columnList = "memberId, answerDate, hourOfDay"),
-        uniqueConstraints = @UniqueConstraint(name = "uq_member_date", columnNames = {"memberId", "answerDate"}))
+        uniqueConstraints = @UniqueConstraint(name = "uq_member_date", columnNames = {"member_id", "answer_date"}))
 
 public class DailyAnswerHourStat extends BaseEntity {
     @Id

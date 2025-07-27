@@ -13,7 +13,7 @@ import lombok.*;
 @Builder
 @Table(name = "monthly_fixed_question_stat",
         indexes = @Index(name = "idx_member_year_month", columnList = "memberId, year, month"),
-        uniqueConstraints = @UniqueConstraint(name = "uq_member_year_month_question_order", columnNames = {"memberId", "year", "month", "questionOrder"}))
+        uniqueConstraints = @UniqueConstraint(name = "uq_member_year_month_question_order", columnNames = {"member_id", "year", "month", "question_order"}))
 public class MonthlyFixedQuestionStat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
