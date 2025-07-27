@@ -123,4 +123,25 @@ public class QuestionResponseDTO {
 
         private LocalDateTime createdAt;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SavedSharedQuestionResultDTO {
+
+        private Long id;
+
+        private Long questionId;
+
+        private List<CategoryResponseDTO.CategoryInfoDTO> categories;
+
+        private String question;
+
+        private Long sharedCount;
+
+        private Boolean isFavorite;
+
+        private LocalDateTime createdAt;
+    }
 }

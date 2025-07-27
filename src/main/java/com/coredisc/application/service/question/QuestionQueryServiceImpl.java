@@ -5,6 +5,7 @@ import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.category.Category;
 import com.coredisc.domain.category.CategoryRepository;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
@@ -130,4 +131,43 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         return myTodayQuestionList;
     }
 
+    // 저장한 공유 질문 목록 조회
+    @Override
+    public CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO> getSavedSharedQuestionList(
+            Member member,
+            Long categoryId,
+            Boolean favorite,
+            Long cursorId,
+            int pageSize) {
+
+        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
+            throw new QuestionHandler(ErrorStatus.INVALID_SAVED_OFFICIAL_QUESTION_FILTER_COMBINATION);
+        }
+
+        List<MemberOfficialQuestion> mySavedSharedQuestionList;
+
+        if (Boolean.TRUE.equals(favorite) ) {
+            mySavedSharedQuestionList = memberOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
+        } else if (categoryId == null || categoryId == 0) { // 전체
+            mySavedSharedQuestionList = memberOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
+        } else {    // 카테고리별
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+            mySavedSharedQuestionList = memberOfficialQuestionRepository.findByMemberAndCategoryAndCursor(member, category, cursorId, pageSize);
+        }
+
+        boolean hasNext = mySavedSharedQuestionList.size() > pageSize;
+
+        if (hasNext) {
+            mySavedSharedQuestionList = mySavedSharedQuestionList.subList(0, pageSize);
+        }
+
+        List<QuestionResponseDTO.SavedSharedQuestionResultDTO> mySavedSharedQuestionDTOList = mySavedSharedQuestionList.stream()
+                .map(question -> {
+                    long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question.getOfficialQuestion());
+                    return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount);
+                }).toList();
+
+        return new CursorDTO<>(mySavedSharedQuestionDTOList, hasNext);
+    }
 }

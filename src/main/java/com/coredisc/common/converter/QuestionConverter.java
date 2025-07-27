@@ -161,4 +161,27 @@ public class QuestionConverter {
                 .createdAt(LocalDateTime.now())
                 .build();
     }
+
+    public static QuestionResponseDTO.SavedSharedQuestionResultDTO toSavedSharedQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion, long sharedCount) {
+        OfficialQuestion officialQuestion = memberOfficialQuestion.getOfficialQuestion();
+
+        List<CategoryResponseDTO.CategoryInfoDTO> categories = officialQuestion.getQuestionCategoryList().stream()
+                .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                        .categoryId(qc.getCategory().getId())
+                        .categoryName(qc.getCategory().getName())
+                        .build())
+                .toList();
+
+        return QuestionResponseDTO.SavedSharedQuestionResultDTO.builder()
+                .id(memberOfficialQuestion.getId())
+                .questionId(officialQuestion.getId())
+                .question(officialQuestion.getContents())
+                .categories(categories)
+                .sharedCount(sharedCount)
+                .isFavorite(memberOfficialQuestion.getIsFavorite())
+                .createdAt(officialQuestion.getCreatedAt())
+                .build();
+    }
+
+
 }
