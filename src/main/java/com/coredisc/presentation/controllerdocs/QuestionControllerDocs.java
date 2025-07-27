@@ -117,4 +117,8 @@ public interface QuestionControllerDocs {
             @RequestParam(name = "favorite", required = false) Boolean favorite,
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", required = false) Integer size);
+
+    @Operation(summary = "인기 질문 목록 조회", description = "인기 질문 상위 5개를 조회하는 기능입니다.")
+    ApiResponse<QuestionResponseDTO.PopularQuestionListResultDTO> getPopularQuestionList(@CurrentMember Member member);
+
 }

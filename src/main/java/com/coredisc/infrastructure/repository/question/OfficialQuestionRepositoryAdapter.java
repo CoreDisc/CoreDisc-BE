@@ -6,11 +6,13 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
 import com.coredisc.infrastructure.repository.question.querydsl.QueryOfficialQuestionRepository;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +46,10 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     @Override
     public Optional<OfficialQuestion> findById(Long id) {
         return jpaOfficialQuestionRepository.findById(id);
+    }
+
+    @Override
+    public List<Tuple> findTop5PopularQuestionsThisWeek(LocalDate startOfWeek, LocalDate endOfWeek) {
+        return queryOfficialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
     }
 }

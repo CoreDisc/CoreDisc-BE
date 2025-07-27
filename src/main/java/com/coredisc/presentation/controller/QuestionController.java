@@ -165,4 +165,11 @@ public class QuestionController implements QuestionControllerDocs {
 
         return ApiResponse.onSuccess( questionQueryService.getSavedSharedQuestionList(member, categoryId, favorite, cursorId, size) );
     }
+
+    // 인기 질문 목록 조회
+    @GetMapping("/popular")
+    public ApiResponse<QuestionResponseDTO.PopularQuestionListResultDTO> getPopularQuestionList(@CurrentMember Member member) {
+
+        return ApiResponse.onSuccess( questionQueryService.getPopularQuestionList() );
+    }
 }

@@ -44,4 +44,7 @@ public interface QuestionQueryService {
             Boolean favorite,
             Long cursorId,
             int pageSize);
+
+    // 인기 질문 목록 조회
+    QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList();
 }

@@ -15,9 +15,11 @@ import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.infrastructure.repository.question.CustomQuestionRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -170,4 +172,18 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
         return new CursorDTO<>(mySavedSharedQuestionDTOList, hasNext);
     }
+
+    // 인기 질문 목록 조회
+    @Override
+    public QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList() {
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+
+        List<Tuple> popularQuestionTuple = officialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
+
+        return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionTuple, startOfWeek, endOfWeek);
+    }
+
 }
