@@ -32,14 +32,16 @@ public class DiscCommandServiceImpl implements DiscCommandService {
 
         try {
             // 기존에 설정한 이미지가 있으면 s3에서 삭제
-            if (disc.hasCoverImage()) {
-                if (amazonS3Manager.isValidS3Url(oldUrl)) {
-                    amazonS3Manager.deleteImageByUrl(oldUrl);
+            if (disc.hasCoverImage() && amazonS3Manager.isValidS3Url(oldUrl)) {
+                String oldFileKey = amazonS3Manager.extractFileKeyFromUrl(oldUrl);
+                if (oldFileKey != null) {
+                    amazonS3Manager.deleteImageByKey("discCoverImages/" + oldFileKey + ".jpg");
                 }
             }
 
             // 새로 저장
             amazonS3Manager.validateFile(coverImageFile);
+
             String fileKey = amazonS3Manager.generateFileKey(member.getId());
             String s3Key = "discCoverImages/" + fileKey + ".jpg";
             String newUrl = amazonS3Manager.uploadToS3(coverImageFile, s3Key);
@@ -47,8 +49,6 @@ public class DiscCommandServiceImpl implements DiscCommandService {
             disc.setCoverImgUrl(newUrl);
 
         } catch (IOException e) {
-            // 실패하면 다시 기존 URL로
-            disc.setCoverImgUrl(oldUrl);
             throw new DiscHandler(ErrorStatus.FILE_UPLOAD_FAILED);
         }
 
