@@ -39,9 +39,13 @@ public class TodayQuestionRepositoryAdapter  implements TodayQuestionRepository 
     }
 
     @Override
-    public List<TodayQuestion> findByQuestionOrderInAndSelectedDateBetween(List<Integer> questionOrders, LocalDate startDate, LocalDate endDate) {
-        return jpaTodayQuestionRepository.findByQuestionOrderInAndSelectedDateBetween(questionOrders, startDate, endDate);
+    public List<TodayQuestion> findAllByQuestionOrderAndSelectedDate(int questionOrder, LocalDate targetDate) {
+        return jpaTodayQuestionRepository.findAllByQuestionOrderAndSelectedDate(questionOrder, targetDate);
     }
 
+    @Override
+    public List<TodayQuestion> findByMemberIdInAndQuestionOrderInAndSelectedDateBetween(List<Long> memberIds, List<Integer> questionOrders, LocalDate startDate, LocalDate endDate) {
+        return jpaTodayQuestionRepository.findByMemberIdInAndQuestionOrderInAndSelectedDateBetween(memberIds, questionOrders, startDate, endDate);
+    }
 
 }

@@ -17,5 +17,7 @@ public interface TodayQuestionRepository {
 
     boolean existsByPersonalQuestion(PersonalQuestion personalQuestion);
 
-    List<TodayQuestion> findByQuestionOrderInAndSelectedDateBetween(List<Integer> questionOrders, LocalDate startDate, LocalDate endDate);
+    List<TodayQuestion> findAllByQuestionOrderAndSelectedDate(int questionOrder, LocalDate targetDate);
+    List<TodayQuestion> findByMemberIdInAndQuestionOrderInAndSelectedDateBetween(List<Long> memberIds, List<Integer> questionOrders, LocalDate startDate, LocalDate endDate);
+
 }
