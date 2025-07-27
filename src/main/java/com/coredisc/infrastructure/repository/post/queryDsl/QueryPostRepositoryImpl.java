@@ -323,47 +323,35 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                 .selectFrom(post)
                 .where(post.createdAt.between(
                         targetDate.atStartOfDay(),
-                        targetDate.plusDays(1).atStartOfDay().minusNanos(1))
+                        targetDate.plusDays(1).atStartOfDay().minusNanos(1)),
+                        post.status.ne(PostStatus.TEMP)
                 )
                 .fetch();
     }
 
     @Override
-    public List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
+    public List<Long> findDistinctMemberIdsByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
         QPost post = QPost.post;
 
         return jpaQueryFactory
-                .selectFrom(post)
+                .select(post.member.id)
+                .distinct()
+                .from(post)
                 .where(post.createdAt.between(start, end))
                 .fetch();
     }
 
+
     @Override
-    public List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end) {
+    public List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
         QPost post = QPost.post;
 
         return jpaQueryFactory
-                .selectFrom(post)
-                .where(post.createdAt.between(start, end))
-                .where(
-                        post.createdAt.eq(
-                                JPAExpressions
-                                        .select(post.createdAt.min())
-                                        .from(post)
-                                        .where(post.member.id.eq(post.member.id)) // 같은 멤버
-                                        .where(post.createdAt.between(start, end))
-                        )
-                )
-                .fetch();
-    }
-
-    @Override
-    public List<PostAnswer> findByCreatedAtBetweenAndTodayQuestionId(LocalDateTime start, LocalDateTime end, Long todayQuestionId) {
-        QPostAnswer postAnswer = QPostAnswer.postAnswer;
-
-        return jpaQueryFactory.selectFrom(postAnswer)
-                .where(postAnswer.createdAt.between(start, end)
-                        .and(postAnswer.todayQuestion.id.eq(todayQuestionId)))
+                .select(post.member)
+                .distinct()
+                .from(post)
+                .where(post.createdAt.between(start, end),
+                        post.status.ne(PostStatus.TEMP))
                 .fetch();
     }
 }

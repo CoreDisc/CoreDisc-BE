@@ -81,7 +81,7 @@ public class PostRepositoryAdaptor implements PostRepository {
 
     @Override
     public Post findPostDetail(Member member, Long postId) {
-        return queryPostRepository.findPostDetail(member.getId(),postId);
+        return queryPostRepository.findPostDetail(member.getId(), postId);
     }
 
     @Override
@@ -92,12 +92,12 @@ public class PostRepositoryAdaptor implements PostRepository {
 
     @Override
     public List<PostResponseDTO.PostFeedResponseDTO.PostSummary> findPostFeed(Member member, FeedType feedType, Long lastPostId, Integer size) {
-        return queryPostRepository.findPostFeed(member.getId(), feedType,lastPostId, size);
+        return queryPostRepository.findPostFeed(member.getId(), feedType, lastPostId, size);
     }
 
 
     @Override
-    public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member){
+    public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member) {
         return queryPostRepository.findPostInfoByMemberAndMonth(year, month, member);
     }
 
@@ -115,11 +115,12 @@ public class PostRepositoryAdaptor implements PostRepository {
     }
 
     @Override
-    public List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end){
-        return queryPostRepository.findPostsByCreatedAtBetween(start, end);
+    public List<Long> findDistinctMemberIdsByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
+        return queryPostRepository.findDistinctMemberIdsByCreatedAtBetween(start, end);
     }
 
     @Override
-    public List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end) {
-        return queryPostRepository.findFirstPostPerMemberInMonth(start, end);
+    public List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
+        return queryPostRepository.findMembersByPostCreatedAtBetween(start, end);
     }
+}

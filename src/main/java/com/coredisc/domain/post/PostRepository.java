@@ -42,8 +42,8 @@ public interface PostRepository {
     // 디스크, 캘린더, 통계용
     List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
     List<Post> findPostsByCreatedDate(LocalDate targetDate);
-    List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
-    List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end);
+    List<Long> findDistinctMemberIdsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
     // 특정 회원이 특정 날짜에 발행한 게시글이 있는가?
     boolean existsByMemberAndStatusAndCreatedAtBetween(Member member, PostStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);

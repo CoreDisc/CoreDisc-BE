@@ -8,6 +8,7 @@ import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,7 +33,6 @@ public interface QueryPostRepository {
 
     List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
     List<Post> findPostsByCreatedDate(LocalDate targetDate);
-    List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
-    List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end);
-    List<PostAnswer> findByCreatedAtBetweenAndTodayQuestionId(LocalDateTime start, LocalDateTime end, Long todayQuestionId);
+    List<Long> findDistinctMemberIdsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }
