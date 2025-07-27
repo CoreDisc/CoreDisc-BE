@@ -54,7 +54,7 @@ public interface MemberControllerDocs {
             @Parameter(name = "cursorId", description = "마지막으로 조회한 postAnswerImgId, 첫 요청 때는 null, queryString입니다."),
             @Parameter(name = "size", description = "기본값 10, queryString입니다.")
     })
-    ApiResponse<CursorDTO<MemberResponseDTO.UserHomePostDTO>> getUserHomePosts(@CurrentMember Member member,
+    ApiResponse<CursorDTO<MemberResponseDTO.MyHomePostDTO>> getUserHomePosts(@CurrentMember Member member,
                                                                                @PathVariable String targetUsername,
                                                                                @RequestParam(required = false) Long cursorId,
                                                                                @RequestParam(required = false) Integer size);
