@@ -85,7 +85,7 @@ public class MemberController implements MemberControllerDocs {
 
     @Override
     @GetMapping("/my-home/posts/{targetUsername}")
-    public ApiResponse<CursorDTO<MemberResponseDTO.UserHomePostDTO>> getUserHomePosts(@CurrentMember Member member,
+    public ApiResponse<CursorDTO<MemberResponseDTO.MyHomePostDTO>> getUserHomePosts(@CurrentMember Member member,
                                                                                       @PathVariable String targetUsername,
                                                                                       @RequestParam(required = false) Long cursorId,
                                                                                       @RequestParam(required = false) Integer size) {
