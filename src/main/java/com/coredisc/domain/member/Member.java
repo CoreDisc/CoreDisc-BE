@@ -53,8 +53,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Boolean status;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10)")
     private Role role;
 
     @ColumnDefault("0")
@@ -62,7 +62,6 @@ public class Member extends BaseEntity {
     private Boolean isSocialLogin;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10)")
     private OauthType oauthType;
 
     private String oauthKey;
