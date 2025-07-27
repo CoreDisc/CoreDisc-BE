@@ -313,4 +313,44 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                 .orderBy(p.createdAt.asc())
                 .fetch();
     }
+
+    @Override
+    public List<Post> findPostsByCreatedDate(LocalDate targetDate) {
+        QPost post = QPost.post;
+
+        return jpaQueryFactory
+                .selectFrom(post)
+                .where(post.createdAt.between(
+                        targetDate.atStartOfDay(),
+                        targetDate.plusDays(1).atStartOfDay().minusNanos(1)),
+                        post.status.ne(PostStatus.TEMP)
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Long> findDistinctMemberIdsByCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
+        QPost post = QPost.post;
+
+        return jpaQueryFactory
+                .select(post.member.id)
+                .distinct()
+                .from(post)
+                .where(post.createdAt.between(start, end))
+                .fetch();
+    }
+
+
+    @Override
+    public List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
+        QPost post = QPost.post;
+
+        return jpaQueryFactory
+                .select(post.member)
+                .distinct()
+                .from(post)
+                .where(post.createdAt.between(start, end),
+                        post.status.ne(PostStatus.TEMP))
+                .fetch();
+    }
 }

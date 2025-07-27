@@ -1,6 +1,5 @@
 package com.coredisc.domain.postAnswer;
 
-import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 
@@ -18,5 +17,4 @@ public interface PostAnswerRepository {
 
     // 특정 게시글의 모든 답변 조회 (questionOrder 순서대로)
     List<PostAnswer> findByPostOrderByQuestionOrder(Post post);
-
 }

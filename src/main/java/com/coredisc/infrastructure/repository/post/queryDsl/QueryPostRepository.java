@@ -10,6 +10,7 @@ import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -30,4 +31,7 @@ public interface QueryPostRepository {
     Post findPostDetail(Long memberId, Long postId);
 
     List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member);
+    List<Post> findPostsByCreatedDate(LocalDate targetDate);
+    List<Long> findDistinctMemberIdsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }

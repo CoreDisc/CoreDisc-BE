@@ -1,7 +1,5 @@
 package com.coredisc.infrastructure.repository.answer;
 
-import com.coredisc.domain.common.enums.PostStatus;
-import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
@@ -58,6 +56,5 @@ public class PostAnswerRepositoryAdaptor implements PostAnswerRepository {
     public List<PostAnswer> findByPostOrderByQuestionOrder(Post post) {
         return List.of();
     }
-
 
 }

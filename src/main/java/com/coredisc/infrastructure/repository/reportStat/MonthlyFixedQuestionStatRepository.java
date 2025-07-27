@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface MonthlyFixedQuestionStatRepository extends JpaRepository<MonthlyFixedQuestionStat, Long> {
@@ -21,4 +22,9 @@ public interface MonthlyFixedQuestionStatRepository extends JpaRepository<Monthl
             @Param("memberId") Long memberId,
             @Param("year") int year,
             @Param("month") int month);
+
+    @Query("SELECT DISTINCT m.memberId " +
+            "FROM MonthlyFixedQuestionStat m " +
+            "WHERE m.year = :year AND m.month = :month")
+    Set<Long> findMemberIdsByYearAndMonth(int year, int month);
 }
