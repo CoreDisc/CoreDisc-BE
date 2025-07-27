@@ -19,6 +19,4 @@ public interface PostAnswerRepository {
 
     // 특정 게시글의 모든 답변 조회 (questionOrder 순서대로)
     List<PostAnswer> findByPostOrderByQuestionOrder(Post post);
-
-    List<PostAnswer> findByCreatedAtBetweenAndTodayQuestionId(LocalDateTime start, LocalDateTime end, Long todayQuestionId);
 }
