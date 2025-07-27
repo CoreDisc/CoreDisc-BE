@@ -12,7 +12,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Table(name = "daily_random_question_stat",
-        indexes = @Index(name = "idx_member_date", columnList = "memberId, selectedDate"))
+        indexes = @Index(name = "idx_member_date", columnList = "memberId, selectedDate"),
+        uniqueConstraints = @UniqueConstraint(name = "uq_member_selected_date", columnNames = {"memberId", "selectedDate"}))
 public class DailyRandomQuestionStat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
