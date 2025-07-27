@@ -2,8 +2,8 @@ package com.coredisc.common.converter;
 
 import com.coredisc.application.service.reportStat.ReportRawData;
 import com.coredisc.domain.common.enums.TimeZoneType;
+import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
-import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.reportStats.DailyAnswerHourStat;
 import com.coredisc.domain.reportStats.DailyRandomQuestionStat;
 import com.coredisc.domain.reportStats.MonthlyFixedQuestionStat;
@@ -129,14 +129,12 @@ public class ReportStatConverter {
                 .toList();
     }
 
-    public static List<DailyRandomQuestionStat> toDailyRandomQuestionStats(List<PostAnswer> postAnswers, LocalDate targetDate) {
-        return postAnswers.stream()
-                .map(pa -> DailyRandomQuestionStat.builder()
-                        .memberId(pa.getPost().getMember().getId())
-                        .selectedDate(targetDate)
-                        .questionContent(pa.getQuestionContent())
-                        .build())
-                .toList();
+    public static DailyRandomQuestionStat toDailyRandomQuestionStats(Member member, String questionContent, LocalDate targetDate) {
+        return DailyRandomQuestionStat.builder()
+                .memberId(member.getId())
+                .questionContent(questionContent)
+                .selectedDate(targetDate)
+                .build();
     }
 
     public static List<MonthlyFixedQuestionStat> toMonthlyFixedQuestionStats(List<TodayQuestion> questions, Set<Long> memberIds, int year, int month) {
