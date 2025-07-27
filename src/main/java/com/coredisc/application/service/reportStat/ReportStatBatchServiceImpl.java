@@ -2,9 +2,8 @@ package com.coredisc.application.service.reportStat;
 
 import com.coredisc.common.converter.ReportStatConverter;
 import com.coredisc.common.util.DateUtil;
+import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
-import com.coredisc.domain.post.PostAnswer;
-import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.reportStats.*;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
@@ -20,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,9 +36,6 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
 
     private final PostRepository postRepository;
     private final TodayQuestionRepository todayQuestionRepository;
-    private final PostAnswerRepository postAnswerRepository;
-
-    private static final long RANDOM_QUESTION_ORDER = 4L;
 
     @Override
     @Transactional
@@ -45,7 +43,6 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
         // 그날에 답변한 시간 데이터 저장
 
         List<Post> posts = postRepository.findPostsByCreatedDate(targetDate);
-
         List<DailyAnswerHourStat> stats = ReportStatConverter.toDailyAnswerHourStats(posts, targetDate);
 
         dailyAnswerHourStatRepository.saveAll(stats);
@@ -58,9 +55,24 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
         LocalDateTime startOfDay = DateUtil.getStartOfDay(targetDate);
         LocalDateTime endOfDay = DateUtil.getEndOfDay(targetDate);
 
-        List<PostAnswer> postAnswers = postAnswerRepository.findByCreatedAtBetweenAndTodayQuestionId(startOfDay, endOfDay, RANDOM_QUESTION_ORDER);
+        // 포스트 작성한 멤버만 조회해서 랜덤 질문 선택 내역 저장
+        List<Member> members = postRepository.findMembersByPostCreatedAtBetween(startOfDay, endOfDay);
+        List<TodayQuestion> randomQuestions = todayQuestionRepository.findAllByQuestionOrderAndSelectedDate(4, targetDate);
 
-        List<DailyRandomQuestionStat> stats = ReportStatConverter.toDailyRandomQuestionStats(postAnswers, targetDate);
+        Map<Long, TodayQuestion> questionMap = randomQuestions.stream()
+                .collect(Collectors.toMap(
+                        tq -> tq.getMember().getId(),
+                        tq -> tq
+                ));
+
+        List<DailyRandomQuestionStat> stats = members.stream()
+                .map(member -> {
+                    TodayQuestion tq = questionMap.get(member.getId());
+                    if (tq == null) return null;  // null이면 건너뛰기 (실제로는 발생 가능성 X, 개발 중 에러 발생 가능하므로)
+                    String question = tq.getQuestionContent();
+                    return ReportStatConverter.toDailyRandomQuestionStats(member, question, targetDate);
+                })
+                .collect(Collectors.toList());
 
         dailyRandomQuestionStatRepository.saveAll(stats);
     }
@@ -73,30 +85,33 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
         int month = targetMonth.getMonthValue();
 
         LocalDateTime startOfMonth = DateUtil.getStartDateTime(year, month);
-        LocalDateTime endOfMonth = DateUtil.getEndDateTime(year, month);
+        LocalDateTime startOfDay = DateUtil.getStartOfDay(targetDate);
+        LocalDateTime endOfDay = DateUtil.getEndOfDay(targetDate);
 
-        // 이미 저장된 통계 데이터가 있는 멤버 ID 집합 조회
-        Set<Long> existingMemberIds = monthlyFixedQuestionStatRepository.findMemberIdsByYearAndMonth(year, month);
+        // 오늘 작성한 모든 포스트 멤버 ID
+        List<Long> membersWhoPostedToday = postRepository.findDistinctMemberIdsByCreatedAtBetween(startOfDay, endOfDay);
 
-        // 해당 월에 처음 포스트를 작성한 사람들의 포스트만 추출
-        List<Post> firstPosts = postRepository.findFirstPostPerMemberInMonth(startOfMonth, endOfMonth);
+        // 이번 달 1일부터 오늘 전날까지 포스트 작성한 멤버 IDs
+        List<Long> membersWithPostsBeforeToday = postRepository.findDistinctMemberIdsByCreatedAtBetween(startOfMonth, startOfDay.minusSeconds(1));
 
-        Set<Long> memberIds = firstPosts.stream()
-                .map(post -> post.getMember().getId())
-                .filter(memberId -> !existingMemberIds.contains(memberId))
+        // 오늘 처음 작성한 멤버만 필터링
+        Set<Long> newMemberIds = membersWhoPostedToday.stream()
+                .filter(memberId -> !membersWithPostsBeforeToday.contains(memberId))
                 .collect(Collectors.toSet());
 
-        if (memberIds.isEmpty()) {
-            return; // 저장할 신규 멤버가 없으면 바로 종료
-        }
+        // 고정 질문 조회
 
-        // 해당 월에 작성된 1~3번 고정 질문 가져오기
         List<TodayQuestion> questions = todayQuestionRepository
-                .findByQuestionOrderInAndSelectedDateBetween(List.of(1, 2, 3), startOfMonth.toLocalDate(), endOfMonth.toLocalDate());
+                .findByMemberIdInAndQuestionOrderInAndSelectedDateBetween(
+                        new ArrayList<>(newMemberIds),
+                        List.of(1, 2, 3),
+                        targetMonth.atDay(1),
+                        targetMonth.atEndOfMonth());
 
-        // 멤버 별 고정 질문 내용 저장
-        List<MonthlyFixedQuestionStat> stats = ReportStatConverter.toMonthlyFixedQuestionStats(questions, memberIds, year, month);
+        // 컨버터로 변환
+        List<MonthlyFixedQuestionStat> stats = ReportStatConverter.toMonthlyFixedQuestionStats(questions, newMemberIds, year, month);
 
+        // 저장
         monthlyFixedQuestionStatRepository.saveAll(stats);
     }
 
