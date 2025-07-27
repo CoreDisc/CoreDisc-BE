@@ -50,11 +50,35 @@ public class BatchScheduler {
     }
 
     private void runDailyBatch(LocalDate targetDate) {
-        reportStatBatchService.generateDailyStatistics(targetDate); // 답변 시간 저장
-        reportStatBatchService.generateMonthlyFixedQuestionStats(targetDate); // 고정 질문 저장
-        reportStatBatchService.generateRandomQuestionsStats(targetDate); // 랜덤 질문 저장
+        int errorCount = 0;
 
-        // TODO: 완성되면 추후에 추가하기
-        // reportStatBatchService.generateMonthlySelectionDiaryStats(targetDate);
+        try {
+            reportStatBatchService.generateDailyStatistics(targetDate);
+        } catch (Exception e) {
+            errorCount++;
+            log.error("[배치] generateDailyStatistics 에러: {}", e.getMessage(), e);
+        }
+
+        try {
+            reportStatBatchService.generateMonthlyFixedQuestionStats(targetDate);
+        } catch (Exception e) {
+            errorCount++;
+            log.error("[배치] generateMonthlyFixedQuestionStats 에러: {}", e.getMessage(), e);
+        }
+
+        try {
+            reportStatBatchService.generateRandomQuestionsStats(targetDate);
+        } catch (Exception e) {
+            errorCount++;
+            log.error("[배치] generateRandomQuestionsStats 에러: {}", e.getMessage(), e);
+        }
+
+        // TODO: 추후 추가 배치 작업 에러 처리도 여기에 포함
+
+        if (errorCount > 0) {
+            log.warn("[배치] {}일자 통계 배치 작업 완료 - 에러 발생 횟수: {}", targetDate, errorCount);
+        } else {
+            log.info("[배치] {}일자 통계 배치 작업 완료 - 에러 없이 정상 종료", targetDate);
+        }
     }
 }
