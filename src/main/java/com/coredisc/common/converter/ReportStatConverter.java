@@ -2,11 +2,19 @@ package com.coredisc.common.converter;
 
 import com.coredisc.application.service.reportStat.ReportRawData;
 import com.coredisc.domain.common.enums.TimeZoneType;
+import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.Post;
+import com.coredisc.domain.reportStats.DailyAnswerHourStat;
+import com.coredisc.domain.reportStats.DailyRandomQuestionStat;
+import com.coredisc.domain.reportStats.MonthlyFixedQuestionStat;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.presentation.dto.reportStat.ReportStatResponseDTO;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ReportStatConverter {
 
@@ -108,5 +116,37 @@ public class ReportStatConverter {
                 .filter(entry -> type.containsHour(entry.getKey()))
                 .mapToInt(Map.Entry::getValue)
                 .sum();
+    }
+
+    public static List<DailyAnswerHourStat> toDailyAnswerHourStats(List<Post> posts, LocalDate targetDate) {
+        return posts.stream()
+                .map(post -> DailyAnswerHourStat.builder()
+                        .memberId(post.getMember().getId())
+                        .answerDate(targetDate)
+                        .hourOfDay(post.getCreatedAt().getHour())
+                        .answerCount(1)
+                        .build())
+                .toList();
+    }
+
+    public static DailyRandomQuestionStat toDailyRandomQuestionStats(Member member, String questionContent, LocalDate targetDate) {
+        return DailyRandomQuestionStat.builder()
+                .memberId(member.getId())
+                .questionContent(questionContent)
+                .selectedDate(targetDate)
+                .build();
+    }
+
+    public static List<MonthlyFixedQuestionStat> toMonthlyFixedQuestionStats(List<TodayQuestion> questions, Set<Long> memberIds, int year, int month) {
+        return questions.stream()
+                .filter(q -> memberIds.contains(q.getMember().getId()))
+                .map(q -> MonthlyFixedQuestionStat.builder()
+                        .memberId(q.getMember().getId())
+                        .year(year)
+                        .month(month)
+                        .questionOrder(q.getQuestionOrder())
+                        .questionContent(q.getQuestionContent())
+                        .build())
+                .toList();
     }
 }

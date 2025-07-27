@@ -17,20 +17,15 @@ import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 import com.coredisc.presentation.dto.auth.KakaoUserInfo;
 import com.coredisc.security.auth.PrincipalDetails;
 import com.coredisc.security.jwt.JwtProvider;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,14 +49,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         // yml 파일 social 아래 값 자바 객체로 매핑
         SocialProperties.ProviderProperties properties = getProviderProperties(provider);
 
-        // 인가 코드를 이용하여 AccessToken 가져옴
-        String accessToken = getAccessToken(
-                URLDecoder.decode(request.getCode(), StandardCharsets.UTF_8),
-                properties.getClientId(),
-                properties.getClientSecret(),
-                properties.getRedirectUri(),
-                properties.getTokenUri()
-        );
+        // 모바일 환경 : 클라이언트가 전달한 accessToken 직접 사용
+        String accessToken = request.getAccessToken();
 
         // AccessToken을 사용하여 유저 정보 가져옴
         Object userInfo = getUserInfo(
@@ -85,41 +74,6 @@ public class SocialAuthServiceImpl implements SocialAuthService {
             default:
                 throw new AuthHandler(ErrorStatus.UNSUPPORTED_PROVIDER);
         }
-    }
-
-    // 인가 코드를 이용하여 AccessToken 가져옴
-    private String getAccessToken(String code, String clientId, String clientSecret,
-                                  String redirectUri, String tokenUri) {
-
-        // HTTP Header 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        // HTTP Body 생성
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("client_secret", clientSecret);
-        body.add("redirect_uri", redirectUri);
-        body.add("code", code);
-
-        // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, request, String.class);
-
-            if(response.getStatusCode() == HttpStatus.OK) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(response.getBody());
-
-                // Json 응답에서 access_token 추출
-                System.out.println(jsonNode);
-                return jsonNode.get("access_token").asText();
-            }
-        } catch (Exception e) {
-            throw new AuthHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
-        }
-        throw new AuthHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
     }
 
     // AccessToken을 사용하여 유저 정보 가져옴

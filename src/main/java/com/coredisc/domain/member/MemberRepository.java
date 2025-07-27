@@ -1,5 +1,8 @@
 package com.coredisc.domain.member;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 
 public interface MemberRepository {
@@ -14,4 +17,6 @@ public interface MemberRepository {
     Optional<Member> findByNameAndUsername(String name, String username);
     Optional<Member> findByEmail(String email);
     Optional<Member> findById(Long followerId);
+
+    Page<Member> findAllForDiscCreation(Pageable pageable);
 }

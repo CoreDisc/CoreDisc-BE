@@ -18,6 +18,7 @@ public class ProfileImg extends BaseEntity {
 
     @Lob
     @Column(nullable = false, length = 256)
+    @Setter
     private String imgUrl;
 
     // 연관 관계

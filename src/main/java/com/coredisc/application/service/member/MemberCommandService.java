@@ -2,6 +2,8 @@ package com.coredisc.application.service.member;
 
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.member.MemberRequestDTO;
+import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberCommandService {
 
@@ -23,4 +25,7 @@ public interface MemberCommandService {
 
     // 계정 관리 - 아이디 변경
     void resetUsernameMyHome(String accessToken, Member member, MemberRequestDTO.MyHomeResetUsernameDTO request);
+
+    // 프로필 사진 변경
+    ProfileImgResponseDTO.ProfileImgDTO resetProfileImg(Member member, MultipartFile newProfileImg);
 }

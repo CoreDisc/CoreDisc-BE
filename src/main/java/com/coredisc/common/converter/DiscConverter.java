@@ -1,6 +1,8 @@
 package com.coredisc.common.converter;
 
+import com.coredisc.domain.common.enums.DiscCoverColor;
 import com.coredisc.domain.disc.Disc;
+import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.disc.DiscResponseDTO;
 import org.springframework.data.domain.Page;
 
@@ -36,6 +38,16 @@ public class DiscConverter {
                 .coverColor(disc.getCoverColor())
                 .hasCoverImage(disc.hasCoverImage())
                 .coverImageUrl(disc.getCoverImgUrl())
+                .build();
+    }
+
+    public static Disc toDisc(Member member, int year, int month){
+        return Disc.builder()
+                .member(member)
+                .year(year)
+                .month(month)
+                .coverColor(DiscCoverColor.WHITE)
+                .coverImgUrl(null)
                 .build();
     }
 }

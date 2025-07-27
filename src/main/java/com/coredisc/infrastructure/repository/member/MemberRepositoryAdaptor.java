@@ -3,6 +3,8 @@ package com.coredisc.infrastructure.repository.member;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -60,4 +62,11 @@ public class MemberRepositoryAdaptor implements MemberRepository {
 
     @Override
     public Optional<Member> findById(Long memberId) { return jpaMemberRepository.findById(memberId); }
+
+    @Override
+    public Page<Member> findAllForDiscCreation(Pageable pageable) {
+        return jpaMemberRepository.findAllForDiscCreation(pageable);
+    }
+
+
 }

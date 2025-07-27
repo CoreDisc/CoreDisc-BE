@@ -20,8 +20,8 @@ public class Terms extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(100)")
     private TermsType type;
 
     @Lob

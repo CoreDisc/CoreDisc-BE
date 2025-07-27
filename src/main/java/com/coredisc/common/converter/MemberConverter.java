@@ -129,7 +129,6 @@ public class MemberConverter {
         if(imageDto != null) {
             return MemberResponseDTO.MyHomePostDTO.builder()
                     .postId(post.getId())
-                    .publicityType(post.getPublicity())
                     .postImageThumbnailDTO(imageDto)
                     .postTextThumbnailDTO(null)
                     .build();
@@ -137,28 +136,6 @@ public class MemberConverter {
 
         // 텍스트 답변만 있는 게시글일 때
         return MemberResponseDTO.MyHomePostDTO.builder()
-                .postId(post.getId())
-                .publicityType(post.getPublicity())
-                .postImageThumbnailDTO(null)
-                .postTextThumbnailDTO(textDto)
-                .build();
-    }
-
-    public static MemberResponseDTO.UserHomePostDTO toUserHomePostDTO(Post post,
-                                                                      MemberResponseDTO.PostImageThumbnailDTO imageDto,
-                                                                      MemberResponseDTO.PostTextThumbnailDTO textDto) {
-
-        // 이미지 답변이 있는 게시글일 때
-        if(imageDto != null) {
-            return MemberResponseDTO.UserHomePostDTO.builder()
-                    .postId(post.getId())
-                    .postImageThumbnailDTO(imageDto)
-                    .postTextThumbnailDTO(null)
-                    .build();
-        }
-
-        // 텍스트 답변만 있는 게시글일 때
-        return MemberResponseDTO.UserHomePostDTO.builder()
                 .postId(post.getId())
                 .postImageThumbnailDTO(null)
                 .postTextThumbnailDTO(textDto)
@@ -172,10 +149,9 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.PostTextThumbnailDTO toPostTextThumbnailDTO(String weekday, String createdDate) {
+    public static MemberResponseDTO.PostTextThumbnailDTO toPostTextThumbnailDTO(String content) {
         return MemberResponseDTO.PostTextThumbnailDTO.builder()
-                .createdAt(createdDate)
-                .weekday(weekday)
+                .content(content)
                 .build();
     }
 

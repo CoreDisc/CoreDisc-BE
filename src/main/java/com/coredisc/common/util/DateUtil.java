@@ -22,6 +22,14 @@ public class DateUtil {
         return getEndDate(year, month).atTime(23, 59, 59); // 23:59:59
     }
 
+    public static LocalDateTime getStartOfDay(LocalDate date) {
+        return date.atStartOfDay(); // 00:00:00
+    }
+
+    public static LocalDateTime getEndOfDay(LocalDate date) {
+        return date.atTime(23, 59, 59); // 23:59:59
+    }
+
     public static String getWeekdayShort(LocalDateTime dateTime) {
         return dateTime.getDayOfWeek().toString().substring(0, 3);
     }

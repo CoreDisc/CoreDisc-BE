@@ -18,4 +18,7 @@ public interface JpaTodayQuestionRepository extends JpaRepository<TodayQuestion,
     Optional<TodayQuestion> findByMemberAndQuestionOrderAndSelectedDate(Member member, Integer questionOrder, LocalDate selectedDate);
 
     boolean existsByPersonalQuestion(PersonalQuestion personalQuestion) ;
+
+    List<TodayQuestion> findAllByQuestionOrderAndSelectedDate(int questionOrder, LocalDate targetDate);
+    List<TodayQuestion> findByMemberIdInAndQuestionOrderInAndSelectedDateBetween(List<Long> memberIds, List<Integer> questionOrders, LocalDate startDate, LocalDate endDate);
 }
