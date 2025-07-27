@@ -75,8 +75,8 @@ public class PostRepositoryAdaptor implements PostRepository {
     }
 
     @Override
-    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate) {
-        return queryPostRepository.findTempPostByMemberAndDate(member, selectedDate);
+    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate today) {
+        return queryPostRepository.findTempPostByMemberAndDate(member, today);
     }
 
     @Override
@@ -102,6 +102,14 @@ public class PostRepositoryAdaptor implements PostRepository {
     }
 
     @Override
+    public boolean existsByMemberAndStatusAndCreatedAtBetween(Member member, PostStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return jpaPostRepository.existsByMemberAndStatusAndCreatedAtBetween(member,
+                status,
+                startOfDay,
+                endOfDay);
+    }
+
+    @Override
     public List<Post> findPostsByCreatedDate(LocalDate targetDate) {
         return queryPostRepository.findPostsByCreatedDate(targetDate);
     }
@@ -115,5 +123,3 @@ public class PostRepositoryAdaptor implements PostRepository {
     public List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end) {
         return queryPostRepository.findFirstPostPerMemberInMonth(start, end);
     }
-
-}

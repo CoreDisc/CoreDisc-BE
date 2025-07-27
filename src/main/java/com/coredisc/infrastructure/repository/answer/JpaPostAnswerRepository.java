@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface JpaPostAnswerRepository extends JpaRepository<PostAnswer,Long> {
 
+    Optional<PostAnswer> findPostAnswerByPostAndAnswerOrderAndCreatedAtBetween(Post post, Integer answerOrder, LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
+
     Optional<PostAnswer> findPostAnswerByPostAndTodayQuestion(Post post , TodayQuestion todayQuestion);
 
     List<PostAnswer> findByCreatedAtBetweenAndTodayQuestionId(LocalDateTime start, LocalDateTime end, Long todayQuestionId);

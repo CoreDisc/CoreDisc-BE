@@ -28,8 +28,7 @@ public interface PostRepository {
     List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable);
     List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable);
     boolean existsByMemberAndIdLessThan(Member member, Long id, Set<PublicityType> allowTypes);
-    List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate);
-
+    List<Post> findTempPostByMemberAndDate(Member member, LocalDate today);
 
     //단건 조회
     Post findPostDetail(Member member, Long postId);
@@ -45,4 +44,8 @@ public interface PostRepository {
     List<Post> findPostsByCreatedDate(LocalDate targetDate);
     List<Post> findPostsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
     List<Post> findFirstPostPerMemberInMonth(LocalDateTime start, LocalDateTime end);
-}
+
+    // 특정 회원이 특정 날짜에 발행한 게시글이 있는가?
+    boolean existsByMemberAndStatusAndCreatedAtBetween(Member member, PostStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+    }

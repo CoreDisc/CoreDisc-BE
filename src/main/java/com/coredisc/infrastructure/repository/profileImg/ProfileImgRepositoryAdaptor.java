@@ -23,4 +23,14 @@ public class ProfileImgRepositoryAdaptor implements ProfileImgRepository {
     public Optional<ProfileImg> findById(Long profileImgId) {
         return jpaProfileImgRepository.findById(profileImgId);
     }
+
+    @Override
+    public void delete(ProfileImg profileImg) {
+        jpaProfileImgRepository.delete(profileImg);
+    }
+
+    @Override
+    public void save(ProfileImg newProfileImg) {
+        jpaProfileImgRepository.save(newProfileImg);
+    }
 }

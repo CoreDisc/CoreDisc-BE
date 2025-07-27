@@ -12,8 +12,7 @@ import com.coredisc.domain.post.*;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
 import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
-import com.coredisc.infrastructure.file.FileInfo;
-import com.coredisc.infrastructure.file.FileStore;
+import com.coredisc.infrastructure.aws.s3.ImageUploadResult;
 import com.coredisc.infrastructure.repository.question.JpaTodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
@@ -24,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +37,6 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostAnswerImageRepository postAnswerImageRepository;
     private final JpaTodayQuestionRepository todayQuestionRepository;
     private final AmazonS3Manager amazonS3Manager;
-    private final FileStore fileStore;
 
     //  빈 게시글 생성
     @Override
@@ -48,10 +47,9 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         log.info("빈 게시글 생성 시작 - 회원ID: {}, 날짜: {}", member.getId(), selectedDate);
 
-        // 중복 검증 - 해당 날짜에 이미 포스트가 등록되었는지.
-        validatePostNotExists(member,selectedDate);
+        // 중복 검증 - 오늘 날짜에 이미 등록된 게시글이 있다면? 예외를 던진다.
+        validatePostNotExists(member);
 
-        // 오늘의 질문 확인 - TODO : todayquestion 더미데이터 대신 실제 DB 에서 가져올 것
         List<TodayQuestion> todayQuestions = validateTodayQuestions(member);
 
         Post emptyPost = Post.builder()
@@ -70,60 +68,44 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 
     @Override
-    public PostResponseDTO.AnswerResultDto updateTextAnswer(Member member,Long postId, Integer questionId, PostRequestDTO.TextAnswerDto request) {
+    public PostResponseDTO.AnswerResultDto updateTextAnswer(Member member,Long postId, Integer questionOrder, PostRequestDTO.TextAnswerDto request) {
 
         //게시글 및 권한 확인
         Post post = validatePostOwnership(member,postId);
 
         log.info("게시판 가져오기 게시글ID: {}",post.getId() );
 
-        // 질문 조회 + 검증
-        TodayQuestion todayQuestion = getTodayQuestion(member,questionId);
+        //  질문 데이터 가져오기
+        TodayQuestion todayQuestion = validateTodayQuestion(member, questionOrder);
 
         log.info("질문ID: {}",todayQuestion.getId());
 
-        // 기존 답변 or null
+        // 답변 데이터 가져오기
         Optional<PostAnswer> existingAnswer = postAnswerRepository
-                .findByPostAndTodayQuestion(post,todayQuestion);
+                .findByPostAndQuestionOrder(post,questionOrder);
 
         PostAnswer answer;
 
         if(existingAnswer.isPresent()) {
 
-            log.info("답변이 이미 존재해 수정을 진행합니다.");
-            // 수정
+            // 이미 존재하는 답변이 있는 경우
             answer = existingAnswer.get();
 
-
-            // 기존이 이미지인 경우 - 삭제
-            if(answer.isImageAnswer() && answer.getPostAnswerImage() != null) {
-                postAnswerImageRepository.delete(answer.getPostAnswerImage());
-            }
+            // 기존 답변이 이미지 일 겨우 삭제 처리
+            deleteExistingImageIfPresent(answer);
 
             answer.updateTextAnswer(request.getContent());
 
         } else {
-            log.info("답변을 생성합니다.");
             // 질문 저장 - > 만약 질문이 발행 질문이라면? 발행 질문 content 를 가져온다.
-            String questionContent;
-
-            if(todayQuestion.getOfficialQuestion() != null) {
-                questionContent = todayQuestion.getOfficialQuestion().getContents();
-            } else if(todayQuestion.getPersonalQuestion() != null) {
-                questionContent = todayQuestion.getPersonalQuestion().getContent();
-            } else {
-                //TODO: 어떤 질문도 참고하지 않을 때 - 에러
-                questionContent= "nothing";
-            }
-
-            log.info("questioinContent:{}",questionContent);
+            String questionContent = todayQuestion.getQuestionContent();
+            log.info("questionContent:{}",questionContent);
 
             answer = PostAnswer.builder()
                     .post(post)
-                    .todayQuestion(todayQuestion)
+                    .answerOrder(questionOrder)
                     .type(AnswerType.TEXT)
                     .textContent(request.getContent())
-                    .questionContent(questionContent)
                     .build();
 
         }
@@ -133,33 +115,29 @@ public class PostCommandServiceImpl implements PostCommandService {
         return PostConverter.toAnswerResultDto(savedAnswer);
     }
 
+
     /**
      * 이미지 작성 및 수정 로직 구현
      */
-
-
     @Override
     @Transactional
-    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postId, Integer questionType, MultipartFile image) {
+    public PostResponseDTO.AnswerResultDto updateImageAnswer(Member member, Long postId, Integer questionOrder, MultipartFile image) {
 
         log.info("이미지 답변 수정 시작 - 회원ID: {}, 게시글ID: {}, 질문타입: {}, 파일: {}",
-                member.getId(), postId, questionType, image.getOriginalFilename());
+                member.getId(), postId, questionOrder, image.getOriginalFilename());
 
         // 1. 게시글 및 권한 확인
         Post post = validatePostOwnership(member, postId);
 
         // 2. 질문 조회 및 검증
-        TodayQuestion todayQuestion = getTodayQuestion(member, questionType);
+        TodayQuestion todayQuestion = validateTodayQuestion(member, questionOrder);
 
         // 3. 이미지 파일 저장
-        FileInfo fileInfo = amazonS3Manager.uploadFile(image, member.getId());
-
-        // 임시 저장소
-//        FileInfo fileInfo = fileStore.storeFile(image, "post-answers");
+        ImageUploadResult s3Result = amazonS3Manager.uploadFile(image, member.getId());
 
         // 4. 기존 답변 조회
         Optional<PostAnswer> existingAnswer = postAnswerRepository
-                .findByPostAndTodayQuestion(post, todayQuestion);
+                .findByPostAndQuestionOrder(post,questionOrder);
 
         PostAnswer answer;
 
@@ -171,24 +149,21 @@ public class PostCommandServiceImpl implements PostCommandService {
             deleteExistingImageIfPresent(answer);
 
             // 새 이미지로 교체
-            PostAnswerImage newImage = createPostAnswerImage(answer, fileInfo);
+            PostAnswerImage newImage = createPostAnswerImage(answer, s3Result);
             answer.updateToImageAnswer(newImage);
 
             log.info("기존 이미지 답변 수정 완료 - 답변ID: {}", answer.getId());
 
         } else {
-            // 새로운 이미지 답변 생성
-            String questionContent = extractQuestionContent(todayQuestion);
 
             answer = PostAnswer.builder()
                     .post(post)
-                    .todayQuestion(todayQuestion)
+                    .answerOrder(questionOrder)
                     .type(AnswerType.IMAGE)
-                    .questionContent(questionContent)
                     .build();
 
             // 이미지 엔티티 생성 및 연결
-            PostAnswerImage answerImage = createPostAnswerImage(answer, fileInfo);
+            PostAnswerImage answerImage = createPostAnswerImage(answer, s3Result);
             answer.updateToImageAnswer(answerImage);
 
             log.info("새 이미지 답변 생성 완료");
@@ -196,16 +171,13 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         PostAnswer savedAnswer = postAnswerRepository.save(answer);
 
-        log.info("이미지 답변 처리 완료 - 답변ID: {}, 이미지URL: {}",
-                savedAnswer.getId(), fileInfo.getFileUrl());
-
         return PostConverter.toAnswerResultDto(savedAnswer);
     }
 
     // 게시글 발행하기 - 실제 발행
     @Override
     @Transactional
-    public PostResponseDTO.PublishResultDto publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request) {
+    public Post publishPost(Member member, Long postId, PostRequestDTO.PublishPostDto request) {
         Post post = validatePostOwnership(member, postId);
         PostRequestDTO.SelectiveDiaryDto selectiveDiaryDto = request.getSelectiveDiary();
 
@@ -217,22 +189,14 @@ public class PostCommandServiceImpl implements PostCommandService {
                 selectiveDiaryDto.getWhere(),
                 selectiveDiaryDto.getWhat(),
                 selectiveDiaryDto.getDetail());
+
         post.updatePublicity(request.getPublicity());
 
 
         Post savedPost = postRepository.save(post);
 
-
         log.info("게시글 발행 완료 - 게시글 ID: {}, 회원 ID: {}",postId, member.getId());
-
-
-
-        //TODO : Converter
-        return PostResponseDTO.PublishResultDto.builder()
-                .postId(savedPost.getId())
-                .status(savedPost.getStatus())
-                .publishedAt(savedPost.getUpdatedAt())
-                .build();
+        return savedPost;
 
     }
 
@@ -249,14 +213,16 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         post.validateOwnership(member);
         //TODO : 삭제 전 추가 검증 로직
-//        post.validateForDeletion();
+
+        // imageUrl 불러오기
+        List<String> imageUrls = extractImageUrls(post);
+        List<String> thumbnailUrls = extractThumbnailUrls(post);
 
         // S3 이미지 파일들 삭제 (트랜잭션 외부에서 처리)
-        List<String> imageUrls = extractImageUrls(post);
         deleteS3Images(imageUrls);
+        deleteS3Images(thumbnailUrls);
 
         //TODO : 삭제 전 정리 작업 -> 통계 업데이트, 로그 기록,,..
-//        post.prepareForDeletion();
 
         // DB에서 게시글 삭제 (Cascade로 연관 엔티티들 자동 삭제)
         postRepository.delete(post);
@@ -266,15 +232,12 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
 
-    private PostAnswerImage createPostAnswerImage(PostAnswer answer, FileInfo fileInfo) {
+    private PostAnswerImage createPostAnswerImage(PostAnswer answer, ImageUploadResult s3Result) {
         return PostAnswerImage.builder()
                 .postAnswer(answer)
-                .imgUrl(fileInfo.getFileUrl())
-                .thumbnailUrl(fileInfo.getThumbnailUrl())
-                .originalFileName(fileInfo.getOriginalFileName())
-                .storedFileName(fileInfo.getStoredFileName())
-                .filePath(fileInfo.getFilePath())
-                .fileSize(fileInfo.getFileSize())
+                .imgUrl(s3Result.getOriginalUrl())
+                .thumbnailUrl(s3Result.getThumbnailUrl())
+                .originalFileName(s3Result.getOriginalFileName())
                 .build();
     }
 
@@ -282,51 +245,104 @@ public class PostCommandServiceImpl implements PostCommandService {
      * 기존 이미지 파일 삭제
      */
     private void deleteExistingImageIfPresent(PostAnswer answer) {
+        // 만약 이미지 가 있다면?
         if (answer.getType() == AnswerType.IMAGE && answer.getPostAnswerImage() != null) {
             PostAnswerImage existingImage = answer.getPostAnswerImage();
 
-            // 실제 파일 삭제
-            if (existingImage.getFilePath() != null) {
-                fileStore.deleteFile(existingImage.getFilePath());
+            // 실제 파일 삭제 -> image, thumbnail url 둘 다 삭제
+            if (existingImage.getImgUrl() != null) {
+                amazonS3Manager.deleteImage(existingImage.getImgUrl());
+            }
+            if(existingImage.getThumbnailUrl() != null) {
+                amazonS3Manager.deleteImageByUrl(existingImage.getThumbnailUrl());
             }
 
             // DB에서 이미지 엔티티 삭제
             postAnswerImageRepository.delete(existingImage);
 
-            log.info("기존 이미지 파일 삭제 완료 - 경로: {}", existingImage.getFilePath());
         }
+
+    }
+
+
+    /**
+     * 오늘 발행한 게시글이 있는지 검증
+     */
+
+    private void validatePostNotExists(Member member) {
+        LocalDate today = LocalDate.now();
+        boolean exists = postRepository.existsByMemberAndStatusAndCreatedAtBetween(
+                member,
+                PostStatus.PUBLISHED,
+                today.atStartOfDay(),
+                today.plusDays(1).atStartOfDay()
+        );
+
+        if(exists)
+        {
+            throw new PostHandler(ErrorStatus.POST_ALREADY_PUBLISHED);
+        }}
+
+    /**
+     * 오늘의 질문 리스트 가져오기
+     */
+    private List<TodayQuestion> validateTodayQuestions(Member member) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        List<TodayQuestion> todayQuestions = new ArrayList<>();
+
+        // 고정질문과 랜덤질문 가져오기
+
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            // 오늘의 질문이 없는 경우
+            if(todayQuestion.isEmpty()) {
+                throw new PostHandler(ErrorStatus.INCOMPLETE_TODAY_QUESTIONS);
+            }
+
+            todayQuestions.add(todayQuestion.get());
+
+        }
+
+        // 오늘의 질문이 하나라도 없는 경우 - 예외처리
+        for (TodayQuestion todayQuestion : todayQuestions) {
+            if(todayQuestion.getQuestionContent().isEmpty())
+            {
+                throw new PostHandler(ErrorStatus.INCOMPLETE_TODAY_QUESTIONS);
+            }
+        }
+        return todayQuestions;
     }
 
     /**
-     * 질문 내용 추출
+     * questionOrder 에 해당하는 질문 검증 및 조회
      */
-    private String extractQuestionContent(TodayQuestion todayQuestion) {
-        if (todayQuestion.getOfficialQuestion() != null) {
-            return todayQuestion.getOfficialQuestion().getContents();
-        } else if (todayQuestion.getPersonalQuestion() != null) {
-            return todayQuestion.getPersonalQuestion().getContent();
-        } else {
-            return "질문 내용을 찾을 수 없습니다.";
-        }
+
+    private TodayQuestion validateTodayQuestion(Member member, Integer questionOrder) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+
+        Optional<TodayQuestion> todayQuestion = questionOrder == 4 ?
+                todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, questionOrder,today)
+                : todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, questionOrder,startOfMonth,endOfMonth);
+
+        if(todayQuestion.isEmpty()) throw new PostHandler(ErrorStatus.QUESTION_TYPE_NOT_FOUND);
+
+        return todayQuestion.get();
     }
 
-
-
-    private void validatePostNotExists(Member member, LocalDate selectedDate) {
-        // TODO : 게시글이 이미 있다면 예외를 던짐. - 오늘 날짜 기준 published 인 게시글이 있다면?
-    }
-
-    private List<TodayQuestion> validateTodayQuestions(Member member) {
-
-        List<TodayQuestion> todayQuestions = todayQuestionRepository.findByMember(member);
-
-        if (todayQuestions.size() != 4) {
-            throw new PostHandler(ErrorStatus.INCOMPLETE_TODAY_QUESTIONS);
-
-        }
-
-        return todayQuestions;
-    }
 
     private Post validatePostOwnership(Member member, Long postId) {
         Post post = postRepository.findById(postId)
@@ -345,18 +361,6 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     }
 
-    private TodayQuestion getTodayQuestion(Member member, Integer questionId) {
-        // 실제로는 Post와 연결된 TodayQuestion들 중에서 questionOrder에 해당하는 것을 찾아야 함
-        // 현재는 간단히 구현
-        List<TodayQuestion> todayQuestions = todayQuestionRepository.findByMember(member);
-
-        if (questionId < 0 || questionId >= todayQuestions.size()) {
-            throw new PostHandler(ErrorStatus.INVALID_QUESTION_ORDER);
-        }
-
-        return todayQuestions.get(questionId);
-    }
-
     /**
      * 게시글에서 모든 이미지 URL 추출
      */
@@ -368,6 +372,20 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .filter(url -> url != null && !url.isEmpty())
                 .toList();
     }
+
+    /**
+     * 게시글에서 모든 썸네일 URL 추출
+     */
+
+    private List<String> extractThumbnailUrls(Post post) {
+        return post.getAnswers().stream()
+                .filter(answer -> answer.getType() == AnswerType.IMAGE)
+                .filter(answer -> answer.getPostAnswerImage() != null)
+                .map(answer -> answer.getPostAnswerImage().getThumbnailUrl())
+                .filter(url -> url != null && !url.isEmpty())
+                .toList();
+    }
+
 
     /**
      * S3에서 이미지 파일들 삭제 (실패해도 전체 프로세스 중단하지 않음)

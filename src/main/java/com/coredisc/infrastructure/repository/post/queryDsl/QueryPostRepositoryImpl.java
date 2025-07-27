@@ -7,6 +7,7 @@ import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
+import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.coredisc.domain.post.Post;
@@ -24,9 +25,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.coredisc.domain.follow.QFollow.follow;
@@ -108,9 +107,9 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     }
 
     @Override
-    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate selectedDate) {
-        LocalDateTime start = selectedDate.atStartOfDay();
-        LocalDateTime end = selectedDate.plusDays(1).atStartOfDay();
+    public List<Post> findTempPostByMemberAndDate(Member member, LocalDate today) {
+        LocalDateTime start = today.atStartOfDay();
+        LocalDateTime end = today.plusDays(1).atStartOfDay();
 
         return jpaQueryFactory
                 .selectFrom(post)
@@ -128,9 +127,9 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
 
         return jpaQueryFactory
                 .selectFrom(postAnswer)
-                .join(postAnswer.todayQuestion, todayQuestion).fetchJoin()
-                .where(postAnswer.post.id.eq(postId))
-                .orderBy(todayQuestion.id.asc())
+                .join(postAnswer.post, post).fetchJoin()
+                .where(post.id.eq(postId))
+                .orderBy(postAnswer.answerOrder.asc()) // 1,2,3,4
                 .fetch();
     }
 
@@ -188,7 +187,6 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
             condition.and(post.id.lt(lastPostId));
         }
 
-
         // Pull 모델: 실시간으로 게시글 조회
         List<Post> posts = jpaQueryFactory
                 .selectFrom(post)
@@ -204,27 +202,73 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                 .map(Post::getId)
                 .toList();
 
+        // 각 게시글의 생성일자를 Map으로 저장 (질문 조회용)
+        Map<Long, LocalDate> postDateMap = posts.stream()
+                .collect(Collectors.toMap(Post::getId, p -> p.getCreatedAt().toLocalDate()));
+
         //  모든 게시글의 답변을 한 번에 조회 (N+1 방지)
         List<com.coredisc.domain.post.PostAnswer> allAnswers = jpaQueryFactory
                 .selectFrom(postAnswer)
                 .leftJoin(postAnswer.postAnswerImage, postAnswerImage).fetchJoin()
-                .leftJoin(postAnswer.todayQuestion).fetchJoin()
                 .where(postAnswer.post.id.in(postIds))
                 .orderBy(postAnswer.post.id.asc(), postAnswer.id.asc())
                 .fetch();
+
+        // 모든 게시글의 답변을 한 번에 조회
+        Set<Member> postMembers = posts.stream().map(Post::getMember).collect(Collectors.toSet());
+        Set<LocalDate> postDates = new HashSet<>(postDateMap.values());
+
+        List<TodayQuestion> allTodayQuestions = jpaQueryFactory
+                .selectFrom(todayQuestion)
+                .leftJoin(todayQuestion.officialQuestion).fetchJoin()
+                .leftJoin(todayQuestion.personalQuestion).fetchJoin()
+                .where(
+                        todayQuestion.member.in(postMembers)
+                                .and(todayQuestion.selectedDate.in(postDates))
+                )
+                .orderBy(todayQuestion.member.id.asc(),
+                        todayQuestion.selectedDate.asc(),
+                        todayQuestion.questionOrder.asc())
+                .fetch();
+
 
         // 게시글별로 답변 그룹핑
         Map<Long, List<PostAnswer>> answersMap = allAnswers.stream()
                 .collect(Collectors.groupingBy(answer -> answer.getPost().getId()));
 
+        // 회원+날짜별로 질문 그룹핑 (questionOrder 순서대로 정렬)
+        Map<String, List<TodayQuestion>> questionsMap = allTodayQuestions.stream()
+                .collect(Collectors.groupingBy(
+                        tq -> tq.getMember().getId() + "_" + tq.getSelectedDate(),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list.stream()
+                                        .sorted(Comparator.comparing(TodayQuestion::getQuestionOrder))
+                                        .collect(Collectors.toList())
+                        )
+                ));
+
+
+
         // PostSummary DTO로 변환
         return posts.stream()
+                .limit(size) // hasNext 체크 후 실제 반환할 크기로 제한
                 .map(postEntity -> {
-                    List<com.coredisc.domain.post.PostAnswer> postAnswers =
-                            answersMap.getOrDefault(postEntity.getId(), List.of());
-                    return PostConverter.toPostSummary(postEntity, postAnswers);
+                    List<PostAnswer> postAnswers = answersMap.getOrDefault(postEntity.getId(), List.of());
+
+                    // 해당 게시글의 질문들 조회
+                    LocalDate postDate = postDateMap.get(postEntity.getId());
+                    String questionKey = postEntity.getMember().getId() + "_" + postDate;
+                    List<TodayQuestion> postQuestions = questionsMap.getOrDefault(questionKey, List.of());
+
+                    // 질문 내용을 String 리스트로 변환 (questionOrder 순서대로)
+                    List<String> questionContents = postQuestions.stream()
+                            .map(TodayQuestion::getQuestionContent)
+                            .collect(Collectors.toList());
+
+                    return PostConverter.toPostSummary(postEntity, postAnswers, questionContents);
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

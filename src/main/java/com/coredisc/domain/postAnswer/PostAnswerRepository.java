@@ -4,8 +4,8 @@ import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PostAnswerRepository {
@@ -13,9 +13,12 @@ public interface PostAnswerRepository {
     PostAnswer save(PostAnswer postAnswer);
     Optional<PostAnswer> findById(Long id);
     void delete(PostAnswer postAnswer);
-    void deleteById(Long id);
 
-    Optional<PostAnswer> findByPostAndTodayQuestion(Post post, TodayQuestion todayQuestion);
+    // 특정 게시글의 특정 질문 순서 답변 조회
+    Optional<PostAnswer> findByPostAndQuestionOrder(Post post, Integer questionOrder);
+
+    // 특정 게시글의 모든 답변 조회 (questionOrder 순서대로)
+    List<PostAnswer> findByPostOrderByQuestionOrder(Post post);
 
     List<PostAnswer> findByCreatedAtBetweenAndTodayQuestionId(LocalDateTime start, LocalDateTime end, Long todayQuestionId);
 }

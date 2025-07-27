@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.config.S3Config;
-import com.coredisc.infrastructure.file.FileInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -34,7 +33,7 @@ public class AmazonS3Manager {
 
     private final S3Config s3Config;
 
-    public FileInfo uploadFile(MultipartFile file, Long memberId) {
+    public ImageUploadResult uploadFile(MultipartFile file, Long memberId) {
 
         // 파일 검증
         validateFile(file);
@@ -54,9 +53,12 @@ public class AmazonS3Manager {
 
             log.info("이미지 업로드 완료 - 사용자: {}, 파일키: {}", memberId, fileKey);
 
-            return FileInfo.builder()
-                    .fileUrl(originalUrl)
+            return ImageUploadResult.builder()
+                    .originalUrl(originalUrl)
                     .thumbnailUrl(thumbnailUrl)
+                    .originalKey(originalKey)
+                    .thumbnailKey(thumbnailKey)
+                    .originalFileName(file.getOriginalFilename())
                     .build();
 
         } catch (Exception e) {
@@ -64,7 +66,6 @@ public class AmazonS3Manager {
             throw new RuntimeException("이미지 업로드 실패", e);
         }
     }
-
 
     public void deleteImage(String key) {
         try {
@@ -119,7 +120,7 @@ public class AmazonS3Manager {
      * URL 형식: https://bucket.s3.region.amazonaws.com/original/user_1_abc123.jpg
      * 추출 결과: user_1_abc123
      */
-    private String extractFileKeyFromUrl(String imageUrl) {
+    public String extractFileKeyFromUrl(String imageUrl) {
         if (imageUrl == null || imageUrl.isEmpty()) {
             return null;
         }
@@ -127,7 +128,7 @@ public class AmazonS3Manager {
         try {
             // 정규식으로 파일키 패턴 추출
             // original/ 또는 thumbnail/ 다음의 user_숫자_문자열 부분을 추출
-            Pattern pattern = Pattern.compile("(?:original|thumbnail)/(user_\\d+_[a-zA-Z0-9]+)\\.jpg");
+            Pattern pattern = Pattern.compile("(?:original|thumbnail|profiles)/(user_\\d+_[a-zA-Z0-9]+)\\.jpg");
             Matcher matcher = pattern.matcher(imageUrl);
 
             if (matcher.find()) {
@@ -221,7 +222,7 @@ public class AmazonS3Manager {
     /**
      * 파일 검증
      */
-    private void validateFile(MultipartFile file) {
+    public void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new PostHandler(ErrorStatus.FILE_NOT_FOUND);
         }
@@ -241,7 +242,7 @@ public class AmazonS3Manager {
     /**
      * 파일키 생성 (user_memberId_uuid)
      */
-    private String generateFileKey(Long memberId) {
+    public String generateFileKey(Long memberId) {
         String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         return String.format("user_%d_%s", memberId, uuid);
     }
@@ -251,7 +252,7 @@ public class AmazonS3Manager {
      * S3에 원본 이미지 업로드
      * @return 원본 이미지 url
      */
-    private String uploadToS3(MultipartFile file, String s3Key) throws IOException {
+    public String uploadToS3(MultipartFile file, String s3Key) throws IOException {
         // 메타데이터 설정
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
@@ -348,9 +349,4 @@ public class AmazonS3Manager {
         return String.format("https://%s.s3.%s.amazonaws.com/%s",
                 s3Config.getBucket(), s3Config.getRegion(), s3Key);
     }
-
-
-
-
-
 }

@@ -26,8 +26,8 @@ public class PostConverter {
     }
 
     public static CreatePostResultDto toCreatePostResponse(Post post,
-                                                                           List<TodayQuestion> todayQuestions,
-                                                                           LocalDate selectedDate) {
+                                                           List<TodayQuestion> todayQuestions,
+                                                           LocalDate selectedDate) {
 
         List<TodayQuestionDto> questionDtos = todayQuestions.stream()
                 .map(tq -> TodayQuestionDto.builder()
@@ -57,29 +57,24 @@ public class PostConverter {
                     .imageUrl(image.getImgUrl())
                     .thumbnailUrl(image.getThumbnailUrl())
                     .originalFileName(image.getOriginalFileName())
-                    .fileSize(image.getFileSize())
-                    .fileSizeFormatted(FileUtil.formatFileSize(image.getFileSize() != null ? image.getFileSize() : 0))
-                    .hasThumbnail(image.hasThumbnail())
                     .build();
         }
 
         if (answer.getType() == AnswerType.TEXT) {
             textAnswer = TextAnswerDto.builder()
                     .content(answer.getTextContent())
-                    .characterCount(answer.getTextContent() != null ? answer.getTextContent().length() : 0)
                     .build();
         }
 
         return AnswerResultDto.builder()
                 .answerId(answer.getId())
-                .questionId(answer.getTodayQuestion().getId().intValue())
+                .questionOrder(answer.getAnswerOrder())
                 .answerType(answer.getType())
                 .imageAnswer(imageAnswer)
                 .textAnswer(textAnswer)
-                .createdAt(answer.getCreatedAt())
-                .updatedAt(answer.getUpdatedAt())
                 .build();
     }
+
     /**
      * 임시저장 게시글 상세 DTO 변환
      * @param post 임시저장 게시글
@@ -91,12 +86,12 @@ public class PostConverter {
         //
         Map<Integer, PostAnswer> answerMap = answers.stream()
                 .collect(Collectors.toMap(
-                        answer -> answer.getTodayQuestion().getQuestionOrder(), // questionOrder
+                        PostAnswer::getAnswerOrder, // questionOrder
                         answer -> answer
                 ));
 
         // 1,2,3,4 순서로 답변 DTO 생성
-        List<TempAnswerDto> answerDtos = IntStream.range(1,5)
+        List<TempAnswerDto> answerDtos = IntStream.range(1, 5)
                 .mapToObj(questionOrder -> {
                     PostAnswer answer = answerMap.get(questionOrder);
 
@@ -128,7 +123,6 @@ public class PostConverter {
 
         return TempPostDetailDto.builder()
                 .postId(post.getId())
-                .selectedDate(post.getCreatedAt().toLocalDate())
                 .status(post.getStatus())
                 .answers(answerDtos)
                 .build();
@@ -138,26 +132,25 @@ public class PostConverter {
     /**
      * Post 엔티티를 PostSummary DTO로 변환 (4개 답변 포함)
      */
-    public static PostFeedResponseDTO.PostSummary toPostSummary(Post post, List<PostAnswer> answers) {
+    public static PostFeedResponseDTO.PostSummary toPostSummary(Post post, List<PostAnswer> answers, List<String> questions) {
         return PostFeedResponseDTO.PostSummary.builder()
                 .postId(post.getId())
                 .member(toMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
-                .answers(toFeedAnswerResponses(answers)) // 4개 답변 모두 포함
-                .createdAt(post.getCreatedAt())
+                .answers(toFeedAnswerResponses(answers,questions)) // 4개 답변 모두 포함
                 .build();
     }
 
     /**
      * Post 엔티티를 PostDetailResponseDTO로 변환
      */
-    public static PostDetailDto toPostDetailResponse(Post post, boolean isLiked) {
+    public static PostDetailDto toPostDetailResponse(Post post, List<String> questions, boolean isLiked) {
         return PostDetailDto.builder()
                 .postId(post.getId())
                 .member(toDetailMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
                 .visibility(post.getPublicity())
-                .answers(toDetailAnswerResponses(post.getAnswers()))
+                .answers(toFeedAnswerResponses(post.getAnswers(),questions))
                 .selectiveDiary(toDetailSelectiveDiary(post))
                 .statistics(toDetailStatistics(post))
                 .isLiked(isLiked)
@@ -193,20 +186,32 @@ public class PostConverter {
     /**
      * 4개 답변을 Feed용 Answer DTO 리스트로 변환
      */
-    private static List<PostFeedResponseDTO.PostSummary.Answer> toFeedAnswerResponses(List<PostAnswer> answers) {
-        return answers.stream()
-                .map(PostConverter::toFeedAnswerResponse)
-                .collect(Collectors.toList());
+    private static List<PostFeedResponseDTO.PostSummary.Answer> toFeedAnswerResponses(List<PostAnswer> answers, List<String> questions) {
+
+        // 두 리스트 모두 1,2,3,4 questionOrder 순으로 저장되었다면?
+
+        return IntStream.range(0,answers.size())
+                .mapToObj( i ->
+                        {
+                            PostAnswer answer = answers.get(i);
+                            String questionContent = questions.get(i);
+
+                            return toFeedAnswerResponse(answer,questionContent);
+                        }
+                )
+                .toList();
+
     }
 
     /**
      * PostAnswer를 Feed용 Answer DTO로 변환
      */
-    private static PostFeedResponseDTO.PostSummary.Answer toFeedAnswerResponse(PostAnswer answer) {
+    private static PostFeedResponseDTO.PostSummary.Answer toFeedAnswerResponse(PostAnswer answer, String questionContent) {
+
         return PostFeedResponseDTO.PostSummary.Answer.builder()
                 .answerId(answer.getId())
-                .questionContent(answer.getQuestionContent())
                 .answerType(answer.getType())
+                .questionContent(questionContent)
                 .imageAnswer(answer.getType() == AnswerType.IMAGE ?
                         toFeedImageAnswerResponse(answer.getPostAnswerImage()) : null)
                 .textAnswer(answer.getType() == AnswerType.TEXT ?
@@ -264,28 +269,6 @@ public class PostConverter {
     }
 
     /**
-     * PostAnswer 리스트를 Detail용 Answer DTO 리스트로 변환
-     */
-    private static List<PostDetailDto.Answer> toDetailAnswerResponses(List<PostAnswer> answers) {
-        return answers.stream()
-                .map(PostConverter::toDetailAnswerResponse)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * PostAnswer를 Detail용 Answer DTO로 변환
-     */
-    private static PostDetailDto.Answer toDetailAnswerResponse(PostAnswer answer) {
-        return PostDetailDto.Answer.builder()
-                .answerId(answer.getId())
-                .questionContent(answer.getQuestionContent())
-                .answerType(answer.getType())
-                .imageAnswer(toDetailImageAnswerResponse(answer.getPostAnswerImage()))
-                .textAnswer(toDetailTextAnswerResponse(answer.getTextContent()))
-                .build();
-    }
-
-    /**
      * PostAnswerImage를 Detail용 ImageAnswer DTO로 변환
      */
     private static PostDetailDto.Answer.ImageAnswer toDetailImageAnswerResponse(PostAnswerImage image) {
@@ -316,8 +299,7 @@ public class PostConverter {
     public static PostResponseDTO.PostFeedResponseDTO toPostFeedResponseDto(
             List<PostResponseDTO.PostFeedResponseDTO.PostSummary> posts,
             Long nextCursor,
-            boolean hasNext)
-    {
+            boolean hasNext) {
         return PostResponseDTO.PostFeedResponseDTO.builder()
                 .posts(posts)
                 .nextCursor(nextCursor)
@@ -326,6 +308,22 @@ public class PostConverter {
 
     }
 
+    public static PostResponseDTO.PublishResultDto toPublishResultDto(Post post) {
+        return PostResponseDTO.PublishResultDto.builder()
+                .postId(post.getId())
+                .status(post.getStatus())
+                .publishedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    public static TempAnswerPostDto toTempAnswerPostDto(List<Post> tempPosts) {
+
+        return PostResponseDTO.TempAnswerPostDto.builder()
+                .PostIds(tempPosts.stream()
+                        .map(Post::getId)
+                        .toList())
+                .build();
+    }
 }
 
 
