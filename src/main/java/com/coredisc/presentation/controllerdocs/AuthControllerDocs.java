@@ -57,4 +57,7 @@ public interface AuthControllerDocs {
 
     @Operation(summary = "카카오 소셜 로그인", description = "카카오 accessToken을 입력받아 로그인을 처리합니다.")
     ApiResponse<AuthResponseDTO.LoginResultDTO> kakaoLogin(@Valid @RequestBody AuthRequestDTO.SocialLoginDTO request);
+
+    @Operation(summary = "네이버 소셜 로그인", description = "네이버 accessToken을 입력받아 로그인을 처리합니다.")
+    ApiResponse<AuthResponseDTO.LoginResultDTO> naverLogin(@Valid @RequestBody AuthRequestDTO.SocialLoginDTO request);
 }
