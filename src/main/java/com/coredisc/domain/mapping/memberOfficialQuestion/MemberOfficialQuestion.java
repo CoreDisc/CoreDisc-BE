@@ -28,4 +28,9 @@ public class MemberOfficialQuestion extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "official_question_id")
     private OfficialQuestion officialQuestion;
+
+    public void updateFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
 }
