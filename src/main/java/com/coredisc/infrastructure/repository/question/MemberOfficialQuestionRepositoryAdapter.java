@@ -1,12 +1,15 @@
 package com.coredisc.infrastructure.repository.question;
 
+import com.coredisc.domain.category.Category;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
+import com.coredisc.infrastructure.repository.question.querydsl.QueryMemberOfficialQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +17,7 @@ import java.util.Optional;
 public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQuestionRepository {
 
     private final JpaMemberOfficialQuestionRepository jpaMemberOfficialQuestionRepository;
+    private final QueryMemberOfficialQuestionRepository queryMemberOfficialQuestionRepository;
 
     @Override
     public MemberOfficialQuestion save(MemberOfficialQuestion memberOfficialQuestion) {
@@ -39,5 +43,21 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
     public long countByOfficialQuestion(OfficialQuestion officialQuestion) {
         return jpaMemberOfficialQuestionRepository.countByOfficialQuestion(officialQuestion);
     }
+
+    @Override
+    public List<MemberOfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int size) {
+        return queryMemberOfficialQuestionRepository.findFavoritesByMember(member, cursorId, size);
+    }
+
+    @Override
+    public List<MemberOfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize) {
+        return queryMemberOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
+    }
+
+    @Override
+    public List<MemberOfficialQuestion> findByMemberAndCategoryAndCursor(Member member, Category category, Long cursorId, int pageSize) {
+        return queryMemberOfficialQuestionRepository.findByMemberAndCategoryAndCursor(member, category, cursorId, pageSize);
+    }
+
 
 }
