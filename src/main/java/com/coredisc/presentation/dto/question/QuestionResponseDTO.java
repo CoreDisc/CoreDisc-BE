@@ -173,4 +173,15 @@ public class QuestionResponseDTO {
 
         private Long sharedCount;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class AddFavoriteToSavedSharedQuestionResultDTO {
+
+        private Long id;
+
+        private LocalDateTime createdAt;
+    }
 }

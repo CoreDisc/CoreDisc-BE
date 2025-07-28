@@ -205,4 +205,13 @@ public class QuestionConverter {
                 .build();
     }
 
+    public static QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO toAddFavoriteToSavedSharedQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
+
+        return QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO.builder()
+                .id(memberOfficialQuestion.getId())
+                .createdAt(memberOfficialQuestion.getCreatedAt())
+                .build();
+    }
+
+
 }

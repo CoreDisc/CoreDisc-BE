@@ -19,6 +19,7 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.personalQuestion.PersonalQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
+import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -253,4 +254,25 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         memberOfficialQuestionRepository.delete(memberOfficialQuestion);
     }
+
+    // 즐겨찾기 추가
+    @Override
+    @Transactional
+    public QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO addFavoriteToSavedSharedQuestion(Member member, Long questionId) {
+
+        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
+
+        // 이미 즐겨찾기된 상태
+        if (memberOfficialQuestion.getIsFavorite())
+            throw new QuestionHandler(ErrorStatus.ALREADY_FAVORITE_OFFICIAL_QUESTION);
+
+        memberOfficialQuestion.updateFavorite(true);
+
+        return QuestionConverter.toAddFavoriteToSavedSharedQuestionResultDTO(memberOfficialQuestionRepository.save(memberOfficialQuestion));
+    }
+
 }
