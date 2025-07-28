@@ -113,9 +113,9 @@ public class AuthController implements AuthControllerDocs {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ApiResponse<String> logout(HttpServletRequest request) {
+    public ApiResponse<String> logout(HttpServletRequest request, String deviceToken) {
 
-        authCommandService.logout(request);
+        authCommandService.logout(request, deviceToken);
         return ApiResponse.onSuccess("로그아웃 되었습니다.");
     }
 

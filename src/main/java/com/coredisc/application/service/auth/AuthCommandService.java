@@ -28,5 +28,5 @@ public interface AuthCommandService {
     JwtDTO reissueToken(String refreshToken);
 
     // 로그아웃
-    void logout(HttpServletRequest request);
+    void logout(HttpServletRequest request, String deviceToken);
 }

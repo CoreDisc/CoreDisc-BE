@@ -1,4 +1,4 @@
-package com.coredisc.domain;
+package com.coredisc.domain.device;
 
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.member.Member;
@@ -30,5 +30,9 @@ public class Device extends BaseEntity {
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private boolean isActive = true;
+
+    public void updateActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
 }

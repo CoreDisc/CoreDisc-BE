@@ -5,6 +5,7 @@ import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.category.Category;
 import com.coredisc.domain.category.CategoryRepository;
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
@@ -14,9 +15,11 @@ import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.infrastructure.repository.question.CustomQuestionRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -128,6 +131,67 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         }
 
         return myTodayQuestionList;
+    }
+
+    // 저장한 공유 질문 목록 조회
+    @Override
+    public CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO> getSavedSharedQuestionList(
+            Member member,
+            Long categoryId,
+            Boolean favorite,
+            Long cursorId,
+            int pageSize) {
+
+        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
+            throw new QuestionHandler(ErrorStatus.INVALID_SAVED_OFFICIAL_QUESTION_FILTER_COMBINATION);
+        }
+
+        List<MemberOfficialQuestion> mySavedSharedQuestionList;
+
+        if (Boolean.TRUE.equals(favorite) ) {
+            mySavedSharedQuestionList = memberOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
+        } else if (categoryId == null || categoryId == 0) { // 전체
+            mySavedSharedQuestionList = memberOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
+        } else {    // 카테고리별
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+            mySavedSharedQuestionList = memberOfficialQuestionRepository.findByMemberAndCategoryAndCursor(member, category, cursorId, pageSize);
+        }
+
+        boolean hasNext = mySavedSharedQuestionList.size() > pageSize;
+
+        if (hasNext) {
+            mySavedSharedQuestionList = mySavedSharedQuestionList.subList(0, pageSize);
+        }
+
+        List<QuestionResponseDTO.SavedSharedQuestionResultDTO> mySavedSharedQuestionDTOList = mySavedSharedQuestionList.stream()
+                .map(question -> {
+                    long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question.getOfficialQuestion());
+                    return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount);
+                }).toList();
+
+        return new CursorDTO<>(mySavedSharedQuestionDTOList, hasNext);
+    }
+
+    // 인기 질문 목록 조회
+    @Override
+    public QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList() {
+
+        LocalDate lastWeek = LocalDate.now().minusWeeks(1);
+        LocalDate startOfWeek = lastWeek.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = lastWeek.with(DayOfWeek.SUNDAY);
+
+        List<Tuple> popularQuestionTuple = officialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
+
+        // 예외 처리
+        for (Tuple tuple : popularQuestionTuple) {
+            OfficialQuestion question = tuple.get(0, OfficialQuestion.class);
+            if (question == null) {
+                throw new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND);
+            }
+        }
+
+        return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionTuple, startOfWeek, endOfWeek);
     }
 
 }

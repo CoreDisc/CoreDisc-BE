@@ -12,7 +12,6 @@ import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -152,4 +151,25 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess("질문이 삭제되었습니다.");
     }
 
+    // 저장한 공유 질문 목록 조회
+    @GetMapping("/official/saved/mine")
+    public ApiResponse<CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO>> getSavedSharedQuestionList(
+            @CurrentMember Member member,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "favorite", required = false) Boolean favorite,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size) {
+
+        if (size == null)
+            size = DEFAULT_PAGE_SIZE;
+
+        return ApiResponse.onSuccess( questionQueryService.getSavedSharedQuestionList(member, categoryId, favorite, cursorId, size) );
+    }
+
+    // 인기 질문 목록 조회
+    @GetMapping("/popular")
+    public ApiResponse<QuestionResponseDTO.PopularQuestionListResultDTO> getPopularQuestionList(@CurrentMember Member member) {
+
+        return ApiResponse.onSuccess( questionQueryService.getPopularQuestionList() );
+    }
 }
