@@ -8,12 +8,6 @@ import lombok.Getter;
 public class DiscRequestDTO {
 
     @Getter
-    public static class UpdateCoverImgDTO {
-        @NotBlank
-        private String coverImageUrl;
-    }
-
-    @Getter
     public static class UpdateCoverColorDTO{
         @NotNull
         private DiscCoverColor coverColor;
