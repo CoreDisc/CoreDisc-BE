@@ -126,4 +126,12 @@ public interface QuestionControllerDocs {
             @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
     })
     ApiResponse<QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO> addFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
+
+
+    @Operation(summary = "공유 질문 즐겨찾기 삭제", description = "즐겨찾기에 추가했던 공유질문을 다시 취소하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+    })
+    ApiResponse<QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO> deleteFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
+
 }

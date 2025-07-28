@@ -184,4 +184,15 @@ public class QuestionResponseDTO {
 
         private LocalDateTime createdAt;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class DeleteFavoriteToSavedSharedQuestionResultDTO {
+
+        private Long id;
+
+        private LocalDateTime createdAt;
+    }
 }

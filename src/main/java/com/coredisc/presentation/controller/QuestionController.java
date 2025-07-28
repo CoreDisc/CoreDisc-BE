@@ -180,4 +180,11 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess( questionCommandService.addFavoriteToSavedSharedQuestion(member, questionId) );
     }
 
+    // 즐겨찾기 삭제
+    @DeleteMapping("/official/{questionId}/favorite")
+    public ApiResponse<QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO> deleteFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+
+        return ApiResponse.onSuccess( questionCommandService.deleteFavoriteToSavedSharedQuestion(member, questionId) );
+    }
+
 }

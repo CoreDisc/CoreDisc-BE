@@ -275,4 +275,25 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         return QuestionConverter.toAddFavoriteToSavedSharedQuestionResultDTO(memberOfficialQuestionRepository.save(memberOfficialQuestion));
     }
 
+
+    // 즐겨찾기 삭제
+    @Override
+    @Transactional
+    public QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO deleteFavoriteToSavedSharedQuestion(Member member, Long questionId) {
+
+        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
+
+        // 이미 즐겨찾기가 아닌 상태
+        if (!memberOfficialQuestion.getIsFavorite())
+            throw new QuestionHandler(ErrorStatus.ALREADY_NOT_FAVORITE_OFFICIAL_QUESTION);
+
+        memberOfficialQuestion.updateFavorite(false);
+
+        return QuestionConverter.toDeleteFavoriteToSavedSharedQuestionResultDTO(memberOfficialQuestionRepository.save(memberOfficialQuestion));
+    }
+
 }

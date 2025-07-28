@@ -213,5 +213,11 @@ public class QuestionConverter {
                 .build();
     }
 
+    public static QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO toDeleteFavoriteToSavedSharedQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
 
+        return QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO.builder()
+                .id(memberOfficialQuestion.getId())
+                .createdAt(memberOfficialQuestion.getCreatedAt())
+                .build();
+    }
 }
