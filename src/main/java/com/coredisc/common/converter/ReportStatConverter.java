@@ -1,12 +1,14 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.application.service.reportStat.ReportRawData;
+import com.coredisc.common.util.DailyEnumMappingHelper;
 import com.coredisc.domain.common.enums.TimeZoneType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.reportStats.DailyAnswerHourStat;
 import com.coredisc.domain.reportStats.DailyRandomQuestionStat;
 import com.coredisc.domain.reportStats.MonthlyFixedQuestionStat;
+import com.coredisc.domain.reportStats.MonthlySelectionDiaryStat;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.presentation.dto.reportStat.ReportStatResponseDTO;
 
@@ -94,10 +96,11 @@ public class ReportStatConverter {
                     int selectedOption = entry.getValue().getSelectedOption();
                     int selectionCount = entry.getValue().getSelectionCount();
 
-                    String optionContent = String.valueOf(selectedOption);
+                    String dailyTypeContent = DailyEnumMappingHelper.toDailyTypeName(dailyType);
+                    String optionContent = DailyEnumMappingHelper.toLabelFromSelectedOption(dailyType, selectedOption);
 
                     return ReportStatResponseDTO.DailyOptionDTO.builder()
-                            .dailyType(dailyType)
+                            .dailyType(dailyTypeContent)
                             .optionContent(optionContent)
                             .selectionCount(selectionCount)
                             .build();
@@ -148,5 +151,30 @@ public class ReportStatConverter {
                         .questionContent(q.getQuestionContent())
                         .build())
                 .toList();
+    }
+
+    public static MonthlySelectionDiaryStat toOrUpdateMonthlySelectionDiaryStat(
+            Map.Entry<ReportRawData.SelectionStatKey, Integer> entry,
+            Map<ReportRawData.SelectionStatKey, MonthlySelectionDiaryStat> existingStatMap) {
+
+        ReportRawData.SelectionStatKey key = entry.getKey();
+        int countToAdd = entry.getValue();
+
+        MonthlySelectionDiaryStat existingStat = existingStatMap.get(key);
+
+        if (existingStat != null) {
+            existingStat.setSelectionCount(existingStat.getSelectionCount() + countToAdd);
+            return existingStat;
+        } else {
+            // 없으면 새로 생성
+            return MonthlySelectionDiaryStat.builder()
+                    .memberId(key.getMemberId())
+                    .year(key.getYear())
+                    .month(key.getMonth())
+                    .dailyType(key.getDailyType())
+                    .selectedOption(key.getSelectedOption())
+                    .selectionCount(countToAdd)
+                    .build();
+        }
     }
 }
