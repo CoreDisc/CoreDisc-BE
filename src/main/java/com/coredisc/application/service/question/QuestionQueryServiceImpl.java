@@ -177,9 +177,9 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     @Override
     public QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList() {
 
-        LocalDate today = LocalDate.now();
-        LocalDate startOfWeek = today.with(DayOfWeek.MONDAY);
-        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+        LocalDate lastWeek = LocalDate.now().minusWeeks(1);
+        LocalDate startOfWeek = lastWeek.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = lastWeek.with(DayOfWeek.SUNDAY);
 
         List<Tuple> popularQuestionTuple = officialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
 
