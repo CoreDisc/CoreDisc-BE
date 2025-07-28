@@ -189,7 +189,6 @@ public class QuestionConverter {
                     String contents = tuple.get(2, String.class);
                     Long sharedCount = tuple.get(3, Long.class);
 
-                    assert question != null;
                     return QuestionResponseDTO.PopularQuestionResultDTO.builder()
                             .id(question.getId())
                             .username(username)

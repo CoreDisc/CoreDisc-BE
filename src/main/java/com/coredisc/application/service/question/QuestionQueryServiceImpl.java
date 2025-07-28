@@ -183,6 +183,14 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
         List<Tuple> popularQuestionTuple = officialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
 
+        // 예외 처리
+        for (Tuple tuple : popularQuestionTuple) {
+            OfficialQuestion question = tuple.get(0, OfficialQuestion.class);
+            if (question == null) {
+                throw new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND);
+            }
+        }
+
         return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionTuple, startOfWeek, endOfWeek);
     }
 
