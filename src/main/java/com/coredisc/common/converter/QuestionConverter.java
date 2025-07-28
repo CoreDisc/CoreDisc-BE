@@ -205,17 +205,9 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO toAddFavoriteToSavedSharedQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
+    public static QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO toUpdateSavedSharedQuestionFavoriteStatusResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
 
-        return QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO.builder()
-                .id(memberOfficialQuestion.getId())
-                .createdAt(memberOfficialQuestion.getCreatedAt())
-                .build();
-    }
-
-    public static QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO toDeleteFavoriteToSavedSharedQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
-
-        return QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO.builder()
+        return QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO.builder()
                 .id(memberOfficialQuestion.getId())
                 .createdAt(memberOfficialQuestion.getCreatedAt())
                 .build();

@@ -121,17 +121,10 @@ public interface QuestionControllerDocs {
     @Operation(summary = "인기 질문 목록 조회", description = "인기 질문 상위 5개를 조회하는 기능입니다.")
     ApiResponse<QuestionResponseDTO.PopularQuestionListResultDTO> getPopularQuestionList(@CurrentMember Member member);
 
-    @Operation(summary = "저장한 공유 질문 즐겨찾기 추가", description = "타사용자가 발행하여 저장헀던 공유 질문을 즐겨찾기에 추가하는 기능입니다.")
+    @Operation(summary = "저장한 공유 질문 즐겨찾기 추가/삭제", description = "타사용자가 발행하여 저장헀던 공유 질문을 즐겨찾기에 추가/삭제하는 기능입니다.")
     @Parameters({
             @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+            @Parameter(name = "isFavorite", description = "즐겨찾기 추가/삭제 (true: 추가, false: 삭제)"),
     })
-    ApiResponse<QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO> addFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
-
-
-    @Operation(summary = "공유 질문 즐겨찾기 삭제", description = "즐겨찾기에 추가했던 공유질문을 다시 취소하는 기능입니다.")
-    @Parameters({
-            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
-    })
-    ApiResponse<QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO> deleteFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
-
+    ApiResponse<QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO> updateSavedSharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite);
 }

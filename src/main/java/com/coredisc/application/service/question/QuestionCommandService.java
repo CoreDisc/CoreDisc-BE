@@ -36,9 +36,6 @@ public interface QuestionCommandService {
     void deleteMemberOfficialQuestion(Member member, Long questionId);
 
     // 즐겨찾기 추가
-    QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO addFavoriteToSavedSharedQuestion(Member member, Long questionId);
-
-    // 즐겨찾기 삭제
-    QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO deleteFavoriteToSavedSharedQuestion(Member member, Long questionId);
+    QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO updateSavedSharedQuestionFavoriteStatus(Member member, Long questionId, Boolean isFavorite);
 
 }

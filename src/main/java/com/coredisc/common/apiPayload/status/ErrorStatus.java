@@ -100,7 +100,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_SAVED_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4011", "이미 해당 공유 질문을 저장했습니다."),
     INVALID_SAVED_OFFICIAL_QUESTION_FILTER_COMBINATION(HttpStatus.BAD_REQUEST, "QUESTION4012", "카테고리와 즐겨찾기 필터는 동시에 사용할 수 없습니다. (favorite=true면 categoryId는 넘기지 말아야 함, categoryId 넘길 시 favorite는 안넘기거나 false여야 함)"),
     ALREADY_FAVORITE_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4013", "이미 즐겨찾기된 질문입니다."),
-    ALREADY_NOT_FAVORITE_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4014", "이미 즐겨찾기가 되지 않은 질문입니다."),
+    ALREADY_NOT_FAVORITE_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4014", "즐겨찾기가 되어있지 않은 질문입니다."),
 
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),

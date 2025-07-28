@@ -175,16 +175,9 @@ public class QuestionController implements QuestionControllerDocs {
 
     // 즐겨찾기 추가
     @PatchMapping("/official/{questionId}/favorite")
-    public ApiResponse<QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO> addFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+    public ApiResponse<QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO> updateSavedSharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite) {
 
-        return ApiResponse.onSuccess( questionCommandService.addFavoriteToSavedSharedQuestion(member, questionId) );
-    }
-
-    // 즐겨찾기 삭제
-    @DeleteMapping("/official/{questionId}/favorite")
-    public ApiResponse<QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO> deleteFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
-
-        return ApiResponse.onSuccess( questionCommandService.deleteFavoriteToSavedSharedQuestion(member, questionId) );
+        return ApiResponse.onSuccess( questionCommandService.updateSavedSharedQuestionFavoriteStatus(member, questionId, isFavorite) );
     }
 
 }

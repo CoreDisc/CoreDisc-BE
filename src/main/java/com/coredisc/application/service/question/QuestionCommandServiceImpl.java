@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -258,7 +257,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     // 즐겨찾기 추가
     @Override
     @Transactional
-    public QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO addFavoriteToSavedSharedQuestion(Member member, Long questionId) {
+    public QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO updateSavedSharedQuestionFavoriteStatus(Member member, Long questionId, Boolean isFavorite) {
 
         OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
@@ -266,34 +265,18 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
 
-        // 이미 즐겨찾기된 상태
-        if (memberOfficialQuestion.getIsFavorite())
+        // 이미 즐겨찾기 추가한 상태
+        if (memberOfficialQuestion.getIsFavorite() && isFavorite)
             throw new QuestionHandler(ErrorStatus.ALREADY_FAVORITE_OFFICIAL_QUESTION);
 
-        memberOfficialQuestion.updateFavorite(true);
-
-        return QuestionConverter.toAddFavoriteToSavedSharedQuestionResultDTO(memberOfficialQuestionRepository.save(memberOfficialQuestion));
-    }
-
-
-    // 즐겨찾기 삭제
-    @Override
-    @Transactional
-    public QuestionResponseDTO.DeleteFavoriteToSavedSharedQuestionResultDTO deleteFavoriteToSavedSharedQuestion(Member member, Long questionId) {
-
-        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
-
-        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
-
-        // 이미 즐겨찾기가 아닌 상태
-        if (!memberOfficialQuestion.getIsFavorite())
+        // 이미 즐겨찾기 삭제한 상태
+        if (!memberOfficialQuestion.getIsFavorite() && !isFavorite)
             throw new QuestionHandler(ErrorStatus.ALREADY_NOT_FAVORITE_OFFICIAL_QUESTION);
 
-        memberOfficialQuestion.updateFavorite(false);
 
-        return QuestionConverter.toDeleteFavoriteToSavedSharedQuestionResultDTO(memberOfficialQuestionRepository.save(memberOfficialQuestion));
+        memberOfficialQuestion.updateFavorite(isFavorite);
+
+        return QuestionConverter.toUpdateSavedSharedQuestionFavoriteStatusResultDTO(memberOfficialQuestionRepository.save(memberOfficialQuestion));
     }
 
 }
