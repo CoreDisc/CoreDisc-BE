@@ -9,6 +9,7 @@ import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,7 +21,7 @@ public class CalendarController implements CalendarControllerDocs {
 
     // 캘린더 조회
     @GetMapping
-    public ApiResponse<CalendarResponseDTO.CalendarDTO> getCalendar(int year, int month, @CurrentMember Member member) {
+    public ApiResponse<CalendarResponseDTO.CalendarDTO> getCalendar(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
         return ApiResponse.onSuccess(calendarQueryService.getCalendar(year, month, member));
     }
 }
