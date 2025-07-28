@@ -13,10 +13,8 @@ import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.presentation.dto.reportStat.ReportStatResponseDTO;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReportStatConverter {
 
@@ -143,14 +141,20 @@ public class ReportStatConverter {
     public static List<MonthlyFixedQuestionStat> toMonthlyFixedQuestionStats(List<TodayQuestion> questions, Set<Long> memberIds, int year, int month) {
         return questions.stream()
                 .filter(q -> memberIds.contains(q.getMember().getId()))
-                .map(q -> MonthlyFixedQuestionStat.builder()
-                        .memberId(q.getMember().getId())
-                        .year(year)
-                        .month(month)
-                        .questionOrder(q.getQuestionOrder())
-                        .questionContent(q.getQuestionContent())
-                        .build())
-                .toList();
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toMap(
+                                q -> q.getMember().getId() + "-" + q.getQuestionOrder(),
+                                q -> MonthlyFixedQuestionStat.builder()
+                                        .memberId(q.getMember().getId())
+                                        .year(year)
+                                        .month(month)
+                                        .questionOrder(q.getQuestionOrder())
+                                        .questionContent(q.getQuestionContent())
+                                        .build(),
+                                (existing, replacement) -> existing
+                        ),
+                        map -> new ArrayList<>(map.values())
+                ));
     }
 
     public static MonthlySelectionDiaryStat toOrUpdateMonthlySelectionDiaryStat(
