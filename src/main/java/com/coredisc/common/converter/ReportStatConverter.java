@@ -11,10 +11,8 @@ import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.presentation.dto.reportStat.ReportStatResponseDTO;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReportStatConverter {
 
@@ -24,7 +22,6 @@ public class ReportStatConverter {
     }
 
     public static ReportStatResponseDTO.PeakHourDTO toPeakHourDTO(ReportRawData.HourlyAnswerRawData rawData) {
-        // 최다 응답 시간대 찾기 -> 이 부분 고민 중...
         Map.Entry<Integer, Integer> maxEntry = rawData.getHourCountMap().entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .orElse(null);
@@ -148,5 +145,19 @@ public class ReportStatConverter {
                         .questionContent(q.getQuestionContent())
                         .build())
                 .toList();
+    }
+
+    public static ReportStatResponseDTO.DailyDetailListDTO toDailyDetailListDTO(List<Post> posts) {
+        Map<LocalDate, String> detailMap = posts.stream()
+                .collect(Collectors.toMap(
+                        post -> post.getCreatedAt().toLocalDate(),
+                        Post::getDailyDetail,
+                        (oldValue, newValue) -> newValue,
+                        LinkedHashMap::new
+                ));
+
+        return ReportStatResponseDTO.DailyDetailListDTO.builder()
+                .dailyDetails(detailMap)
+                .build();
     }
 }
