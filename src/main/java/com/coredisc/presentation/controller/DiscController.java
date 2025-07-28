@@ -45,8 +45,7 @@ public class DiscController implements DiscControllerDocs {
     //디스크 커버 이미지 변경
     @PatchMapping(value = "/{discId}/cover/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<DiscResponseDTO.DiscDTO> updateDiscCoverImage(@PathVariable Long discId, @RequestPart("coverImageFile") MultipartFile coverImageFile, @CurrentMember Member member) {
-        Disc disc = discCommandService.updateDiscCoverImage(discId, coverImageFile, member);
-        return ApiResponse.onSuccess(DiscConverter.toDiscDTO(disc));
+        return ApiResponse.onSuccess(DiscConverter.toDiscDTO(discCommandService.updateDiscCoverImage(discId, coverImageFile, member)));
     }
 
     //디스크 커버 색깔 변경
