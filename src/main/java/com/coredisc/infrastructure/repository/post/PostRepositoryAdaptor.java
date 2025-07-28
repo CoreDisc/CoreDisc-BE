@@ -123,4 +123,9 @@ public class PostRepositoryAdaptor implements PostRepository {
     public List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end) {
         return queryPostRepository.findMembersByPostCreatedAtBetween(start, end);
     }
+
+    @Override
+    public List<Post> findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(Member member, LocalDateTime start, LocalDateTime end) {
+        return jpaPostRepository.findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, start, end);
+    }
 }
