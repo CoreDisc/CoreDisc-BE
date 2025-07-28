@@ -5,10 +5,8 @@ import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.MyHomeHandler;
-import com.coredisc.common.util.DateUtil;
 import com.coredisc.common.util.FormatNumberUtil;
 import com.coredisc.domain.block.BlockRepository;
-import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.disc.DiscRepository;
@@ -29,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -147,7 +144,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
 
     @Override
-    public CursorDTO<MemberResponseDTO.UserHomePostDTO> getUserHomePosts(Member member, String targetUsername, Long cursorId, Pageable page) {
+    public CursorDTO<MemberResponseDTO.MyHomePostDTO> getUserHomePosts(Member member, String targetUsername, Long cursorId, Pageable page) {
 
         // targetUsername이 로그인한 사용자 본인의 username일 때 예외 처리
         if(member.getUsername().equals(targetUsername)) {
@@ -167,11 +164,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         List<Post> posts = postRepository.findUserPostsWithAnswers(targetMember, isCircle, cursorId, page);
 
-        List<MemberResponseDTO.UserHomePostDTO> result = posts.stream()
+        List<MemberResponseDTO.MyHomePostDTO> result = posts.stream()
                 .map(p -> toHomePostDTO(
                         p,
-                        (post, imgDto) -> MemberConverter.toUserHomePostDTO(post, imgDto, null),
-                        (post, txtDto) -> MemberConverter.toUserHomePostDTO(post, null, txtDto)
+                        (post, imgDto) -> MemberConverter.toMyHomePostDTO(post, imgDto, null),
+                        (post, txtDto) -> MemberConverter.toMyHomePostDTO(post, null, txtDto)
                 ))
                 .toList();
 
@@ -194,23 +191,27 @@ public class MemberQueryServiceImpl implements MemberQueryService {
                                 java.util.function.BiFunction<Post, MemberResponseDTO.PostTextThumbnailDTO, T> textDtoBuilder) {
 
         List<PostAnswer> answers = post.getAnswers();
-        Optional<PostAnswer> imageAnswerOpt = answers.stream()
-                .filter(a -> a.getType() == AnswerType.IMAGE && a.getPostAnswerImage().getThumbnailUrl() != null)
-                .findFirst();
 
-        if (imageAnswerOpt.isPresent()) {
-            PostAnswerImage pai = imageAnswerOpt.get().getPostAnswerImage();
+        // 답변이 아예 없으면 null 반환
+        if (answers.isEmpty()) return null;
 
+        // 1. answerOrder 기준 정렬
+        answers.sort(java.util.Comparator.comparing(PostAnswer::getAnswerOrder));
+
+        // 2. 첫 번쩨 답변 가져오기
+        PostAnswer first = answers.get(0);
+
+        // 3. 첫 번째 답변 종류에 맞는 썸네일 dto 생성
+        if (first.isImageAnswer() && first.getPostAnswerImage() != null) {
+            PostAnswerImage pai = first.getPostAnswerImage();
             MemberResponseDTO.PostImageThumbnailDTO imageDto = MemberConverter.toPostImageThumbnailDTO(pai);
             return imageDtoBuilder.apply(post, imageDto);
-        } else {
-            String weekday = DateUtil.getWeekdayShort(post.getCreatedAt());
-            String createdDate = DateUtil.getYYMMDD(post.getCreatedAt());
-            // TODO: 카테고리 조회 추가
-
-            MemberResponseDTO.PostTextThumbnailDTO textDto = MemberConverter.toPostTextThumbnailDTO(weekday, createdDate);
+        } else if (first.isTextAnswer()) {
+            String content = first.getTextContent();
+            MemberResponseDTO.PostTextThumbnailDTO textDto = MemberConverter.toPostTextThumbnailDTO(content);
             return textDtoBuilder.apply(post, textDto);
+        } else {
+            return null;
         }
     }
-
 }

@@ -36,4 +36,9 @@ public class DiscRepositoryAdaptor implements DiscRepository {
     public Optional<Disc> findByIdAndMember(Long id, Member member) {
         return jpaDiscRepository.findByIdAndMember(id, member);
     }
+
+    @Override
+    public boolean existsByMemberAndYearAndMonth(Member member, int year, int month) {
+        return jpaDiscRepository.existsByMemberAndYearAndMonth(member, year, month);
+    }
 }

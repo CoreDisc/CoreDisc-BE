@@ -1,7 +1,10 @@
 package com.coredisc.infrastructure.repository.member;
 
 import com.coredisc.domain.member.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -15,4 +18,7 @@ public interface JpaMemberRepository extends JpaRepository<Member, Long> {
     boolean existsByNameAndUsername(String name, String username);
     Optional<Member> findByNameAndUsername(String name, String username);
     Optional<Member> findByEmail(String email);
+
+    @Query("SELECT m FROM Member m WHERE m.status = true")
+    Page<Member> findAllForDiscCreation(Pageable pageable);
 }

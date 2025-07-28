@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -35,6 +35,16 @@ public class TodayQuestionRepositoryAdapter  implements TodayQuestionRepository 
     @Override
     public boolean existsByPersonalQuestion(PersonalQuestion personalQuestion) {
         return jpaTodayQuestionRepository.existsByPersonalQuestion(personalQuestion);
+    }
+
+    @Override
+    public List<TodayQuestion> findAllByQuestionOrderAndSelectedDate(int questionOrder, LocalDate targetDate) {
+        return jpaTodayQuestionRepository.findAllByQuestionOrderAndSelectedDate(questionOrder, targetDate);
+    }
+
+    @Override
+    public List<TodayQuestion> findByMemberIdInAndQuestionOrderInAndSelectedDateBetween(List<Long> memberIds, List<Integer> questionOrders, LocalDate startDate, LocalDate endDate) {
+        return jpaTodayQuestionRepository.findByMemberIdInAndQuestionOrderInAndSelectedDateBetween(memberIds, questionOrders, startDate, endDate);
     }
 
 }

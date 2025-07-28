@@ -11,4 +11,5 @@ public interface DiscRepository {
     Long countByMember(Member member);
     Page<Disc> findByMember(Member member, Pageable pageable);
     Optional<Disc> findByIdAndMember(Long id, Member member);
+    boolean existsByMemberAndYearAndMonth(Member member, int year, int month);
 }

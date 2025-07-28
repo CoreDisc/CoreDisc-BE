@@ -46,9 +46,6 @@ public class TodayQuestion extends BaseEntity {
     @JoinColumn(name = "personal_question_id")
     private PersonalQuestion personalQuestion;
 
-    @OneToMany(mappedBy = "todayQuestion")
-    private List<PostAnswer> postAnswers = new ArrayList<>();
-
 
     public String getQuestionContent() {
         if (this.officialQuestion != null) {
