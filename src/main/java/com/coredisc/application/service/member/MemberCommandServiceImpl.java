@@ -1,5 +1,6 @@
 package com.coredisc.application.service.member;
 
+import com.coredisc.application.service.device.DeviceCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.ProfileImgConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
@@ -33,6 +34,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final PasswordEncoder passwordEncoder;
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
+    private final DeviceCommandService deviceCommandService;
     private final AmazonS3Manager amazonS3Manager;
 
     @Override
@@ -85,6 +87,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public void resignMember(Member member) {
 
+        // 사용자가 등록했던 디바이스 토큰들 삭제
+        deviceCommandService.deleteDeviceToken(member);
         member.setStatus(Boolean.FALSE);
         memberRepository.save(member);
     }
