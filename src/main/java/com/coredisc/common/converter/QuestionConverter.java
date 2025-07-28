@@ -170,8 +170,7 @@ public class QuestionConverter {
                 .toList();
 
         return QuestionResponseDTO.SavedSharedQuestionResultDTO.builder()
-                .id(memberOfficialQuestion.getId())
-                .questionId(officialQuestion.getId())
+                .id(memberOfficialQuestion.getOfficialQuestion().getId())
                 .question(officialQuestion.getContents())
                 .categories(categories)
                 .sharedCount(sharedCount)

@@ -21,15 +21,14 @@ public class QueryMemberOfficialQuestionRepositoryImpl implements QueryMemberOff
 
     @Override
     public List<MemberOfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int pageSize) {
-
         return jpaQueryFactory
                 .selectFrom(qMemberOfficialQuestion)
                 .where(
                         qMemberOfficialQuestion.member.eq(member),
                         qMemberOfficialQuestion.isFavorite.isTrue(),
-                        cursorId != null ? qMemberOfficialQuestion.id.lt(cursorId) : null
+                        cursorId != null ? qMemberOfficialQuestion.officialQuestion.id.lt(cursorId) : null
                 )
-                .orderBy(qMemberOfficialQuestion.id.desc())
+                .orderBy(qMemberOfficialQuestion.officialQuestion.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
     }
@@ -40,9 +39,9 @@ public class QueryMemberOfficialQuestionRepositoryImpl implements QueryMemberOff
                 .selectFrom(qMemberOfficialQuestion)
                 .where(
                         qMemberOfficialQuestion.member.eq(member),
-                        cursorId != null ? qMemberOfficialQuestion.id.lt(cursorId) : null
+                        cursorId != null ? qMemberOfficialQuestion.officialQuestion.id.lt(cursorId) : null
                 )
-                .orderBy(qMemberOfficialQuestion.id.desc())
+                .orderBy(qMemberOfficialQuestion.officialQuestion.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
     }
@@ -54,9 +53,9 @@ public class QueryMemberOfficialQuestionRepositoryImpl implements QueryMemberOff
                 .where(
                         qMemberOfficialQuestion.member.eq(member),
                         qMemberOfficialQuestion.officialQuestion.questionCategoryList.any().category.eq(category),
-                        cursorId != null ? qMemberOfficialQuestion.id.lt(cursorId) : null
+                        cursorId != null ? qMemberOfficialQuestion.officialQuestion.id.lt(cursorId) : null
                 )
-                .orderBy(qMemberOfficialQuestion.id.desc())
+                .orderBy(qMemberOfficialQuestion.officialQuestion.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
     }
