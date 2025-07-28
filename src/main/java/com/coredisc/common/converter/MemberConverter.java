@@ -9,6 +9,7 @@ import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 import com.coredisc.presentation.dto.auth.KakaoUserInfo;
+import com.coredisc.presentation.dto.auth.NaverUserInfo;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 
 import java.time.LocalDateTime;
@@ -165,6 +166,21 @@ public class MemberConverter {
                 .email(kakaoUserInfo.getKakaoAccount().getEmail())
                 .isSocialLogin(true)
                 .oauthType(OauthType.KAKAO)
+                .status(true)
+                .role(Role.USER)
+                .build();
+    }
+
+    public static Member toNaverMember(NaverUserInfo naverUserInfo, String randomNickname,
+                                       String randomUsername, String password) {
+        return Member.builder()
+                .username(randomUsername)
+                .password(password)
+                .name(naverUserInfo.getResponse().getName())
+                .nickname(randomNickname)
+                .email(naverUserInfo.getResponse().getEmail())
+                .isSocialLogin(true)
+                .oauthType(OauthType.NAVER)
                 .status(true)
                 .role(Role.USER)
                 .build();

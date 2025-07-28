@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class SocialProperties {
 
     private ProviderProperties kakao; // kakao 관련 값
+    private ProviderProperties naver; // naver 관련 값
 
     @Data
     public static class ProviderProperties {

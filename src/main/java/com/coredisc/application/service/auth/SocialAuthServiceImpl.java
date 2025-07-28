@@ -15,6 +15,7 @@ import com.coredisc.domain.profileImg.ProfileImgRepository;
 import com.coredisc.presentation.dto.auth.AuthRequestDTO;
 import com.coredisc.presentation.dto.auth.AuthResponseDTO;
 import com.coredisc.presentation.dto.auth.KakaoUserInfo;
+import com.coredisc.presentation.dto.auth.NaverUserInfo;
 import com.coredisc.security.auth.PrincipalDetails;
 import com.coredisc.security.jwt.JwtProvider;
 import com.google.gson.Gson;
@@ -71,6 +72,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         switch (provider.toLowerCase()) {
             case "kakao":
                 return socialProperties.getKakao();
+            case "naver":
+                return socialProperties.getNaver();
             default:
                 throw new AuthHandler(ErrorStatus.UNSUPPORTED_PROVIDER);
         }
@@ -107,6 +110,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         switch (provider.toLowerCase()) {
             case "kakao" :
                 return HttpMethod.POST;
+            case "naver":
+                return HttpMethod.GET;
             default:
                 throw new AuthHandler(ErrorStatus.UNSUPPORTED_PROVIDER);
         }
@@ -118,6 +123,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         switch (provider.toLowerCase()) {
             case "kakao":
                 return KakaoUserInfo.class;
+            case "naver":
+                return NaverUserInfo.class;
             default:
                 throw new AuthHandler(ErrorStatus.UNSUPPORTED_PROVIDER);
         }
@@ -129,6 +136,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         switch (provider.toLowerCase()) {
             case "kakao":
                 return ((KakaoUserInfo) userInfo).getKakaoAccount().getEmail();
+            case "naver":
+                return ((NaverUserInfo) userInfo).getResponse().getEmail();
             default:
                 throw new AuthHandler(ErrorStatus.UNSUPPORTED_PROVIDER);
         }
@@ -141,6 +150,8 @@ public class SocialAuthServiceImpl implements SocialAuthService {
         switch(provider.toLowerCase()) {
             case "kakao":
                 return MemberConverter.toKakaoMember((KakaoUserInfo) userInfo, randomNickname, randomUsername, password);
+            case "naver":
+                return MemberConverter.toNaverMember((NaverUserInfo) userInfo, randomNickname, randomUsername, password);
             default:
                 throw new AuthHandler(ErrorStatus.UNSUPPORTED_PROVIDER);
         }
