@@ -174,7 +174,7 @@ public class QuestionController implements QuestionControllerDocs {
     }
 
     // 즐겨찾기 추가
-    @PatchMapping("/{questionId}/favorite")
+    @PatchMapping("/official/{questionId}/favorite")
     public ApiResponse<QuestionResponseDTO.AddFavoriteToSavedSharedQuestionResultDTO> addFavoriteToSavedSharedQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
 
         return ApiResponse.onSuccess( questionCommandService.addFavoriteToSavedSharedQuestion(member, questionId) );
