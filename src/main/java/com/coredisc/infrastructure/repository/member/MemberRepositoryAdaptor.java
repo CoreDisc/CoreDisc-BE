@@ -74,12 +74,11 @@ public class MemberRepositoryAdaptor implements MemberRepository {
     // 검색 화면 사용자 검색
     @Override
     public List<Member> findMemberListByKeyword(
-            Member member,
             String keyword,
             Long cursorId,
             int pageSize
     ) {
-        return queryMemberRepository.findMemberListByKeyword(member, keyword, cursorId, pageSize);
+        return queryMemberRepository.findMemberListByKeyword(keyword, cursorId, pageSize);
     }
 
 }

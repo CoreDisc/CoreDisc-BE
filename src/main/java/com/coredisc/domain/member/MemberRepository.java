@@ -23,7 +23,6 @@ public interface MemberRepository {
 
     // 검색 화면 사용자 검색
     List<Member> findMemberListByKeyword(
-            Member member,
             String keyword,
             Long cursorId,
             int pageSize

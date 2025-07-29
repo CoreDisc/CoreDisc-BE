@@ -19,7 +19,6 @@ public class QueryMemberRepositoryImpl implements QueryMemberRepository {
     // 검색 화면 사용자 검색
     @Override
     public List<Member> findMemberListByKeyword(
-            Member member,
             String keyword,
             Long cursorId,
             int pageSize

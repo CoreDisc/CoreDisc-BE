@@ -225,7 +225,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
             throw new MemberHandler(ErrorStatus.INVALID_SEARCH_KEYWORD);
         }
 
-        List<Member> memberList = memberRepository.findMemberListByKeyword(member, keyword, cursorId, pageSize);
+        List<Member> memberList = memberRepository.findMemberListByKeyword(keyword, cursorId, pageSize);
 
         boolean hasNext = memberList.size() > pageSize;
 
