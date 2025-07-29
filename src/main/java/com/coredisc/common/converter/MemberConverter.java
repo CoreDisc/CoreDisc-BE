@@ -185,4 +185,14 @@ public class MemberConverter {
                 .role(Role.USER)
                 .build();
     }
+
+    // 검색 화면 사용자 검색
+    public static MemberResponseDTO.SearchMemberResultDTO toSearchMemberResultDTO(Member member, ProfileImg profileImg) {
+        return MemberResponseDTO.SearchMemberResultDTO.builder()
+                .id(member.getId())
+                .username(member.getUsername())
+                .nickname(member.getNickname())
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(profileImg))
+                .build();
+    }
 }
