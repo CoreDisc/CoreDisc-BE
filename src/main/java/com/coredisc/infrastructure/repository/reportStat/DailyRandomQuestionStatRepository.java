@@ -14,7 +14,6 @@ import java.util.List;
 public interface DailyRandomQuestionStatRepository extends JpaRepository<DailyRandomQuestionStat, Long> {
 
     // 특정 월의 모든 랜덤 질문들을 날짜 순으로 조회
-    //TODO : 여기 지금 날짜순으로 정렬만 했는데, 만약 중복 질문은 X라면 수정해야 함
     @Query("SELECT d FROM DailyRandomQuestionStat d " +
             "WHERE d.memberId = :memberId " +
             "AND d.selectedDate BETWEEN :startDate AND :endDate " +
