@@ -17,6 +17,8 @@ public interface JpaPostRepository extends JpaRepository<Post, Long> {
 
     long countByMemberAndStatus(Member member, PostStatus status);
     long countByMemberAndStatusAndPublicityIn(Member member, PostStatus status, List<PublicityType> publicityTypes);
+
+    List<Post> findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(Member member, LocalDateTime start, LocalDateTime end);
 }
 
 

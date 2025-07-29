@@ -3,6 +3,9 @@ package com.coredisc.application.service.reportStat;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.ReportStatHandler;
 import com.coredisc.common.util.DateUtil;
+import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostRepository;
 import com.coredisc.domain.reportStats.DailyRandomQuestionStat;
 import com.coredisc.domain.reportStats.MonthlyFixedQuestionStat;
 import com.coredisc.infrastructure.repository.reportStat.DailyAnswerHourStatRepository;
@@ -15,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.*;
 
 
@@ -26,6 +32,7 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     private final DailyRandomQuestionStatRepository randomQuestionRepository;
     private final MonthlyFixedQuestionStatRepository fixedQuestionRepository;
     private final MonthlySelectionDiaryStatRepository monthlySelectionDiaryStatRepository;
+    private final PostRepository postRepository;
 
     @Override
     public ReportRawData.QuestionListRawData getQuestionList(int year, int month, Long memberId) {
@@ -110,4 +117,13 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
 
         return new ReportRawData.DailyOptionRawData(year, month, topOptionMap);
     }
+
+    @Override
+    public List<Post> getDailyDetails(int year, int month, Member member) {
+        LocalDateTime start = DateUtil.getStartDateTime(year, month);
+        LocalDateTime end = DateUtil.getEndDateTime(year, month);
+
+        return postRepository.findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, start, end);
+    }
+
 }

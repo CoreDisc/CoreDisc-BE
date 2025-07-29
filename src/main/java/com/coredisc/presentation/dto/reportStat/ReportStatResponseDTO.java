@@ -4,8 +4,8 @@ import com.coredisc.domain.common.enums.TimeZoneType;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReportStatResponseDTO {
 
@@ -57,7 +57,7 @@ public class ReportStatResponseDTO {
     @AllArgsConstructor
     @Setter
     public static class DailyDetailListDTO{
-        private HashMap<LocalDate, String> dailyDetails;
+        private Map<LocalDate, String> dailyDetails;
     }
 
     @Builder
