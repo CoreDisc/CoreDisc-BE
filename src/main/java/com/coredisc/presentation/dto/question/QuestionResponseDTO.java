@@ -133,8 +133,6 @@ public class QuestionResponseDTO {
 
         private Long id;
 
-        private Long questionId;
-
         private List<CategoryResponseDTO.CategoryInfoDTO> categories;
 
         private String question;
