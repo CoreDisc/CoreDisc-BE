@@ -214,4 +214,30 @@ public class MemberQueryServiceImpl implements MemberQueryService {
             return null;
         }
     }
+
+
+    // 검색 화면 사용자 검색
+    @Override
+    public CursorDTO<MemberResponseDTO.SearchMemberResultDTO> getMemberSearchList(Member member, String keyword, Long cursorId, Integer pageSize) {
+        
+        // 키워드 없을 시 예외처리
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new MemberHandler(ErrorStatus.INVALID_SEARCH_KEYWORD);
+        }
+
+        List<Member> memberList = memberRepository.findMemberListByKeyword(member, keyword, cursorId, pageSize);
+
+        boolean hasNext = memberList.size() > pageSize;
+
+        if (hasNext) {
+            memberList = memberList.subList(0, pageSize);
+        }
+
+        List<MemberResponseDTO.SearchMemberResultDTO> memberSearchList = memberList.stream()
+                .map(members -> MemberConverter.toSearchMemberResultDTO(members, members.getProfileImg()))
+                .toList();
+
+        return new CursorDTO<>(memberSearchList, hasNext);
+    }
+
 }

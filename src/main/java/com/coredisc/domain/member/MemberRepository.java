@@ -3,6 +3,7 @@ package com.coredisc.domain.member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository {
@@ -19,4 +20,13 @@ public interface MemberRepository {
     Optional<Member> findById(Long followerId);
 
     Page<Member> findAllForDiscCreation(Pageable pageable);
+
+    // 검색 화면 사용자 검색
+    List<Member> findMemberListByKeyword(
+            Member member,
+            String keyword,
+            Long cursorId,
+            int pageSize
+    );
+
 }

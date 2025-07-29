@@ -2,11 +2,13 @@ package com.coredisc.infrastructure.repository.member;
 
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import com.coredisc.infrastructure.repository.member.querydsl.QueryMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class MemberRepositoryAdaptor implements MemberRepository {
 
     private final JpaMemberRepository jpaMemberRepository;
+    private final QueryMemberRepository queryMemberRepository;
 
     @Override
     public Member save(Member member) {
@@ -68,5 +71,15 @@ public class MemberRepositoryAdaptor implements MemberRepository {
         return jpaMemberRepository.findAllForDiscCreation(pageable);
     }
 
+    // 검색 화면 사용자 검색
+    @Override
+    public List<Member> findMemberListByKeyword(
+            Member member,
+            String keyword,
+            Long cursorId,
+            int pageSize
+    ) {
+        return queryMemberRepository.findMemberListByKeyword(member, keyword, cursorId, pageSize);
+    }
 
 }
