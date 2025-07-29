@@ -24,4 +24,6 @@ public interface MonthlySelectionDiaryStatRepository extends JpaRepository<Month
             @Param("year") int year,
             @Param("month") int month,
             @Param("dailyType") int dailyType);
+
+    List<MonthlySelectionDiaryStat> findAllByYearAndMonth(int year, int month);
 }

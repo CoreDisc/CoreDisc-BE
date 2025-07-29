@@ -73,7 +73,12 @@ public class BatchScheduler {
             log.error("[배치] generateRandomQuestionsStats 에러: {}", e.getMessage(), e);
         }
 
-        // TODO: 추후 추가 배치 작업 에러 처리도 여기에 포함
+        try {
+            reportStatBatchService.generateMonthlySelectionDiaryStats(targetDate);
+        } catch (Exception e) {
+            errorCount++;
+            log.error("[배치] generateMonthlySelectionDiaryStats 에러: {}", e.getMessage(), e);
+        }
 
         if (errorCount > 0) {
             log.warn("[배치] {}일자 통계 배치 작업 완료 - 에러 발생 횟수: {}", targetDate, errorCount);

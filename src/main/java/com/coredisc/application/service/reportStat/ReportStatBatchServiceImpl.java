@@ -1,6 +1,7 @@
 package com.coredisc.application.service.reportStat;
 
 import com.coredisc.common.converter.ReportStatConverter;
+import com.coredisc.common.util.DailyEnumMappingHelper;
 import com.coredisc.common.util.DateUtil;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
@@ -19,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,20 +113,56 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
         monthlyFixedQuestionStatRepository.saveAll(stats);
     }
 
-    // TODO: 구현 중...
     @Override
     @Transactional
     public void generateMonthlySelectionDiaryStats(LocalDate targetDate) {
-        // 그 날에 기록한 선택형 일기 데이터 저장
-
         List<Post> posts = postRepository.findPostsByCreatedDate(targetDate);
+        Map<ReportRawData.SelectionStatKey, Integer> aggregationMap = getAggregationMap(posts);
 
-        // TODO: 컨버터로 분리하기
-        List<MonthlySelectionDiaryStat> stats = posts.stream().map(post -> MonthlySelectionDiaryStat.builder()
-                .memberId(post.getMember().getId())
-                .year(post.getCreatedAt().getYear())
-                .month(post.getCreatedAt().getMonthValue())
-                .build()).toList();
-        monthlySelectionDiaryStatRepository.saveAll(stats);
+        List<MonthlySelectionDiaryStat> existingStats = monthlySelectionDiaryStatRepository
+                .findAllByYearAndMonth(targetDate.getYear(), targetDate.getMonthValue());
+
+        Map<ReportRawData.SelectionStatKey, MonthlySelectionDiaryStat> existingStatMap = existingStats.stream()
+                .collect(Collectors.toMap(
+                        stat -> new ReportRawData.SelectionStatKey(
+                                stat.getMemberId(),
+                                stat.getYear(),
+                                stat.getMonth(),
+                                stat.getDailyType(),
+                                stat.getSelectedOption()
+                        ),
+                        stat -> stat
+                ));
+
+        List<MonthlySelectionDiaryStat> statsToSave = aggregationMap.entrySet().stream()
+                .map(entry -> ReportStatConverter.toOrUpdateMonthlySelectionDiaryStat(entry, existingStatMap))
+                .toList();
+
+        monthlySelectionDiaryStatRepository.saveAll(statsToSave);
+    }
+
+
+    private static Map<ReportRawData.SelectionStatKey, Integer> getAggregationMap(List<Post> posts) {
+        Map<ReportRawData.SelectionStatKey, Integer> aggregationMap = new HashMap<>();
+
+        for (Post post : posts) {
+            Long memberId = post.getMember().getId();
+            int year = post.getCreatedAt().getYear();
+            int month = post.getCreatedAt().getMonthValue();
+
+            int whoOption = DailyEnumMappingHelper.toSelectedOption(post.getDailyWho());
+            ReportRawData.SelectionStatKey keyWho = new ReportRawData.SelectionStatKey(memberId, year, month, 1, whoOption);
+            aggregationMap.put(keyWho, aggregationMap.getOrDefault(keyWho, 0) + 1);
+
+            int whereOption = DailyEnumMappingHelper.toSelectedOption(post.getDailyWhere());
+            ReportRawData.SelectionStatKey keyWhere = new ReportRawData.SelectionStatKey(memberId, year, month, 2, whereOption);
+            aggregationMap.put(keyWhere, aggregationMap.getOrDefault(keyWhere, 0) + 1);
+
+            int whatOption = DailyEnumMappingHelper.toSelectedOption(post.getDailyWhat());
+            ReportRawData.SelectionStatKey keyWhat = new ReportRawData.SelectionStatKey(memberId, year, month, 3, whatOption);
+            aggregationMap.put(keyWhat, aggregationMap.getOrDefault(keyWhat, 0) + 1);
+        }
+
+        return aggregationMap;
     }
 }
