@@ -1,6 +1,5 @@
 package com.coredisc.presentation.controller;
 
-import com.coredisc.application.service.reportStat.ReportRawData;
 import com.coredisc.application.service.reportStat.ReportStatQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.ReportStatConverter;
@@ -24,11 +23,7 @@ public class ReportStatController implements ReportStatControllerDocs {
     // 사용자의 월별 리포트 조회
     @GetMapping
     public ApiResponse<ReportStatResponseDTO.MonthlyReportDTO> getMonthlyReport(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
-        ReportRawData.QuestionListRawData questionListRaw = reportStatQueryService.getQuestionList(year, month, member.getId());
-        ReportRawData.MostSelectedQuestionRawData mostSelectedRaw = reportStatQueryService.getMostSelectedQuestions(year, month, member.getId());
-        ReportRawData.HourlyAnswerRawData peakHourRaw = reportStatQueryService.getHourlyAnswerCountMap(year, month, member.getId());
-
-        return ApiResponse.onSuccess(ReportStatConverter.toMonthlyReport(year, month, questionListRaw, mostSelectedRaw, peakHourRaw));
+        return ApiResponse.onSuccess(ReportStatConverter.toMonthlyReport(reportStatQueryService.getMonthlyReportRawData(year, month, member.getId())));
     }
 
     // 사용자의 선택형 일기 리포트 조회(1) - 가장 많이 선택한 옵션 조회
