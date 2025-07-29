@@ -24,6 +24,7 @@ public class ReportRawData {
     public static class MostSelectedQuestionRawData {
         private int year;
         private int month;
+        private boolean isAllOneCount;
         private List<MostSelectedQuestionItem> questions;
     }
 

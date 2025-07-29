@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.YearMonth;
 import java.util.*;
 
 
@@ -45,8 +43,7 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         LocalDate start = DateUtil.getStartDate(year, month);
         LocalDate end = DateUtil.getEndDate(year, month);
 
-        List<DailyRandomQuestionStat> randomQuestions = randomQuestionRepository.findByMemberIdAndSelectedDateRange(
-                memberId, start, end);
+        List<DailyRandomQuestionStat> randomQuestions = randomQuestionRepository.findByMemberIdAndSelectedDateRange(memberId, start, end);
 
         return new ReportRawData.QuestionListRawData(year, month, fixedQuestions, randomQuestions);
     }
@@ -59,18 +56,18 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         LocalDate endDate = DateUtil.getEndDate(year, month);
 
         List<Object[]> results = randomQuestionRepository.findTop3QuestionsByMemberAndDateRange(memberId, startDate, endDate, top3);
-        if(results.isEmpty()) {
-            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
-        }
+
+        boolean allCountIsOne = results.stream()
+                .allMatch(obj -> ((Long) obj[1]) == 1L);
 
         List<ReportRawData.MostSelectedQuestionItem> topQuestions = new ArrayList<>();
         for (Object[] row : results) {
             String questionContent = (String) row[0];
             int selectionCount = ((Number) row[1]).intValue();
-
             topQuestions.add(new ReportRawData.MostSelectedQuestionItem(questionContent, selectionCount));
         }
-        return new ReportRawData.MostSelectedQuestionRawData(startDate.getYear(), startDate.getMonthValue(), topQuestions);
+
+        return new ReportRawData.MostSelectedQuestionRawData(year, month, allCountIsOne, topQuestions);
     }
 
     @Override
@@ -94,9 +91,8 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
             hourCountMap.putIfAbsent(i, 0);
         }
 
-        return new ReportRawData.HourlyAnswerRawData(startDate.getYear(), startDate.getMonthValue(), hourCountMap);
+        return new ReportRawData.HourlyAnswerRawData(year, month, hourCountMap);
     }
-
 
     @Override
     public ReportRawData.DailyOptionRawData getMostSelectedDaily(int year, int month, Long memberId) {
@@ -125,5 +121,4 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
 
         return postRepository.findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, start, end);
     }
-
 }
