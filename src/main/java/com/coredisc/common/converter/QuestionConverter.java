@@ -1,6 +1,5 @@
 package com.coredisc.common.converter;
 
-import com.coredisc.domain.category.Category;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
@@ -10,14 +9,12 @@ import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.querydsl.core.Tuple;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class QuestionConverter {
 
@@ -159,6 +156,59 @@ public class QuestionConverter {
         return QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO.builder()
                 .id(memberOfficialQuestion.getId())
                 .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static QuestionResponseDTO.SavedSharedQuestionResultDTO toSavedSharedQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion, long sharedCount) {
+        OfficialQuestion officialQuestion = memberOfficialQuestion.getOfficialQuestion();
+
+        List<CategoryResponseDTO.CategoryInfoDTO> categories = officialQuestion.getQuestionCategoryList().stream()
+                .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                        .categoryId(qc.getCategory().getId())
+                        .categoryName(qc.getCategory().getName())
+                        .build())
+                .toList();
+
+        return QuestionResponseDTO.SavedSharedQuestionResultDTO.builder()
+                .id(officialQuestion.getId())
+                .question(officialQuestion.getContents())
+                .categories(categories)
+                .sharedCount(sharedCount)
+                .isFavorite(memberOfficialQuestion.getIsFavorite())
+                .createdAt(officialQuestion.getCreatedAt())
+                .build();
+    }
+
+    public static QuestionResponseDTO.PopularQuestionListResultDTO toPopularQuestionListResultDTO(List<Tuple> questionTuple, LocalDate startDate, LocalDate endDate) {
+
+        List<QuestionResponseDTO.PopularQuestionResultDTO> questionList = questionTuple.stream()
+                .map(tuple -> {
+                    OfficialQuestion question = tuple.get(0, OfficialQuestion.class);
+                    String username = tuple.get(1, String.class);
+                    String contents = tuple.get(2, String.class);
+                    Long sharedCount = tuple.get(3, Long.class);
+
+                    return QuestionResponseDTO.PopularQuestionResultDTO.builder()
+                            .id(question.getId())
+                            .username(username)
+                            .question(contents)
+                            .sharedCount(sharedCount)
+                            .build();
+                })
+                .toList();
+
+        return QuestionResponseDTO.PopularQuestionListResultDTO.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .popularQuestionList(questionList)
+                .build();
+    }
+
+    public static QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO toUpdateSavedSharedQuestionFavoriteStatusResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
+
+        return QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO.builder()
+                .id(memberOfficialQuestion.getId())
+                .createdAt(memberOfficialQuestion.getCreatedAt())
                 .build();
     }
 }

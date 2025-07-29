@@ -65,6 +65,9 @@ public enum ErrorStatus implements BaseErrorCode {
     //통계 관련 에러
     STATS_NOT_FOUND(HttpStatus.NOT_FOUND, "STATS4001","요청한 통계 데이터를 찾을 수 없습니다."),
     STATS_NOT_MEANINGFUL(HttpStatus.NO_CONTENT, "STATS4002","통계 데이터가 유의미하지 않거나 충분하지 않습니다."),
+    INVALID_SELECTED_OPTION(HttpStatus.BAD_REQUEST, "STATS4003", "선택형 일기 옵션 번호가 잘못되었습니다."),
+    INVALID_DAILY_TYPE(HttpStatus.BAD_REQUEST, "STATS4004", "존재하지 않는 dailyType입니다."),
+    INVALID_LABEL_MAPPING(HttpStatus.BAD_REQUEST, "STATS4005", "라벨 매핑에 실패했습니다."),
 
 
     // 답변 관련 예외
@@ -98,6 +101,9 @@ public enum ErrorStatus implements BaseErrorCode {
     CANNOT_SELECT_OWN_OFFICIAL_QUESTION(HttpStatus.FORBIDDEN, "QUESTION4009", "자신이 작성한 공유 질문은 저장할 수 없습니다."),
     MEMBER_OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION4010", "저장한 공유 질문이 존재하지 않습니다."),
     ALREADY_SAVED_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4011", "이미 해당 공유 질문을 저장했습니다."),
+    INVALID_SAVED_OFFICIAL_QUESTION_FILTER_COMBINATION(HttpStatus.BAD_REQUEST, "QUESTION4012", "카테고리와 즐겨찾기 필터는 동시에 사용할 수 없습니다. (favorite=true면 categoryId는 넘기지 말아야 함, categoryId 넘길 시 favorite는 안넘기거나 false여야 함)"),
+    ALREADY_FAVORITE_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4013", "이미 즐겨찾기된 질문입니다."),
+    ALREADY_NOT_FAVORITE_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4014", "즐겨찾기가 되어있지 않은 질문입니다."),
 
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
@@ -119,6 +125,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Disc 관련 에러
     DISC_NOT_FOUND(HttpStatus.NOT_FOUND, "DISC4001", "디스크가 존재하지 않습니다."),
+
+    // 검색 관련 에러
+    INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "SEARCH4001", "검색어는 비어 있을 수 없습니다."),
 
     // 페이지 관련 에러
     PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),

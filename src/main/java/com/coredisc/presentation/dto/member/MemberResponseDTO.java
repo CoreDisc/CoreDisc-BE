@@ -85,4 +85,20 @@ public class MemberResponseDTO {
         private String content;
     }
 
+    // 검색 화면 사용자 검색
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SearchMemberResultDTO {
+
+        private Long id;
+
+        private String nickname;
+
+        private String username;
+
+        private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
+    }
+
 }

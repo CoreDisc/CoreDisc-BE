@@ -26,7 +26,7 @@ public interface QuestionControllerDocs {
     @Operation(summary = "내가 작성한 질문 공유하기", description = "내가 커스텀한 질문을 공유하는 기능입니다.")
     ApiResponse<QuestionResponseDTO.saveOfficialQuestionResultDTO> saveOfficialQuestion(@CurrentMember Member member, @Valid @RequestBody QuestionRequestDTO.SaveOfficialQuestionDTO request);
 
-    @Operation(summary = "기본 질문 리스트 조회 (카테고리별)  [수정중, 사용XXX]", description = "카테고리별로 기본 질문 리스트를 조회하는 기능입니다.")
+    @Operation(summary = "기본 질문 리스트 조회 (카테고리별)", description = "카테고리별로 기본 질문 리스트를 조회하는 기능입니다.")
     @Parameters({
             @Parameter(name = "categoryId", description = "카테고리ID", required = true),
             @Parameter(name = "cursorCreatedAt", description = "커서 - 마지막 질문 생성일자 (ISO 8601 형식), 첫 요청 때는 null", required = false),
@@ -43,7 +43,7 @@ public interface QuestionControllerDocs {
             @RequestParam(name = "size", required = false) Integer size
     );
 
-    @Operation(summary = "기본 질문 리스트 검색 조회  [수정중, 사용XXX]", description = "기본 질문을 검색하는 기능입니다. (키워드가 카테고리명과 일치 시 해당 카테고리에 속하는 기본 질문들도 포함)")
+    @Operation(summary = "기본 질문 리스트 검색 조회", description = "기본 질문을 검색하는 기능입니다. (키워드가 카테고리명과 일치 시 해당 카테고리에 속하는 기본 질문들도 포함)")
     @Parameters({
             @Parameter(name = "keyword", description = "검색어입니다."),
             @Parameter(name = "cursorCreatedAt", description = "커서 - 마지막 질문 생성일자 (ISO 8601 형식), 첫 요청 때는 null", required = false),
@@ -59,7 +59,7 @@ public interface QuestionControllerDocs {
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", required = false) Integer size);
 
-    @Operation(summary = "내가 발행한 공유질문 리스트 조회 (카테고리 필터링 가능)  [수정중, 사용XXX]", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다. (카테고리 필터링 가능)")
+    @Operation(summary = "내가 발행한 공유질문 리스트 조회 (카테고리 필터링 가능)", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다. (카테고리 필터링 가능)")
     @Parameters({
             @Parameter(name = "categoryId", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),
             @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null"),
@@ -104,4 +104,27 @@ public interface QuestionControllerDocs {
     })
     ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
 
+    @Operation(summary = "내가 저장한 공유질문 리스트 조회", description = "사용자가 저장한 타사용자의 공유질문 리스트를 조회하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "categoryId", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),
+            @Parameter(name = "favorite", description = "즐겨찾기 필터링"),
+            @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null"),
+            @Parameter(name = "size", description = "한 페이지당 조회할 질문 수, 기본값 10"),
+    })
+    ApiResponse<CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO>> getSavedSharedQuestionList(
+            @CurrentMember Member member,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "favorite", required = false) Boolean favorite,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size);
+
+    @Operation(summary = "인기 질문 목록 조회", description = "인기 질문 상위 5개를 조회하는 기능입니다.")
+    ApiResponse<QuestionResponseDTO.PopularQuestionListResultDTO> getPopularQuestionList(@CurrentMember Member member);
+
+    @Operation(summary = "저장한 공유 질문 즐겨찾기 추가/삭제", description = "타사용자가 발행하여 저장헀던 공유 질문을 즐겨찾기에 추가/삭제하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+            @Parameter(name = "isFavorite", description = "즐겨찾기 추가/삭제 (true: 추가, false: 삭제)"),
+    })
+    ApiResponse<QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO> updateSavedSharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite);
 }

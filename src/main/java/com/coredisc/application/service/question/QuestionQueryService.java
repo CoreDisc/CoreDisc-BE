@@ -36,4 +36,15 @@ public interface QuestionQueryService {
 
     // 선택한 고정&랜덤 질문 조회
     List<QuestionResponseDTO.SelectedTodayQuestionResultDTO> getMyTodayQuestion(Member member);
+
+    // 저장한 공유 질문 목록 조회
+    CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO> getSavedSharedQuestionList(
+            Member member,
+            Long categoryId,
+            Boolean favorite,
+            Long cursorId,
+            int pageSize);
+
+    // 인기 질문 목록 조회
+    QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList();
 }

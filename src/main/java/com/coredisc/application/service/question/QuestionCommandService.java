@@ -6,6 +6,7 @@ import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
+import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 
 public interface QuestionCommandService {
 
@@ -33,4 +34,8 @@ public interface QuestionCommandService {
 
     // 저장헀던 공유 질문을 삭제
     void deleteMemberOfficialQuestion(Member member, Long questionId);
+
+    // 즐겨찾기 추가
+    QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO updateSavedSharedQuestionFavoriteStatus(Member member, Long questionId, Boolean isFavorite);
+
 }

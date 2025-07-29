@@ -44,6 +44,7 @@ public interface PostRepository {
     List<Post> findPostsByCreatedDate(LocalDate targetDate);
     List<Long> findDistinctMemberIdsByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
     List<Member> findMembersByPostCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    List<Post> findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(Member member, LocalDateTime start, LocalDateTime end);
 
     // 특정 회원이 특정 날짜에 발행한 게시글이 있는가?
     boolean existsByMemberAndStatusAndCreatedAtBetween(Member member, PostStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);

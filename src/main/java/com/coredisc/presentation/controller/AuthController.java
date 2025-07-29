@@ -153,4 +153,11 @@ public class AuthController implements AuthControllerDocs {
 
         return ApiResponse.onSuccess(socialAuthService.login("kakao", request));
     }
+
+    @Override
+    @PostMapping("/social/naver")
+    public ApiResponse<AuthResponseDTO.LoginResultDTO> naverLogin(@Valid @RequestBody AuthRequestDTO.SocialLoginDTO request) {
+
+        return ApiResponse.onSuccess(socialAuthService.login("naver", request));
+    }
 }

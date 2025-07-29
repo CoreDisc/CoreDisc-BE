@@ -22,6 +22,7 @@ import com.coredisc.domain.personalQuestion.PersonalQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
+import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -282,4 +283,30 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         memberOfficialQuestionRepository.delete(memberOfficialQuestion);
     }
+
+    // 즐겨찾기 추가
+    @Override
+    @Transactional
+    public QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO updateSavedSharedQuestionFavoriteStatus(Member member, Long questionId, Boolean isFavorite) {
+
+        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
+
+        // 이미 즐겨찾기 추가한 상태
+        if (memberOfficialQuestion.getIsFavorite() && isFavorite)
+            throw new QuestionHandler(ErrorStatus.ALREADY_FAVORITE_OFFICIAL_QUESTION);
+
+        // 이미 즐겨찾기 삭제한 상태
+        if (!memberOfficialQuestion.getIsFavorite() && !isFavorite)
+            throw new QuestionHandler(ErrorStatus.ALREADY_NOT_FAVORITE_OFFICIAL_QUESTION);
+
+
+        memberOfficialQuestion.updateFavorite(isFavorite);
+
+        return QuestionConverter.toUpdateSavedSharedQuestionFavoriteStatusResultDTO(memberOfficialQuestionRepository.save(memberOfficialQuestion));
+    }
+
 }

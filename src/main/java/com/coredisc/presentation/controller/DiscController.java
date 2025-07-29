@@ -4,7 +4,7 @@ import com.coredisc.application.service.disc.DiscCommandService;
 import com.coredisc.application.service.disc.DiscQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.DiscConverter;
-import com.coredisc.common.exception.handler.DiscHandler;
+import com.coredisc.domain.disc.Disc;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.DiscControllerDocs;
 import com.coredisc.presentation.dto.disc.DiscRequestDTO;
@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +43,9 @@ public class DiscController implements DiscControllerDocs {
     }
 
     //디스크 커버 이미지 변경
-    @PatchMapping("/{discId}/cover/image")
-    public ApiResponse<DiscResponseDTO.DiscDTO> updateDiscCoverImage(@PathVariable(name = "discId") Long discId, @Valid @RequestBody DiscRequestDTO.UpdateCoverImgDTO request, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(DiscConverter.toDiscDTO(discCommandService.updateDiscCoverImage(discId, request.getCoverImageUrl(), member)));
+    @PatchMapping(value = "/{discId}/cover/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<DiscResponseDTO.DiscDTO> updateDiscCoverImage(@PathVariable Long discId, @RequestPart("coverImageFile") MultipartFile coverImageFile, @CurrentMember Member member) {
+        return ApiResponse.onSuccess(DiscConverter.toDiscDTO(discCommandService.updateDiscCoverImage(discId, coverImageFile, member)));
     }
 
     //디스크 커버 색깔 변경

@@ -25,6 +25,6 @@ public class DailyRandomQuestionStat extends BaseEntity {
     @Column(nullable = false)
     private LocalDate selectedDate;
 
-    @Column(nullable = false, length = 100) //질문 길이 얼마지??
+    @Column(nullable = false, length = 50)
     private String questionContent;
 }

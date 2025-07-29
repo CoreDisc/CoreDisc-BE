@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -123,4 +124,63 @@ public class QuestionResponseDTO {
 
         private LocalDateTime createdAt;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SavedSharedQuestionResultDTO {
+
+        private Long id;
+
+        private List<CategoryResponseDTO.CategoryInfoDTO> categories;
+
+        private String question;
+
+        private Long sharedCount;
+
+        private Boolean isFavorite;
+
+        private LocalDateTime createdAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class PopularQuestionListResultDTO {
+
+        private LocalDate startDate;
+
+        private LocalDate endDate;
+
+        private List<PopularQuestionResultDTO> popularQuestionList;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class PopularQuestionResultDTO {
+
+        private Long id;
+
+        private String username;
+
+        private String question;
+
+        private Long sharedCount;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UpdateSavedSharedQuestionFavoriteStatusResultDTO {
+
+        private Long id;
+
+        private LocalDateTime createdAt;
+    }
+
 }
