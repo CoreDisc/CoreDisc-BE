@@ -100,7 +100,7 @@ public class ReportStatResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DailyOptionDTO{ //선택형 일기 옵션
-        private int dailyType;
+        private String dailyType;
         private String optionContent;
         private int selectionCount;
     }

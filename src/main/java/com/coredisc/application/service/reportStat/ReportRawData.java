@@ -3,6 +3,7 @@ package com.coredisc.application.service.reportStat;
 import com.coredisc.domain.reportStats.DailyRandomQuestionStat;
 import com.coredisc.domain.reportStats.MonthlyFixedQuestionStat;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.List;
@@ -55,5 +56,16 @@ public class ReportRawData {
     public static class MostSelectedQuestionItem {
         private String questionContent;
         private int selectionCount;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    public static class SelectionStatKey {
+        private Long memberId;
+        private int year;
+        private int month;
+        private int dailyType;
+        private int selectedOption;
     }
 }
