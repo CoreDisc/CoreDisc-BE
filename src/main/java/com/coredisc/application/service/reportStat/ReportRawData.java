@@ -13,17 +13,23 @@ public class ReportRawData {
 
     @Getter
     @AllArgsConstructor
-    public static class HourlyAnswerRawData {
+    public static class MonthlyReportRawData{
         private int year;
         private int month;
+        private QuestionListRawData questionListRaw;
+        private MostSelectedQuestionRawData mostSelectedRaw;
+        private HourlyAnswerRawData peakHourRaw;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class HourlyAnswerRawData {
         private Map<Integer, Integer> hourCountMap;
     }
 
     @Getter
     @AllArgsConstructor
     public static class MostSelectedQuestionRawData {
-        private int year;
-        private int month;
         private boolean isAllOneCount;
         private List<MostSelectedQuestionItem> questions;
     }
@@ -31,8 +37,6 @@ public class ReportRawData {
     @Getter
     @AllArgsConstructor
     public static class QuestionListRawData {
-        private int year;
-        private int month;
         private List<MonthlyFixedQuestionStat> fixedQuestions;
         private List<DailyRandomQuestionStat> randomQuestions;
     }

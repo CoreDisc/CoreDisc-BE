@@ -125,7 +125,14 @@ public class ReportStatConverter {
                 .build();
     }
 
-    public static ReportStatResponseDTO.MonthlyReportDTO toMonthlyReport(int year, int month, ReportRawData.QuestionListRawData questionListRaw, ReportRawData.MostSelectedQuestionRawData mostSelectedRaw, ReportRawData.HourlyAnswerRawData peakHourRaw) {
+    public static ReportStatResponseDTO.MonthlyReportDTO toMonthlyReport(ReportRawData.MonthlyReportRawData rawData) {
+
+        int year = rawData.getYear();
+        int month = rawData.getMonth();
+
+        ReportRawData.QuestionListRawData questionListRaw = rawData.getQuestionListRaw();
+        ReportRawData.MostSelectedQuestionRawData mostSelectedRaw = rawData.getMostSelectedRaw();
+        ReportRawData.HourlyAnswerRawData peakHourRaw = rawData.getPeakHourRaw();
 
         List<ReportStatResponseDTO.QuestionDTO> fixed = questionListRaw.getFixedQuestions().stream()
                 .map(stat -> ReportStatResponseDTO.QuestionDTO.builder()
