@@ -252,7 +252,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                         member, // 알림 sender
                         selectedOfficialQuestion.getMember(), // 알림 receiver (공유 질문 작성자)
                         member.getNickname()+"님이 질문을 저장했어요.",
-                        memberOfficialQuestion.getId() // 공유질문 id 전달
+                        selectedOfficialQuestion.getId() // 공유질문 id 전달
                 )
         );
 
