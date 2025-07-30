@@ -23,12 +23,14 @@ public class Comment extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "parent_id")
-    private Long parentId;
-
     @Column(name = "is_deleted")
     @Builder.Default
     private Boolean isDeleted = false;
+
+    // 0 : 댓글 ,1: 대댓글
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer depth =0;
 
     // 연관관계 매핑
     @ManyToOne(fetch = FetchType.LAZY)

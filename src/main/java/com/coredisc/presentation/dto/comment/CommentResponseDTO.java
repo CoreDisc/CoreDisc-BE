@@ -50,7 +50,6 @@ public class CommentResponseDTO {
         private Long parentId;
         private Integer depth;
         private MemberInfo member;
-        private LocalDateTime createdAt;
 
     }
 
@@ -61,13 +60,6 @@ public class CommentResponseDTO {
         private String nickname;
         private String profileImg;
 
-        public static MemberInfo from(com.coredisc.domain.member.Member member) {
-            return MemberInfo.builder()
-                    .memberId(member.getId())
-                    .nickname(member.getNickname())
-                    .profileImg(member.getProfileImg())
-                    .build();
-        }
     }
 
     @Getter
@@ -78,15 +70,4 @@ public class CommentResponseDTO {
         private LocalDateTime updatedAt;
     }
 
-    public static CommentCreateResponse from(Comment comment) {
-        return CommentCreateResponse.builder()
-                .commentId(comment.getId())
-                .postId(comment.getPost().getId())
-                .content(comment.getContent())
-                .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
-                .depth(comment.getDepth())
-                .member(MemberInfo.from(comment.getMember()))
-                .createdAt(comment.getCreatedAt())
-                .build();
-    }
 }
