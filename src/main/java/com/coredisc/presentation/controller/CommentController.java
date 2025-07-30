@@ -33,8 +33,14 @@ public class CommentController implements CommentControllerDocs {
     }
 
     @PostMapping("/comments/{commentId}/replies")
-    public ApiResponse<CommentResponseDTO.CommentCreateResponse> createReply(Long commentId, CommentRequestDTO request, Member member) {
-        return null;
+    public ApiResponse<CommentResponseDTO.CommentCreateResponse> createReply(
+            @PathVariable Long commentId,
+            @RequestBody CommentRequestDTO request,
+            @CurrentMember Member member) {
+
+        Comment comment = commentCommandService.createReply(commentId,request,member.getId());
+
+        return ApiResponse.onSuccess(CommentConverter.toReplyCreateResponse(comment));
     }
 
     @GetMapping("/posts/{postId}/comments")
