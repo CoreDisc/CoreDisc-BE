@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CommentCommandServiceImpl implements  CommentCommandService {
+public class CommentCommandServiceImpl implements CommentCommandService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
@@ -34,7 +34,7 @@ public class CommentCommandServiceImpl implements  CommentCommandService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Comment comment = CommentConverter.toComment(request.getContent(),post,member);
+        Comment comment = CommentConverter.toComment(request.getContent(), post, member);
 
         //Converter 적용
         return commentRepository.save(comment);
@@ -52,13 +52,31 @@ public class CommentCommandServiceImpl implements  CommentCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 깊이가 1을 넘을 경우 Error 반환
-        if(parentComment.getDepth() >=1 ) {
+        if (parentComment.getDepth() >= 1) {
             throw new CommentHandler(ErrorStatus.COMMENT_DEPTH_EXCEEDED);
         }
 
-        Comment reply = CommentConverter.toReply(request,parentComment,member);
+        Comment reply = CommentConverter.toComment(request.getContent(),parentComment.getPost(),member);
+
+        parentComment.addReply(reply);
 
         return commentRepository.save(reply);
+
+    }
+
+    @Override
+    public void deleteComment(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // 작성자 권한 확인
+        if (!comment.isOwner(memberId)) {
+            throw new CommentHandler(ErrorStatus.COMMENT_ACCESS_DENIED);
+        }
+
+        // 부모댓글인 경우 HardDelete 로 구현
+        commentRepository.delete(comment);
+
     }
 
 }

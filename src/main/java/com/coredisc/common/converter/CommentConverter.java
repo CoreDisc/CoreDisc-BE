@@ -36,17 +36,6 @@ public class CommentConverter {
                 .build();
     }
 
-    public static Comment toReply(CommentRequestDTO request, Comment parentComment, Member member) {
-
-        return Comment.builder()
-                .content(request.getContent())
-                .post(parentComment.getPost())
-                .member(member)
-                .parent(parentComment)
-                .depth(parentComment.getDepth() + 1)
-                .build();
-    }
-
     public static CommentResponseDTO.CommentCreateResponse toReplyCreateResponse(Comment comment) {
         return CommentResponseDTO.CommentCreateResponse.builder()
                 .commentId(comment.getId())

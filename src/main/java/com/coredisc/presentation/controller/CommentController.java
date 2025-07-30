@@ -55,6 +55,11 @@ public class CommentController implements CommentControllerDocs {
 
     @DeleteMapping("/comments/{commentId}")
     public ApiResponse<String> deleteComment(Long commentId, Member member) {
-        return null;
+
+        commentCommandService.deleteComment(commentId, member.getId());
+
+        return ApiResponse.onSuccess("댓글을 삭제했습니다.");
     }
+
+
 }

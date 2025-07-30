@@ -42,13 +42,24 @@ public class Comment extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    @JoinColumn(name = "parent_id")
     private Comment parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Comment> replies = new ArrayList<>();
 
+
+    // 댓글사용자 본인 확인 용
+    public boolean isOwner(Long memberId) {
+        return this.member.getId().equals(memberId);
+    }
+
+    public void addReply(Comment reply) {
+        replies.add(reply);
+        reply.parent = this;
+        reply.depth = this.depth + 1;
+    }
 
 }
 
