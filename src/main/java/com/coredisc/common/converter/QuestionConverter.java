@@ -229,4 +229,12 @@ public class QuestionConverter {
                 .createdAt(memberOfficialQuestion.getCreatedAt())
                 .build();
     }
+
+    public static QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO toUpdateMySharedQuestionFavoriteStatusResultDTO(OfficialQuestion officialQuestion) {
+
+        return QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO.builder()
+                .id(officialQuestion.getId())
+                .createdAt(officialQuestion.getCreatedAt())
+                .build();
+    }
 }

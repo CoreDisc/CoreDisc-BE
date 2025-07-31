@@ -41,4 +41,9 @@ public class OfficialQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "officialQuestion")
     private List<TodayQuestion> todayQuestionList = new ArrayList<>();
+
+    public void updateFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
 }

@@ -202,4 +202,15 @@ public class QuestionResponseDTO {
         private LocalDateTime createdAt;
     }
 
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UpdateMySharedQuestionFavoriteStatusResultDTO {
+
+        private Long id;
+
+        private LocalDateTime createdAt;
+    }
+
 }
