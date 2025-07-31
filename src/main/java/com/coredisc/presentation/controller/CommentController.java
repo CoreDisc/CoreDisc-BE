@@ -53,8 +53,6 @@ public class CommentController implements CommentControllerDocs {
             @RequestParam(defaultValue = "20") Integer size,
             @CurrentMember Member member)
     {
-
-
         return ApiResponse.onSuccess(commentQueryService.getParentComments(postId,cursorId,size,member));
     }
 
@@ -66,11 +64,6 @@ public class CommentController implements CommentControllerDocs {
             @CurrentMember Member member) {
 
         return ApiResponse.onSuccess(commentQueryService.getChildComments(parentId,cursorId,size,member));
-    }
-
-    @PutMapping("/comments/{commentId}")
-    public ApiResponse<CommentResponseDTO.CommentUpdateResponse> updateComment(Long commentId, CommentRequestDTO request, Member member) {
-        return null;
     }
 
     @DeleteMapping("/comments/{commentId}")

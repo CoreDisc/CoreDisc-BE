@@ -61,16 +61,6 @@ public interface CommentControllerDocs {
     );
 
 
-
-
-    @Operation(summary = "댓글 수정", description = "본인이 작성한 댓글을 수정합니다.")
-    ApiResponse<CommentResponseDTO.CommentUpdateResponse> updateComment(
-            @Parameter(description = "댓글 ID", required = true)
-            @PathVariable Long commentId,
-            @RequestBody CommentRequestDTO request,
-            @CurrentMember Member member
-    );
-
     @Operation(summary = "댓글 삭제", description = "본인이 작성한 댓글을 삭제합니다.")
     ApiResponse<String> deleteComment(
             @Parameter(description = "댓글 ID", required = true)
