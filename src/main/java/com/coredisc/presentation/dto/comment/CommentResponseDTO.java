@@ -32,12 +32,12 @@ public class CommentResponseDTO {
     @Builder
     public static class CommentResponse {
         private Long commentId;
-        private String content;
-        private Integer depth;
-        private Long parentId;
         private MemberInfo member;
+        private String content;
+        private Long parentId;
+        private Integer depth;
         private LocalDateTime createdAt;
-        private List<CommentResponse> replies;
+        private List<CommentCreateResponse> replies;
 
     }
 
@@ -69,5 +69,7 @@ public class CommentResponseDTO {
         private String content;
         private LocalDateTime updatedAt;
     }
+
+
 
 }

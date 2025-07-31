@@ -1,19 +1,12 @@
 package com.coredisc.application.service.comment;
 
-import com.coredisc.domain.Comment;
-import com.coredisc.domain.comment.CommentRepository;
+import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.comment.CommentResponseDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 
-@Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class CommentQueryService {
+public interface CommentQueryService {
+    CursorDTO<CommentResponseDTO.CommentCreateResponse> getChildComments(Long parentId, Long cursorId, Integer size, Member member);
 
-    private final CommentRepository commentRepository;
+    CursorDTO<CommentResponseDTO.CommentCreateResponse> getParentComments(Long postId, Long cursorId, Integer size, Member member);
 
 }

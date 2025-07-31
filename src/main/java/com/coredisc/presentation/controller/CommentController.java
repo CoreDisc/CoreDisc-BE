@@ -2,6 +2,7 @@ package com.coredisc.presentation.controller;
 
 import com.coredisc.application.service.comment.CommentCommandService;
 import com.coredisc.application.service.comment.CommentQueryService;
+import com.coredisc.application.service.comment.CommentQueryServiceImpl;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.CommentConverter;
 import com.coredisc.domain.Comment;
@@ -9,10 +10,12 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.CommentControllerDocs;
 import com.coredisc.presentation.dto.comment.CommentRequestDTO;
 import com.coredisc.presentation.dto.comment.CommentResponseDTO;
+import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController("/api/v1")
 @RequiredArgsConstructor
@@ -44,8 +47,25 @@ public class CommentController implements CommentControllerDocs {
     }
 
     @GetMapping("/posts/{postId}/comments")
-    public ApiResponse<CommentResponseDTO.CommentListResponse> getComments(Long postId, Pageable pageable) {
-        return null;
+    public ApiResponse<CursorDTO<CommentResponseDTO.CommentCreateResponse>> getParentComments(
+            @PathVariable Long postId,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(defaultValue = "20") Integer size,
+            @CurrentMember Member member)
+    {
+
+
+        return ApiResponse.onSuccess(commentQueryService.getParentComments(postId,cursorId,size,member));
+    }
+
+    @GetMapping("/comments/{commentId}/replies")
+    public ApiResponse<CursorDTO<CommentResponseDTO.CommentCreateResponse>> getChildComments(
+            @PathVariable("commentId") Long parentId,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(defaultValue = "20") Integer size,
+            @CurrentMember Member member) {
+
+        return ApiResponse.onSuccess(commentQueryService.getChildComments(parentId,cursorId,size,member));
     }
 
     @PutMapping("/comments/{commentId}")
