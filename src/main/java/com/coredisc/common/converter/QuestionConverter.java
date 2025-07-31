@@ -50,6 +50,23 @@ public class QuestionConverter {
                 .build();
     }
 
+    public static QuestionResponseDTO.MySharedQuestionPreviewResultDTO toMySharedQuestionPreviewResultDTO(OfficialQuestion question, long sharedCount) {
+        List<CategoryResponseDTO.CategoryInfoDTO> categories = question.getQuestionCategoryList().stream()
+                .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                        .categoryId(qc.getCategory().getId())
+                        .categoryName(qc.getCategory().getName())
+                        .build())
+                .toList();
+
+        return QuestionResponseDTO.MySharedQuestionPreviewResultDTO.builder()
+                .id(question.getId())
+                .categories(categories)
+                .question(question.getContents())
+                .sharedCount(sharedCount)
+                .createdAt(question.getCreatedAt())
+                .build();
+    }
+
     public static QuestionResponseDTO.MySharedQuestionResultDTO toMySharedQuestionResultDTO(OfficialQuestion question, long sharedCount) {
         List<CategoryResponseDTO.CategoryInfoDTO> categories = question.getQuestionCategoryList().stream()
                 .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()

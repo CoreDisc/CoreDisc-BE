@@ -59,6 +59,16 @@ public interface QuestionControllerDocs {
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", required = false) Integer size);
 
+    @Operation(summary = "내가 현재 발행한 공유질문 리스트 조회 (발행 개수 포함 ver)", description = "사용자 현재 본인이 발행한 공유질문 리스트를 조회하는 기능입니다. (발행 개수 포함 ver)")
+    @Parameters({
+            @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null"),
+            @Parameter(name = "size", description = "한 페이지당 조회할 질문 수, 기본값 10", required = false),
+    })
+    ApiResponse<QuestionResponseDTO.MySharedQuestionPreviewListResultDTO> getMySharedQuestionListPreview(
+            @CurrentMember Member member,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size);
+
     @Operation(summary = "내가 발행한 공유질문 리스트 조회 (카테고리 필터링 ver)", description = "사용자 본인이 발행한 공유질문 리스트를 조회하는 기능입니다. (카테고리 필터링 ver)")
     @Parameters({
             @Parameter(name = "categoryId", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),

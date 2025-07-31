@@ -84,6 +84,19 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess( questionQueryService.getBasicQuestionSearchList(member, keyword, cursorCreatedAt, cursorQuestionType, cursorId, size) );
     }
 
+    // 내가 발행한 공유 질문 리스트 조회 (개수 포함 ver)
+    @GetMapping("/official/mine/preview")
+    public ApiResponse<QuestionResponseDTO.MySharedQuestionPreviewListResultDTO> getMySharedQuestionListPreview(
+            @CurrentMember Member member,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size) {
+
+        if (size == null)
+            size = DEFAULT_PAGE_SIZE;
+
+        return ApiResponse.onSuccess(questionQueryService.getMySharedQuestionPreviewList(member, cursorId, size));
+    }
+
     // 내가 발행한 공유 질문 리스트 조회 (카테고리 구분 포함)
     @GetMapping("/official/mine")
     public ApiResponse<CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO>> getMySharedQuestionList(

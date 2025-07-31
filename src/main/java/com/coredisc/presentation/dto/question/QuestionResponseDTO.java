@@ -51,14 +51,31 @@ public class QuestionResponseDTO {
         private LocalDateTime createdAt;
     }
 
-//    @Builder
-//    @Getter
-//    @NoArgsConstructor
-//    @AllArgsConstructor
-//    public static class MySharedQuestionListResultDTO {
-//        private Long mySharedQuestionCnt;
-//        private CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList;
-//    }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MySharedQuestionPreviewListResultDTO {
+        private Long mySharedQuestionCnt;
+        private CursorDTO<QuestionResponseDTO.MySharedQuestionPreviewResultDTO> mySharedQuestionList;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MySharedQuestionPreviewResultDTO {
+
+        private Long id;
+
+        private List<CategoryResponseDTO.CategoryInfoDTO> categories;
+
+        private String question;
+
+        private Long sharedCount;
+
+        private LocalDateTime createdAt;
+    }
 
     @Getter
     @AllArgsConstructor

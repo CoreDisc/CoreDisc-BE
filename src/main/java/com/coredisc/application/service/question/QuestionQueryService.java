@@ -31,6 +31,9 @@ public interface QuestionQueryService {
             int pageSize);
 
 
+    // 내가 발행한 공유질문 리스트 조회 (개수 포함 ver)
+    QuestionResponseDTO.MySharedQuestionPreviewListResultDTO getMySharedQuestionPreviewList(Member member, Long cursorId, int pageSize);
+
     // 내가 발행한 공유질문 리스트 조회 (카테고리 필터링 포함)
     CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Boolean favorite, Long cursorId, int pageSize);
 

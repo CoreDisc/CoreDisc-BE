@@ -66,6 +66,37 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         return customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
 
+    // 내가 발행한 공유질문 리스트 조회 (개수 포함 ver)
+    @Override
+    public QuestionResponseDTO.MySharedQuestionPreviewListResultDTO getMySharedQuestionPreviewList(Member member, Long cursorId, int pageSize) {
+
+        Long mySharedQuestionTotal = officialQuestionRepository.countOfficialQuestionByMember(member);
+
+        List<OfficialQuestion> mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
+
+        boolean hasNext = mySharedQuestionsList.size() > pageSize;
+
+        if (hasNext) {
+            mySharedQuestionsList = mySharedQuestionsList.subList(0, pageSize);
+        }
+
+        List<QuestionResponseDTO.MySharedQuestionPreviewResultDTO> mySharedQuestionDTOList =
+                mySharedQuestionsList.stream()
+                        .map(question -> {
+                            long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question);
+                            return QuestionConverter.toMySharedQuestionPreviewResultDTO(question, sharedCount);
+                        })
+                        .toList();
+
+        CursorDTO<QuestionResponseDTO.MySharedQuestionPreviewResultDTO> cursorDTO =
+                new CursorDTO<>(mySharedQuestionDTOList, hasNext);
+
+        return QuestionResponseDTO.MySharedQuestionPreviewListResultDTO.builder()
+                .mySharedQuestionCnt(mySharedQuestionTotal)
+                .mySharedQuestionList(cursorDTO)
+                .build();
+    }
+
     // 내가 발행한 공유 질문 리스트 조회 (카테고리 필터링 포함)
     @Override
     public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Boolean favorite, Long cursorId, int pageSize){
