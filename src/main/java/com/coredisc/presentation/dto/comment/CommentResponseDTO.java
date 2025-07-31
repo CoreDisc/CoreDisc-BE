@@ -1,5 +1,6 @@
 package com.coredisc.presentation.dto.comment;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -50,6 +51,8 @@ public class CommentResponseDTO {
         private Long parentId;
         private Integer depth;
         private MemberInfo member;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private boolean hasReplies;
 
     }
 

@@ -47,4 +47,16 @@ public class CommentConverter {
                 .build();
     }
 
+    public static CommentResponseDTO.CommentCreateResponse toCreateResponseWithChildExists(Comment comment,boolean hasChild) {
+        return CommentResponseDTO.CommentCreateResponse.builder()
+                .commentId(comment.getId())
+                .postId(comment.getPost().getId())
+                .content(comment.getContent())
+                .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
+                .depth(comment.getDepth())
+                .member(CommentConverter.toMemberInfo(comment.getMember()))
+                .hasReplies(hasChild)
+                .build();
+    }
+
 }

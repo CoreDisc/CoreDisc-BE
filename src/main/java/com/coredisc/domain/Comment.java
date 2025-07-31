@@ -61,5 +61,9 @@ public class Comment extends BaseEntity {
         reply.depth = this.depth + 1;
     }
 
+    public boolean hasChild() {
+        return !this.replies.isEmpty();
+    }
+
 }
 
