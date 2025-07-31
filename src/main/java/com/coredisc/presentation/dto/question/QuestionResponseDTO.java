@@ -51,14 +51,14 @@ public class QuestionResponseDTO {
         private LocalDateTime createdAt;
     }
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MySharedQuestionListResultDTO {
-        private Long mySharedQuestionCnt;
-        private CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList;
-    }
+//    @Builder
+//    @Getter
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    public static class MySharedQuestionListResultDTO {
+//        private Long mySharedQuestionCnt;
+//        private CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList;
+//    }
 
     @Getter
     @AllArgsConstructor
@@ -73,6 +73,8 @@ public class QuestionResponseDTO {
         private String question;
 
         private Long sharedCount;
+
+        private Boolean isFavorite;
 
         private LocalDateTime createdAt;
     }

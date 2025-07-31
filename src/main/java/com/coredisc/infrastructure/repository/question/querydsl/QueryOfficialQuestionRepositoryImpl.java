@@ -31,6 +31,21 @@ public class QueryOfficialQuestionRepositoryImpl implements QueryOfficialQuestio
 
     private final QMemberOfficialQuestion qMemberOfficialQuestion = QMemberOfficialQuestion.memberOfficialQuestion;
 
+
+    @Override
+    public List<OfficialQuestion> findFavoritesByMember(Member member, Long cusorId, int pageSize) {
+        return jpaQueryFactory
+                .selectFrom(qOfficialQuestion)
+                .where(qOfficialQuestion.member.eq(member),
+                        qOfficialQuestion.isFavorite.isTrue(),
+                        cusorId != null ? qOfficialQuestion.id.lt(cusorId) : null
+                )
+                .orderBy(qOfficialQuestion.id.desc())
+                .limit(pageSize + 1)
+                .fetch();
+    }
+
+    @Override
     public List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize) {
         BooleanExpression cursorCondition = null;
 

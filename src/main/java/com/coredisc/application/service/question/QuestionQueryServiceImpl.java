@@ -66,15 +66,20 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         return customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
 
-    // 내가 발행한 공유 질문 리스트 조회
+    // 내가 발행한 공유 질문 리스트 조회 (카테고리 필터링 포함)
     @Override
-    public QuestionResponseDTO.MySharedQuestionListResultDTO getMySharedQuestionList(Member member, Long categoryId, Long cursorId, int pageSize){
+    public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Boolean favorite, Long cursorId, int pageSize){
 
-        Long mySharedQuestionTotal = officialQuestionRepository.countOfficialQuestionByMember(member);
+        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
+            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
+        }
 
         List<OfficialQuestion> mySharedQuestionsList;
 
-        if (categoryId == null || categoryId == 0) {    // 전체 조회
+        if (Boolean.TRUE.equals(favorite)) {    // 즐겨찾기
+            mySharedQuestionsList = officialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
+        }
+        else if (categoryId == null || categoryId == 0) {    // 전체 조회
             mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별 조회
             Category category = categoryRepository.findById(categoryId)
@@ -96,13 +101,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         })
                         .toList();
 
-        CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> cursorDTO =
-                new CursorDTO<>(mySharedQuestionDTOList, hasNext);
-
-        return QuestionResponseDTO.MySharedQuestionListResultDTO.builder()
-                .mySharedQuestionCnt(mySharedQuestionTotal)
-                .mySharedQuestionList(cursorDTO)
-                .build();
+        return new CursorDTO<>(mySharedQuestionDTOList, hasNext);
     }
 
     // 선택한 고정&랜덤 질문 조회
@@ -143,7 +142,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             int pageSize) {
 
         if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
-            throw new QuestionHandler(ErrorStatus.INVALID_SAVED_OFFICIAL_QUESTION_FILTER_COMBINATION);
+            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
         }
 
         List<MemberOfficialQuestion> mySavedSharedQuestionList;

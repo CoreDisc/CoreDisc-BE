@@ -29,6 +29,11 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     }
 
     @Override
+    public List<OfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int pageSize) {
+        return queryOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
+    }
+
+    @Override
     public List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize){
         return queryOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
     }

@@ -63,6 +63,7 @@ public class QuestionConverter {
                 .categories(categories)
                 .question(question.getContents())
                 .sharedCount(sharedCount)
+                .isFavorite(question.getIsFavorite())
                 .createdAt(question.getCreatedAt())
                 .build();
     }
