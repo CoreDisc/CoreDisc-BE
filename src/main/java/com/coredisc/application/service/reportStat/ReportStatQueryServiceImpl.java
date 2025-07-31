@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.YearMonth;
 import java.util.*;
 
 
@@ -35,68 +33,13 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     private final PostRepository postRepository;
 
     @Override
-    public ReportRawData.QuestionListRawData getQuestionList(int year, int month, Long memberId) {
-        List<MonthlyFixedQuestionStat> fixedQuestions = fixedQuestionRepository.findByMemberIdAndYearAndMonthOrderByQuestionOrder(
-                memberId, year, month);
-        if(fixedQuestions.isEmpty()) {
-            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
-        }
+    public ReportRawData.MonthlyReportRawData getMonthlyReportRawData(int year, int month, Long memberId) {
+        ReportRawData.QuestionListRawData questionListRaw = getQuestionList(year, month, memberId);
+        ReportRawData.MostSelectedQuestionRawData mostSelectedRaw = getMostSelectedQuestions(year, month, memberId);
+        ReportRawData.HourlyAnswerRawData peakHourRaw = getHourlyAnswerCountMap(year, month, memberId);
 
-        LocalDate start = DateUtil.getStartDate(year, month);
-        LocalDate end = DateUtil.getEndDate(year, month);
-
-        List<DailyRandomQuestionStat> randomQuestions = randomQuestionRepository.findByMemberIdAndSelectedDateRange(
-                memberId, start, end);
-
-        return new ReportRawData.QuestionListRawData(year, month, fixedQuestions, randomQuestions);
+        return new ReportRawData.MonthlyReportRawData(year, month, questionListRaw, mostSelectedRaw, peakHourRaw);
     }
-
-    @Override
-    public ReportRawData.MostSelectedQuestionRawData getMostSelectedQuestions(int year, int month, Long memberId) {
-        Pageable top3 = PageRequest.of(0, 3);
-
-        LocalDate startDate = DateUtil.getStartDate(year, month);
-        LocalDate endDate = DateUtil.getEndDate(year, month);
-
-        List<Object[]> results = randomQuestionRepository.findTop3QuestionsByMemberAndDateRange(memberId, startDate, endDate, top3);
-        if(results.isEmpty()) {
-            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
-        }
-
-        List<ReportRawData.MostSelectedQuestionItem> topQuestions = new ArrayList<>();
-        for (Object[] row : results) {
-            String questionContent = (String) row[0];
-            int selectionCount = ((Number) row[1]).intValue();
-
-            topQuestions.add(new ReportRawData.MostSelectedQuestionItem(questionContent, selectionCount));
-        }
-        return new ReportRawData.MostSelectedQuestionRawData(startDate.getYear(), startDate.getMonthValue(), topQuestions);
-    }
-
-    @Override
-    public ReportRawData.HourlyAnswerRawData getHourlyAnswerCountMap(int year, int month,  Long memberId) {
-        LocalDate startDate = DateUtil.getStartDate(year, month);
-        LocalDate endDate = DateUtil.getEndDate(year, month);
-
-        List<Object[]> results = answerHourStatRepository.findHourlyAnswerCountsByMemberIdAndDateRange(memberId, startDate, endDate);
-        if(results.isEmpty()) {
-            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
-        }
-
-        Map<Integer, Integer> hourCountMap = new HashMap<>();
-        for (Object[] row : results) {
-            int hour = ((Number) row[0]).intValue();
-            int count = ((Number) row[1]).intValue();
-            hourCountMap.put(hour, count);
-        }
-
-        for (int i = 0; i < 24; i++) {
-            hourCountMap.putIfAbsent(i, 0);
-        }
-
-        return new ReportRawData.HourlyAnswerRawData(startDate.getYear(), startDate.getMonthValue(), hourCountMap);
-    }
-
 
     @Override
     public ReportRawData.DailyOptionRawData getMostSelectedDaily(int year, int month, Long memberId) {
@@ -126,4 +69,63 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         return postRepository.findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, start, end);
     }
 
+
+    private ReportRawData.QuestionListRawData getQuestionList(int year, int month, Long memberId) {
+        List<MonthlyFixedQuestionStat> fixedQuestions = fixedQuestionRepository.findByMemberIdAndYearAndMonthOrderByQuestionOrder(
+                memberId, year, month);
+        if(fixedQuestions.isEmpty()) {
+            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
+        }
+
+        LocalDate start = DateUtil.getStartDate(year, month);
+        LocalDate end = DateUtil.getEndDate(year, month);
+
+        List<DailyRandomQuestionStat> randomQuestions = randomQuestionRepository.findByMemberIdAndSelectedDateRange(memberId, start, end);
+
+        return new ReportRawData.QuestionListRawData(fixedQuestions, randomQuestions);
+    }
+
+    private ReportRawData.MostSelectedQuestionRawData getMostSelectedQuestions(int year, int month, Long memberId) {
+        Pageable top3 = PageRequest.of(0, 3);
+
+        LocalDate startDate = DateUtil.getStartDate(year, month);
+        LocalDate endDate = DateUtil.getEndDate(year, month);
+
+        List<Object[]> results = randomQuestionRepository.findTop3QuestionsByMemberAndDateRange(memberId, startDate, endDate, top3);
+
+        boolean allCountIsOne = results.stream()
+                .allMatch(obj -> ((Long) obj[1]) == 1L);
+
+        List<ReportRawData.MostSelectedQuestionItem> topQuestions = new ArrayList<>();
+        for (Object[] row : results) {
+            String questionContent = (String) row[0];
+            int selectionCount = ((Number) row[1]).intValue();
+            topQuestions.add(new ReportRawData.MostSelectedQuestionItem(questionContent, selectionCount));
+        }
+
+        return new ReportRawData.MostSelectedQuestionRawData(allCountIsOne, topQuestions);
+    }
+
+    private ReportRawData.HourlyAnswerRawData getHourlyAnswerCountMap(int year, int month,  Long memberId) {
+        LocalDate startDate = DateUtil.getStartDate(year, month);
+        LocalDate endDate = DateUtil.getEndDate(year, month);
+
+        List<Object[]> results = answerHourStatRepository.findHourlyAnswerCountsByMemberIdAndDateRange(memberId, startDate, endDate);
+        if(results.isEmpty()) {
+            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
+        }
+
+        Map<Integer, Integer> hourCountMap = new HashMap<>();
+        for (Object[] row : results) {
+            int hour = ((Number) row[0]).intValue();
+            int count = ((Number) row[1]).intValue();
+            hourCountMap.put(hour, count);
+        }
+
+        for (int i = 0; i < 24; i++) {
+            hourCountMap.putIfAbsent(i, 0);
+        }
+
+        return new ReportRawData.HourlyAnswerRawData(hourCountMap);
+    }
 }

@@ -1,6 +1,7 @@
 package com.coredisc.presentation.dto.reportStat;
 
 import com.coredisc.domain.common.enums.TimeZoneType;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -9,36 +10,21 @@ import java.util.Map;
 
 public class ReportStatResponseDTO {
 
+    @JsonPropertyOrder({
+            "year", "month", "fixedQuestions", "randomQuestions", "allOneCount", "mostSelectedQuestions", "peakTimeZone"
+    })
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PeakHourDTO{ //최다 답변 시간대
+    public static class MonthlyReportDTO{ // 월별 리포트 - 기본 화면
         private int year;
         private int month;
-        private HourlyAnswerCountDTO topHours;
-        private List<TimeZoneCountDTO> timeZoneStats;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MostSelectedQuestionDTO{ //최다 선택한 랜덤 질문
-        private int year;
-        private int month;
-        private List<SelectedQuestionDTO> questions;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class QuestionListDTO{ //월별 전체 질문 리스트
-        private int year;
-        private int month;
-        private List<QuestionDTO> fixedQuestions; // 혹시 추가로 필요한 내용 있을까봐 따로 dto 만들었는데, 없으면 String으로 수정할 예정
+        private List<QuestionDTO> fixedQuestions;
         private List<QuestionDTO> randomQuestions;
+        private boolean isAllOneCount;
+        private List<SelectedQuestionDTO> mostSelectedQuestions;
+        private TimeZoneType peakTimeZone;
     }
 
     @Builder
@@ -58,24 +44,6 @@ public class ReportStatResponseDTO {
     @Setter
     public static class DailyDetailListDTO{
         private Map<LocalDate, String> dailyDetails;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class HourlyAnswerCountDTO{ //시간대별 응답수 -> 시간 단위
-        private int hour;
-        private int answerCount;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class TimeZoneCountDTO{ //시간대별 응답수 -> 단어 단위
-        private TimeZoneType timeZone;
-        private int answerCount;
     }
 
     @Builder

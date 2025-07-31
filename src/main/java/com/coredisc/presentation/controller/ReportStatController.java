@@ -20,31 +20,19 @@ public class ReportStatController implements ReportStatControllerDocs {
 
     private final ReportStatQueryService reportStatQueryService;
 
-    // 사용자가 특정 달에 선택한 고정 질문 3개와 랜덤 질문 목록 조회
-    @GetMapping("/question-list")
-    public ApiResponse<ReportStatResponseDTO.QuestionListDTO> getMonthlyQuestionList(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toQuestionListDTO(reportStatQueryService.getQuestionList(year, month, member.getId())));
+    // 사용자의 월별 리포트 조회
+    @GetMapping
+    public ApiResponse<ReportStatResponseDTO.MonthlyReportDTO> getMonthlyReport(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
+        return ApiResponse.onSuccess(ReportStatConverter.toMonthlyReport(reportStatQueryService.getMonthlyReportRawData(year, month, member.getId())));
     }
 
-    // 사용자가 특정 달 동안 가장 많이 선택한 랜덤 질문 3개 조회
-    @GetMapping("/most-selected")
-    public ApiResponse<ReportStatResponseDTO.MostSelectedQuestionDTO> getMostSelectedQuestions(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toMostSelectedQuestionDTO(reportStatQueryService.getMostSelectedQuestions(year, month, member.getId())));
-    }
-
-    // 사용자가 특정 달에 시간대 별로 응답한 횟수 조회
-    @GetMapping("/peak-hours")
-    public ApiResponse<ReportStatResponseDTO.PeakHourDTO> getPeakHour(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
-        return ApiResponse.onSuccess(ReportStatConverter.toPeakHourDTO(reportStatQueryService.getHourlyAnswerCountMap(year, month, member.getId())));
-    }
-
-    // 사용자가 선택형 일기에서 특정 달에 가장 많이 선택한 옵션 조회
+    // 사용자의 선택형 일기 리포트 조회(1) - 가장 많이 선택한 옵션 조회
     @GetMapping("/daily/top-selection")
     public ApiResponse<ReportStatResponseDTO.TopDailySelectionDTO> getMostSelectedDaily(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
         return ApiResponse.onSuccess(ReportStatConverter.toTopDailySelectionDTO(reportStatQueryService.getMostSelectedDaily(year, month, member.getId())));
     }
 
-    // 사용자가 특정 달에 작성한 일기 내용 전체 출력
+    // 사용자의 선택형 일기 리포트 조회(2) - 일기 내용 전체 출력
     @GetMapping("/daily/details")
     public ApiResponse<ReportStatResponseDTO.DailyDetailListDTO> getDailyDetail(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
         return ApiResponse.onSuccess(ReportStatConverter.toDailyDetailListDTO(reportStatQueryService.getDailyDetails(year, month, member)));
