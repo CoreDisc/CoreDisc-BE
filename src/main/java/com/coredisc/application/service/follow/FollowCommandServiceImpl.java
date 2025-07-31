@@ -54,8 +54,8 @@ public class FollowCommandServiceImpl implements FollowCommandService {
                         NotificationType.FOLLOW, // 알림 타입 (팔로우)
                         member, // 알림 sender (내가 건 팔로우에 대한 알림을)
                         target, // 알림 receiver (상대방이 받는)
-                        target.getNickname()+"님이 팔로우를 시작했어요.", // 팔로우 알림 content
-                        follow.getId() // 팔로우 id
+                        member.getNickname()+"님이 팔로우를 시작했어요.", // 팔로우 알림 content (sender의 닉네임 전달)
+                        member.getId() // 클릭 시 sender의 홈으로 접속해야 하니 sender의 id 전달
                 )
         );
 
