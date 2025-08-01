@@ -135,7 +135,14 @@ public enum ErrorStatus implements BaseErrorCode {
     PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),
 
     // For test
-    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도");
+    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트 용도"),
+
+    // Comment 4xxx
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT4001", "댓글을 찾을 수 없습니다."),
+    COMMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "COMMENT4003", "댓글에 대한 권한이 없습니다."),
+    COMMENT_DEPTH_EXCEEDED(HttpStatus.BAD_REQUEST, "COMMENT4000", "대댓글의 대댓글은 작성할 수 없습니다."),
+    COMMENT_TOO_LONG(HttpStatus.BAD_REQUEST, "COMMENT4001", "댓글은 최대 500자까지 작성할 수 있습니다."),
+    COMMENT_CONTENT_EMPTY(HttpStatus.BAD_REQUEST, "COMMENT4002", "댓글 내용을 입력해주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;
