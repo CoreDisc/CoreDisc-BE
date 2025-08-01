@@ -31,7 +31,7 @@ public class SearchController implements SearchControllerDocs {
     public ApiResponse<CursorDTO<MemberResponseDTO.SearchMemberResultDTO>> getMemberSearchList(
             @CurrentMember Member member,
             @RequestParam(name = "keyword") String keyword,
-            @RequestParam(name = "record") Boolean record,
+            @RequestParam(name = "record", required = false) Boolean record,
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", required = false) Integer size) {
 
