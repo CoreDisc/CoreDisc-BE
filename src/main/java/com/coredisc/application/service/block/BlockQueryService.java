@@ -1,12 +1,9 @@
 package com.coredisc.application.service.block;
 
-import com.coredisc.domain.block.Block;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.block.BlockResponseDTO;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface BlockQueryService {
 

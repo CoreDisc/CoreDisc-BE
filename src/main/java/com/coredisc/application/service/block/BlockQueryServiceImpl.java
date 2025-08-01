@@ -2,7 +2,6 @@ package com.coredisc.application.service.block;
 
 import com.coredisc.common.converter.BlockConverter;
 import com.coredisc.domain.block.Block;
-import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.infrastructure.repository.block.queryDsl.QueryBlockRepository;
 import com.coredisc.presentation.dto.block.BlockResponseDTO;

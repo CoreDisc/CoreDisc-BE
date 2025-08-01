@@ -1,12 +1,12 @@
 package com.coredisc.presentation.dto.block;
 
+import com.coredisc.presentation.dto.profileImg.ProfileImgResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class BlockResponseDTO {
     @Getter
@@ -17,6 +17,7 @@ public class BlockResponseDTO {
         private Long id;
         private Long blockerId;
         private Long blockedId;
+        private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
         private LocalDateTime createdAt;
     }
 
@@ -28,7 +29,7 @@ public class BlockResponseDTO {
         private Long blockedId;
         private String blockedNickname;
         private String blockedUsername;
-        private String blockedImageUrl;
+        private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
 
 }

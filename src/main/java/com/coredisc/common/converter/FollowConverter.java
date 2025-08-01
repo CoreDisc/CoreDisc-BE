@@ -24,7 +24,7 @@ public class FollowConverter {
                 .followerId(follow.getFollower().getId())
                 .nickname(follow.getFollower().getNickname())
                 .username(follow.getFollower().getUsername())
-                //.profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
                 .isCircle(follow.isCircle())
                 .isMutual(isMutual)
                 .build();
@@ -51,7 +51,7 @@ public class FollowConverter {
                 .followingId(follow.getFollowing().getId())
                 .nickname(follow.getFollowing().getNickname())
                 .username(follow.getFollowing().getUsername())
-                //.profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
                 .build();
     }
 
