@@ -21,6 +21,7 @@ public class BlockConverter {
                 .id(block.getId())
                 .blockerId(block.getBlocker().getId())
                 .blockedId(block.getBlocked().getId())
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(block.getBlocked().getProfileImg()))
                 .createdAt(block.getCreatedAt())
                 .build();
     }
@@ -30,6 +31,7 @@ public class BlockConverter {
                 .blockedId(block.getBlocked().getId())
                 .blockedNickname(block.getBlocked().getNickname())
                 .blockedUsername(block.getBlocked().getUsername())
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(block.getBlocked().getProfileImg()))
                 .build();
     }
 
