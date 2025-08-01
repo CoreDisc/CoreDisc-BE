@@ -4,9 +4,6 @@ import com.coredisc.domain.block.Block;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.block.BlockResponseDTO;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class BlockConverter {
 
     public static Block toBlock(Member member, Member blockedMember) {
@@ -21,6 +18,7 @@ public class BlockConverter {
                 .id(block.getId())
                 .blockerId(block.getBlocker().getId())
                 .blockedId(block.getBlocked().getId())
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(block.getBlocked().getProfileImg()))
                 .createdAt(block.getCreatedAt())
                 .build();
     }
@@ -30,6 +28,7 @@ public class BlockConverter {
                 .blockedId(block.getBlocked().getId())
                 .blockedNickname(block.getBlocked().getNickname())
                 .blockedUsername(block.getBlocked().getUsername())
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(block.getBlocked().getProfileImg()))
                 .build();
     }
 
