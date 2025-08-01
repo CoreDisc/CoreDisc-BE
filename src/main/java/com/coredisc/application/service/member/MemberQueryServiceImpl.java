@@ -2,6 +2,7 @@ package com.coredisc.application.service.member;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
+import com.coredisc.common.converter.SearchHistoryConverter;
 import com.coredisc.common.exception.handler.AuthHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.MyHomeHandler;
@@ -9,6 +10,7 @@ import com.coredisc.common.util.FormatNumberUtil;
 import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
+import com.coredisc.domain.common.enums.SearchType;
 import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
@@ -19,6 +21,8 @@ import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.domain.profileImg.ProfileImgRepository;
+import com.coredisc.domain.searchHistory.SearchHistory;
+import com.coredisc.domain.searchHistory.SearchHistoryRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +43,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final PostRepository postRepository;
     private final BlockRepository blockRepository;
     private final DiscRepository discRepository;
+    private final SearchHistoryRepository searchHistoryRepository;
 
 
     @Override
@@ -218,11 +223,24 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     // 검색 화면 사용자 검색
     @Override
-    public CursorDTO<MemberResponseDTO.SearchMemberResultDTO> getMemberSearchList(Member member, String keyword, Long cursorId, Integer pageSize) {
+    public CursorDTO<MemberResponseDTO.SearchMemberResultDTO> getMemberSearchList(Member member, String keyword, Boolean record, Long cursorId, Integer pageSize) {
         
         // 키워드 없을 시 예외처리
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new MemberHandler(ErrorStatus.INVALID_SEARCH_KEYWORD);
+        }
+
+        // 검색 기록 저장
+        if (Boolean.TRUE.equals(record)) {
+            SearchHistory history = searchHistoryRepository
+                    .findByMemberAndKeywordAndSearchType(member, keyword, SearchType.MEMBER)
+                    .map(existing -> {      // 이미 검색 되어있을 시 최근 검색으로
+                        existing.updateTimestamp();
+                        return existing;
+                    })
+                    .orElseGet(() -> SearchHistoryConverter.toSearchHistory(member, keyword, SearchType.MEMBER));
+
+            searchHistoryRepository.save(history);
         }
 
         List<Member> memberList = memberRepository.findMemberListByKeyword(keyword, cursorId, pageSize);

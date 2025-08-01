@@ -24,5 +24,5 @@ public interface MemberQueryService {
     CursorDTO<MemberResponseDTO.MyHomePostDTO> getUserHomePosts(Member member, String targetUsername, Long cursorId, Pageable page);
 
     // 검색 화면 사용자 검색
-    CursorDTO<MemberResponseDTO.SearchMemberResultDTO> getMemberSearchList(Member member, String keyword, Long cursorId, Integer pageSize);
+    CursorDTO<MemberResponseDTO.SearchMemberResultDTO> getMemberSearchList(Member member, String keyword, Boolean record, Long cursorId, Integer pageSize);
 }
