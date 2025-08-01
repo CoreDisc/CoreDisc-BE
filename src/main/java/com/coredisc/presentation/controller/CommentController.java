@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/api/v1")
+@RestController("/api/")
 @RequiredArgsConstructor
 public class CommentController implements CommentControllerDocs {
 
@@ -67,7 +67,9 @@ public class CommentController implements CommentControllerDocs {
     }
 
     @DeleteMapping("/comments/{commentId}")
-    public ApiResponse<String> deleteComment(Long commentId, Member member) {
+    public ApiResponse<String> deleteComment(
+            @PathVariable Long commentId,
+            @CurrentMember Member member) {
 
         commentCommandService.deleteComment(commentId, member.getId());
 

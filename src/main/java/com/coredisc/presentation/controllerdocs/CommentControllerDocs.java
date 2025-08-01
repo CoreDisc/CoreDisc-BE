@@ -48,7 +48,7 @@ public interface CommentControllerDocs {
 
     @Operation(summary = "대댓글 목록 조회", description = "특정 댓글의 답글을 조회합니다.")
     ApiResponse<CursorDTO<CommentResponseDTO.CommentCreateResponse>> getChildComments(
-            @Parameter(description = "게시글 ID", required = true)
+            @Parameter(description = "댓글 ID", required = true)
             @PathVariable Long parentId,
             @Parameter(description = "커서 ID")
             @RequestParam(required = false)
