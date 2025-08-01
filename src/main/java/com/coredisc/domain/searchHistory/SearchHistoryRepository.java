@@ -15,4 +15,7 @@ public interface SearchHistoryRepository {
 
     List<SearchHistory> findAllByMember(Member member, LocalDateTime cursorSearchedAt, int pageSize);
 
+    Optional<SearchHistory> findByMemberAndId(Member member, Long id);
+
+    void delete(SearchHistory searchHistory);
 }

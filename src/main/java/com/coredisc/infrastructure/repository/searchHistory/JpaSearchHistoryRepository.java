@@ -11,4 +11,6 @@ public interface JpaSearchHistoryRepository extends JpaRepository<SearchHistory,
 
     Optional<SearchHistory> findByMemberAndKeywordAndSearchType(Member member, String keyword, SearchType searchType);
 
+    Optional<SearchHistory> findByMemberAndId(Member member, Long id);
+
 }

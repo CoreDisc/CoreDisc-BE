@@ -1,6 +1,7 @@
 package com.coredisc.presentation.controller;
 
 import com.coredisc.application.service.member.MemberQueryService;
+import com.coredisc.application.service.searchHistory.SearchHistoryCommandService;
 import com.coredisc.application.service.searchHistory.SearchHistoryQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
@@ -10,10 +11,7 @@ import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.presentation.dto.searchHistory.SearchHistoryResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +22,7 @@ public class SearchController implements SearchControllerDocs {
 
     private final MemberQueryService memberQueryService;
     private final SearchHistoryQueryService searchHistoryQueryService;
+    private final SearchHistoryCommandService searchHistoryCommandService;
 
     private static final int DEFAULT_PAGE_SIZE = 10; // 한페이지당 개수
 
@@ -53,5 +52,13 @@ public class SearchController implements SearchControllerDocs {
             size = DEFAULT_PAGE_SIZE;
 
         return ApiResponse.onSuccess(searchHistoryQueryService.getMemberSearchHistoryList(member, cursorSearchedAt, size));
+    }
+
+    @DeleteMapping("/member/history/{historyId}")
+    public ApiResponse<String> deleteSearchHistory(@CurrentMember Member member, @PathVariable(name = "historyId") Long historyId) {
+
+        searchHistoryCommandService.deleteSearchHistory(member, historyId);
+
+        return ApiResponse.onSuccess("검색 기록이 삭제되었습니다.");
     }
 }

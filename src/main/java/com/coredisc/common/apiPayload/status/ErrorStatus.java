@@ -129,6 +129,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 검색 관련 에러
     INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "SEARCH4001", "검색어는 비어 있을 수 없습니다."),
+    SEARCH_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", "해당되는 사용자의 검색 기록이 없습니다."),
 
     // 페이지 관련 에러
     PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),

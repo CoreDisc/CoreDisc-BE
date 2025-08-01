@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
@@ -41,4 +42,10 @@ public interface SearchControllerDocs {
             @CurrentMember Member member,
             @RequestParam(name = "cursorSearchedAt", required = false) LocalDateTime cursorSearchedAt,
             @RequestParam(name = "size", required = false) Integer size);
+
+    @Operation(summary = "검색 화면 검색 기록 삭제", description = "사용자의최근 검색 기록을 삭제하는 기능입니다.")
+    @Parameters({
+            @Parameter(name = "historyId", description = "검색 내역ID pathVariable입니다."),
+    })
+    ApiResponse<String> deleteSearchHistory(@CurrentMember Member member, @PathVariable(name = "historyId") Long historyId);
 }

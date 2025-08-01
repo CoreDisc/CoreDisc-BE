@@ -34,4 +34,14 @@ public class SearchHistoryRepositoryAdapter implements SearchHistoryRepository {
         return querySearchHistoryRepository.findAllByMember(member, cursorSearchedAt, pageSize);
     }
 
+    @Override
+    public Optional<SearchHistory> findByMemberAndId(Member member, Long id) {
+        return jpaSearchHistoryRepository.findByMemberAndId(member, id);
+    }
+
+    @Override
+    public void delete(SearchHistory searchHistory) {
+        jpaSearchHistoryRepository.delete(searchHistory);
+    }
+
 }
