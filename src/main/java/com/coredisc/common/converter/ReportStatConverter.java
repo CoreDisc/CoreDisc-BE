@@ -23,69 +23,6 @@ public class ReportStatConverter {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static ReportStatResponseDTO.PeakHourDTO toPeakHourDTO(ReportRawData.HourlyAnswerRawData rawData) {
-        Map.Entry<Integer, Integer> maxEntry = rawData.getHourCountMap().entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .orElse(null);
-
-        int topHour = (maxEntry != null) ? maxEntry.getKey() : -1;
-        int maxCount = (maxEntry != null) ? maxEntry.getValue() : -1;
-
-        ReportStatResponseDTO.HourlyAnswerCountDTO topHours = ReportStatResponseDTO.HourlyAnswerCountDTO.builder()
-                .hour(topHour)
-                .answerCount(maxCount)
-                .build();
-
-        List<ReportStatResponseDTO.TimeZoneCountDTO> timeZoneStats = Arrays.stream(TimeZoneType.values())
-                .map(type -> new ReportStatResponseDTO.TimeZoneCountDTO(
-                        type,
-                        getTimeZoneCount(type, rawData.getHourCountMap())
-                )).toList();
-
-        return ReportStatResponseDTO.PeakHourDTO.builder()
-                .year(rawData.getYear())
-                .month(rawData.getMonth())
-                .topHours(topHours)
-                .timeZoneStats(timeZoneStats)
-                .build();
-    }
-
-    public static ReportStatResponseDTO.MostSelectedQuestionDTO toMostSelectedQuestionDTO(ReportRawData.MostSelectedQuestionRawData rawData) {
-        List<ReportStatResponseDTO.SelectedQuestionDTO> questions = rawData.getQuestions().stream()
-                .map(data -> ReportStatResponseDTO.SelectedQuestionDTO.builder()
-                        .questionContent(data.getQuestionContent())
-                        .selectedCount(data.getSelectionCount())
-                        .build()
-                ).toList();
-
-        return ReportStatResponseDTO.MostSelectedQuestionDTO.builder()
-                .year(rawData.getYear())
-                .month(rawData.getMonth())
-                .questions(questions)
-                .build();
-    }
-
-    public static ReportStatResponseDTO.QuestionListDTO toQuestionListDTO(ReportRawData.QuestionListRawData rawData) {
-        List<ReportStatResponseDTO.QuestionDTO> fixed = rawData.getFixedQuestions().stream()
-                .map(stat -> ReportStatResponseDTO.QuestionDTO.builder()
-                        .questionContent(stat.getQuestionContent())
-                        .build()
-                ).toList();
-
-        List<ReportStatResponseDTO.QuestionDTO> random = rawData.getRandomQuestions().stream()
-                .map(stat -> ReportStatResponseDTO.QuestionDTO.builder()
-                        .questionContent(stat.getQuestionContent())
-                        .build()
-                ).toList();
-
-        return ReportStatResponseDTO.QuestionListDTO.builder()
-                .year(rawData.getYear())
-                .month(rawData.getMonth())
-                .fixedQuestions(fixed)
-                .randomQuestions(random)
-                .build();
-    }
-
     public static ReportStatResponseDTO.TopDailySelectionDTO toTopDailySelectionDTO(ReportRawData.DailyOptionRawData rawData) {
         List<ReportStatResponseDTO.DailyOptionDTO> optionDTOList = rawData.getTopSelectedOption().entrySet().stream()
                 .map(entry -> {
@@ -109,13 +46,6 @@ public class ReportStatConverter {
                 .month(rawData.getMonth())
                 .dailyList(optionDTOList)
                 .build();
-    }
-
-    private static int getTimeZoneCount(TimeZoneType type, Map<Integer, Integer> hourCountMap) {
-        return hourCountMap.entrySet().stream()
-                .filter(entry -> type.containsHour(entry.getKey()))
-                .mapToInt(Map.Entry::getValue)
-                .sum();
     }
 
     public static List<DailyAnswerHourStat> toDailyAnswerHourStats(List<Post> posts, LocalDate targetDate) {
@@ -192,6 +122,63 @@ public class ReportStatConverter {
 
         return ReportStatResponseDTO.DailyDetailListDTO.builder()
                 .dailyDetails(detailMap)
+                .build();
+    }
+
+    public static ReportStatResponseDTO.MonthlyReportDTO toMonthlyReport(ReportRawData.MonthlyReportRawData rawData) {
+
+        int year = rawData.getYear();
+        int month = rawData.getMonth();
+
+        ReportRawData.QuestionListRawData questionListRaw = rawData.getQuestionListRaw();
+        ReportRawData.MostSelectedQuestionRawData mostSelectedRaw = rawData.getMostSelectedRaw();
+        ReportRawData.HourlyAnswerRawData peakHourRaw = rawData.getPeakHourRaw();
+
+        List<ReportStatResponseDTO.QuestionDTO> fixed = questionListRaw.getFixedQuestions().stream()
+                .map(stat -> ReportStatResponseDTO.QuestionDTO.builder()
+                        .questionContent(stat.getQuestionContent())
+                        .build()
+                ).toList();
+
+        List<ReportStatResponseDTO.QuestionDTO> random = questionListRaw.getRandomQuestions().stream()
+                .map(DailyRandomQuestionStat::getQuestionContent)
+                .distinct()
+                .map(content -> ReportStatResponseDTO.QuestionDTO.builder()
+                        .questionContent(content)
+                        .build())
+                .toList();
+
+        boolean isAllOneCount = mostSelectedRaw.isAllOneCount();
+        List<ReportStatResponseDTO.SelectedQuestionDTO> mostSelected = Collections.emptyList();
+
+        if(!isAllOneCount){
+            mostSelected = mostSelectedRaw.getQuestions().stream()
+                    .map(data -> ReportStatResponseDTO.SelectedQuestionDTO.builder()
+                            .questionContent(data.getQuestionContent())
+                            .selectedCount(data.getSelectionCount())
+                            .build()
+                    ).toList();
+        }
+
+        TimeZoneType peakTime = peakHourRaw.getHourCountMap().entrySet().stream()
+                .collect(Collectors.groupingBy(
+                        e -> TimeZoneType.fromHour(e.getKey()),
+                        () -> new EnumMap<>(TimeZoneType.class),
+                        Collectors.summingInt(Map.Entry::getValue)
+                ))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        return ReportStatResponseDTO.MonthlyReportDTO.builder()
+                .year(year)
+                .month(month)
+                .fixedQuestions(fixed)
+                .randomQuestions(random)
+                .isAllOneCount(isAllOneCount)
+                .mostSelectedQuestions(mostSelected)
+                .peakTimeZone(peakTime)
                 .build();
     }
 }

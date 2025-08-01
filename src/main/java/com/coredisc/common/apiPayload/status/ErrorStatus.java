@@ -101,9 +101,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CANNOT_SELECT_OWN_OFFICIAL_QUESTION(HttpStatus.FORBIDDEN, "QUESTION4009", "자신이 작성한 공유 질문은 저장할 수 없습니다."),
     MEMBER_OFFICIAL_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION4010", "저장한 공유 질문이 존재하지 않습니다."),
     ALREADY_SAVED_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4011", "이미 해당 공유 질문을 저장했습니다."),
-    INVALID_SAVED_OFFICIAL_QUESTION_FILTER_COMBINATION(HttpStatus.BAD_REQUEST, "QUESTION4012", "카테고리와 즐겨찾기 필터는 동시에 사용할 수 없습니다. (favorite=true면 categoryId는 넘기지 말아야 함, categoryId 넘길 시 favorite는 안넘기거나 false여야 함)"),
+    INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION(HttpStatus.BAD_REQUEST, "QUESTION4012", "카테고리와 즐겨찾기 필터는 동시에 사용할 수 없습니다. (favorite=true면 categoryId는 넘기지 말아야 함, categoryId 넘길 시 favorite는 안넘기거나 false여야 함)"),
     ALREADY_FAVORITE_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4013", "이미 즐겨찾기된 질문입니다."),
     ALREADY_NOT_FAVORITE_OFFICIAL_QUESTION(HttpStatus.BAD_REQUEST, "QUESTION4014", "즐겨찾기가 되어있지 않은 질문입니다."),
+    CANNOT_FAVORITE_OTHERS_QUESTION(HttpStatus.FORBIDDEN, "QUESTION4015", "자신이 작성한 질문만 즐겨찾기 할 수 있습니다."),
 
     // Follow 관련 에러
     SELF_FOLLOW_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FOLLOW4001", "자기 자신은 팔로우할 수 없습니다."),
@@ -128,6 +129,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 검색 관련 에러
     INVALID_SEARCH_KEYWORD(HttpStatus.BAD_REQUEST, "SEARCH4001", "검색어는 비어 있을 수 없습니다."),
+    SEARCH_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", "해당되는 사용자의 검색 기록이 없습니다."),
 
     // 페이지 관련 에러
     PAGE_OUT_OF_BOUNDS(HttpStatus.NOT_FOUND, "PAGE4001", "존재하지 않는 페이지입니다."),

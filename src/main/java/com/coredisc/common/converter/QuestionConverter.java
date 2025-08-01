@@ -50,6 +50,23 @@ public class QuestionConverter {
                 .build();
     }
 
+    public static QuestionResponseDTO.MySharedQuestionPreviewResultDTO toMySharedQuestionPreviewResultDTO(OfficialQuestion question, long sharedCount) {
+        List<CategoryResponseDTO.CategoryInfoDTO> categories = question.getQuestionCategoryList().stream()
+                .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                        .categoryId(qc.getCategory().getId())
+                        .categoryName(qc.getCategory().getName())
+                        .build())
+                .toList();
+
+        return QuestionResponseDTO.MySharedQuestionPreviewResultDTO.builder()
+                .id(question.getId())
+                .categories(categories)
+                .question(question.getContents())
+                .sharedCount(sharedCount)
+                .createdAt(question.getCreatedAt())
+                .build();
+    }
+
     public static QuestionResponseDTO.MySharedQuestionResultDTO toMySharedQuestionResultDTO(OfficialQuestion question, long sharedCount) {
         List<CategoryResponseDTO.CategoryInfoDTO> categories = question.getQuestionCategoryList().stream()
                 .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
@@ -63,6 +80,7 @@ public class QuestionConverter {
                 .categories(categories)
                 .question(question.getContents())
                 .sharedCount(sharedCount)
+                .isFavorite(question.getIsFavorite())
                 .createdAt(question.getCreatedAt())
                 .build();
     }
@@ -209,6 +227,14 @@ public class QuestionConverter {
         return QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO.builder()
                 .id(memberOfficialQuestion.getId())
                 .createdAt(memberOfficialQuestion.getCreatedAt())
+                .build();
+    }
+
+    public static QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO toUpdateMySharedQuestionFavoriteStatusResultDTO(OfficialQuestion officialQuestion) {
+
+        return QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO.builder()
+                .id(officialQuestion.getId())
+                .createdAt(officialQuestion.getCreatedAt())
                 .build();
     }
 }

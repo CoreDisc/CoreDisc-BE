@@ -11,6 +11,7 @@ import com.coredisc.domain.mapping.MemberTerms;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostLike;
 import com.coredisc.domain.profileImg.ProfileImg;
+import com.coredisc.domain.searchHistory.SearchHistory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -100,6 +101,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "blocked", cascade = CascadeType.ALL)
     private List<Block> blockerList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<SearchHistory> searchHistoryList = new ArrayList<>();
 
     // 메서드
     public void encodePassword(String password) {

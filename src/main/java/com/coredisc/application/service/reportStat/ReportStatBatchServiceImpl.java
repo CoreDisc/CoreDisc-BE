@@ -38,7 +38,6 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
     @Override
     @Transactional
     public void generateDailyStatistics(LocalDate targetDate) {
-        // 그날에 답변한 시간 데이터 저장
 
         List<Post> posts = postRepository.findPostsByCreatedDate(targetDate);
         List<DailyAnswerHourStat> stats = ReportStatConverter.toDailyAnswerHourStats(posts, targetDate);
@@ -106,10 +105,8 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
                         targetMonth.atDay(1),
                         targetMonth.atEndOfMonth());
 
-        // 컨버터로 변환
         List<MonthlyFixedQuestionStat> stats = ReportStatConverter.toMonthlyFixedQuestionStats(questions, newMemberIds, year, month);
 
-        // 저장
         monthlyFixedQuestionStatRepository.saveAll(stats);
     }
 
