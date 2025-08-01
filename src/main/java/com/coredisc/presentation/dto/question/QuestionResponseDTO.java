@@ -55,9 +55,26 @@ public class QuestionResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MySharedQuestionListResultDTO {
+    public static class MySharedQuestionPreviewListResultDTO {
         private Long mySharedQuestionCnt;
-        private CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> mySharedQuestionList;
+        private CursorDTO<QuestionResponseDTO.MySharedQuestionPreviewResultDTO> mySharedQuestionList;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MySharedQuestionPreviewResultDTO {
+
+        private Long id;
+
+        private List<CategoryResponseDTO.CategoryInfoDTO> categories;
+
+        private String question;
+
+        private Long sharedCount;
+
+        private LocalDateTime createdAt;
     }
 
     @Getter
@@ -73,6 +90,8 @@ public class QuestionResponseDTO {
         private String question;
 
         private Long sharedCount;
+
+        private Boolean isFavorite;
 
         private LocalDateTime createdAt;
     }
@@ -177,6 +196,17 @@ public class QuestionResponseDTO {
     @NoArgsConstructor
     @Builder
     public static class UpdateSavedSharedQuestionFavoriteStatusResultDTO {
+
+        private Long id;
+
+        private LocalDateTime createdAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UpdateMySharedQuestionFavoriteStatusResultDTO {
 
         private Long id;
 

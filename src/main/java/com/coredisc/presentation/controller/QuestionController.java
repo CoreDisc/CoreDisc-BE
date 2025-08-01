@@ -84,18 +84,32 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess( questionQueryService.getBasicQuestionSearchList(member, keyword, cursorCreatedAt, cursorQuestionType, cursorId, size) );
     }
 
-    // 내가 발행한 공유 질문 리스트 조회 (카테고리 구분 포함)
-    @GetMapping("/official/mine")
-    public ApiResponse<QuestionResponseDTO.MySharedQuestionListResultDTO> getMySharedQuestionList(
+    // 내가 발행한 공유 질문 리스트 조회 (개수 포함 ver)
+    @GetMapping("/official/mine/preview")
+    public ApiResponse<QuestionResponseDTO.MySharedQuestionPreviewListResultDTO> getMySharedQuestionListPreview(
             @CurrentMember Member member,
-            @RequestParam(name = "categoryId", required = false) Long categoryId,
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", required = false) Integer size) {
 
         if (size == null)
             size = DEFAULT_PAGE_SIZE;
 
-        return ApiResponse.onSuccess(questionQueryService.getMySharedQuestionList(member, categoryId, cursorId, size));
+        return ApiResponse.onSuccess(questionQueryService.getMySharedQuestionPreviewList(member, cursorId, size));
+    }
+
+    // 내가 발행한 공유 질문 리스트 조회 (카테고리 구분 포함)
+    @GetMapping("/official/mine")
+    public ApiResponse<CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO>> getMySharedQuestionList(
+            @CurrentMember Member member,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "favorite", required = false) Boolean favorite,
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size) {
+
+        if (size == null)
+            size = DEFAULT_PAGE_SIZE;
+
+        return ApiResponse.onSuccess(questionQueryService.getMySharedQuestionList(member, categoryId, favorite, cursorId, size));
 
     }
 
@@ -173,11 +187,18 @@ public class QuestionController implements QuestionControllerDocs {
         return ApiResponse.onSuccess( questionQueryService.getPopularQuestionList() );
     }
 
-    // 즐겨찾기 추가
+    // 타 사용자 공유질문 즐겨찾기 추가
     @PatchMapping("/official/{questionId}/favorite")
     public ApiResponse<QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO> updateSavedSharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite) {
 
         return ApiResponse.onSuccess( questionCommandService.updateSavedSharedQuestionFavoriteStatus(member, questionId, isFavorite) );
+    }
+
+    // 내 공유 질문 즐겨찾기 추가
+    @PatchMapping("/official/mine/{questionId}/favorite")
+    public ApiResponse<QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO> updateMySharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite) {
+
+        return ApiResponse.onSuccess( questionCommandService.updateMySharedQuestionFavoriteStatus(member, questionId, isFavorite) );
     }
 
 }

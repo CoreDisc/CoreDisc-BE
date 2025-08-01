@@ -15,6 +15,8 @@ public interface OfficialQuestionRepository {
 
     OfficialQuestion save(OfficialQuestion officialQuestion);
 
+    List<OfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int pageSize);
+
     List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize);
 
     List<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Long cursorId, int pageSize);
