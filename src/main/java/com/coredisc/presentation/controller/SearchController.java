@@ -54,7 +54,7 @@ public class SearchController implements SearchControllerDocs {
         return ApiResponse.onSuccess(searchHistoryQueryService.getMemberSearchHistoryList(member, cursorSearchedAt, size));
     }
 
-    @DeleteMapping("/member/history/{historyId}")
+    @DeleteMapping("/members/history/{historyId}")
     public ApiResponse<String> deleteSearchHistory(@CurrentMember Member member, @PathVariable(name = "historyId") Long historyId) {
 
         searchHistoryCommandService.deleteSearchHistory(member, historyId);
