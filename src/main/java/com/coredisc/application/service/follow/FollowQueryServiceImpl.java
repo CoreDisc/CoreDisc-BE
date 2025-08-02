@@ -108,4 +108,25 @@ public class FollowQueryServiceImpl implements FollowQueryService {
 
         return FollowConverter.toFollowerListDTO(totalCount, cursorDTO);
     }
+
+    @Override
+    public FollowResponseDTO.FollowingListDTO getUserFollowings(String targetUsername, Long cursorId, Pageable pageable) {
+
+        Member targetMember = memberRepository.findByUsername(targetUsername)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Follow> result = queryFollowRepository.findFollowings(targetMember, cursorId, pageable);
+
+        boolean hasNext = result.size() > pageable.getPageSize();
+        if (hasNext) result.remove(pageable.getPageSize());
+
+        List<FollowResponseDTO.FollowingDTO> dtos = result.stream()
+                .map(FollowConverter::toFollowingDTO)
+                .collect(Collectors.toList());
+
+        CursorDTO<FollowResponseDTO.FollowingDTO> cursorDTO = new CursorDTO<>(dtos, hasNext);
+        int totalCount = queryFollowRepository.countFollowings(targetMember);
+
+        return FollowConverter.toFollowingListDTO(totalCount, cursorDTO);
+    }
 }
