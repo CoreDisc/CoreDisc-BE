@@ -1,15 +1,18 @@
 package com.coredisc.application.service.follow;
 
+import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.FollowConverter;
 import com.coredisc.common.exception.handler.CircleHandler;
 import com.coredisc.common.exception.handler.FollowHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.domain.block.BlockRepository;
+import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
+import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final BlockRepository blockRepository;
+    private final NotificationCommandService notificationCommandService;
 
     @Override
     public Follow follow(Member member, Long targetId) {
@@ -43,9 +47,19 @@ public class FollowCommandServiceImpl implements FollowCommandService {
             throw new FollowHandler(ErrorStatus.BLOCK_RELATIONSHIP_EXISTS);
         }
 
-        Follow follow = FollowConverter.toFollow(member, target);
+        Follow follow = followRepository.save(FollowConverter.toFollow(member, target));
 
-        return followRepository.save(follow);
+        notificationCommandService.createNotification(
+                new NotificationRequestDTO(
+                        NotificationType.FOLLOW, // 알림 타입 (팔로우)
+                        member, // 알림 sender (내가 건 팔로우에 대한 알림을)
+                        target, // 알림 receiver (상대방이 받는)
+                        member.getNickname()+"님이 팔로우를 시작했어요.", // 팔로우 알림 content (sender의 닉네임 전달)
+                        member.getId() // 클릭 시 sender의 홈으로 접속해야 하니 sender의 id 전달
+                )
+        );
+
+        return follow;
     }
 
     @Override

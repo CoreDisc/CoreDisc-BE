@@ -1,9 +1,11 @@
 package com.coredisc.application.service.question;
 
+import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.QuestionCategoryConverter;
 import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
+import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
@@ -18,6 +20,7 @@ import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.personalQuestion.PersonalQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
+import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final CategoryRepository categoryRepository;
     private final QuestionCategoryRepository questionCategoryRepository;
     private final MemberOfficialQuestionRepository memberOfficialQuestionRepository;
+    private final NotificationCommandService notificationCommandService;
 
     // 내가 작성한 질문 저장
     @Override
@@ -240,7 +244,33 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         if (selectedOfficialQuestion.getMember().equals(member))
             throw new QuestionHandler(ErrorStatus.CANNOT_SELECT_OWN_OFFICIAL_QUESTION);
 
-        return memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion));
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion));
+
+        notificationCommandService.createNotification(
+                new NotificationRequestDTO(
+                        NotificationType.SHARED_SAVED, // 알림 타입(공유질문 저장)
+                        member, // 알림 sender
+                        selectedOfficialQuestion.getMember(), // 알림 receiver (공유 질문 작성자)
+                        member.getNickname()+"님이 질문을 저장했어요.",
+                        selectedOfficialQuestion.getId() // 공유질문 id 전달
+                )
+        );
+
+        // 100회 단위 저장 알림
+        Long saveCount = memberOfficialQuestionRepository.countByOfficialQuestion(selectedOfficialQuestion);
+        if (saveCount % 100 == 0) {
+            notificationCommandService.createNotification(
+                    new NotificationRequestDTO(
+                            NotificationType.SHARED_SAVED,
+                            member,
+                            selectedOfficialQuestion.getMember(),
+                            saveCount + "명의 사용자가 질문을 저장했어요.",
+                            selectedOfficialQuestion.getId()
+                    )
+            );
+        }
+
+        return memberOfficialQuestion;
     }
 
     // 저장헀던 공유 질문을 삭제
