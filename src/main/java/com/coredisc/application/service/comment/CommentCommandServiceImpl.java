@@ -74,6 +74,16 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         parentComment.addReply(reply);
 
+        notificationCommandService.createNotification(
+                new NotificationRequestDTO(
+                        NotificationType.COMMENT_REPLY, // 알림 타입 (대댓글)
+                        member, // sender
+                        parentComment.getMember(), // receiver
+                        member.getNickname()+"님이 게시글에 댓글을 남겼어요.",
+                        parentComment.getPost().getId() // 클릭 시 댓글 달렸던 게시글로 이동
+                )
+        );
+
         return commentRepository.save(reply);
 
     }
