@@ -3,7 +3,6 @@ package com.coredisc.application.service.follow;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.FollowConverter;
 import com.coredisc.common.exception.handler.MemberHandler;
-import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
