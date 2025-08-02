@@ -70,4 +70,14 @@ public class FollowController implements FollowControllerDocs {
         Pageable pageable = PageRequest.of(0, size);
         return ApiResponse.onSuccess(followQueryService.getUserFollowers(targetUsername, cursorId, pageable));
     }
+
+    @GetMapping("/api/followings/{targetUsername}")
+    public ApiResponse<FollowResponseDTO.FollowingListDTO> getUserFollowings(
+            @PathVariable String targetUsername,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(0, size);
+        return ApiResponse.onSuccess(followQueryService.getUserFollowings(targetUsername, cursorId, pageable));
+    }
 }
