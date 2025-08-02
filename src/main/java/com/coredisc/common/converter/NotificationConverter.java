@@ -3,6 +3,7 @@ package com.coredisc.common.converter;
 import com.coredisc.domain.mapping.notificationRead.NotificationRead;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.notification.Notification;
+import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import com.coredisc.presentation.dto.notification.NotificationResponseDTO;
 
 import java.time.Duration;
@@ -27,6 +28,26 @@ public class NotificationConverter {
                 .isRead(notificationRead.getIsRead())
                 .createdAt(notification.getCreatedAt())
                 .timeStamp(createdAtToTimestamp(notification.getCreatedAt()))
+                .build();
+    }
+
+    public static Notification toSaveNotification(NotificationRequestDTO request) {
+
+        return Notification.builder()
+                .sender(request.sender())
+                .receiver(request.receiver())
+                .type(request.type())
+                .targetId(request.targetId())
+                .content(request.content())
+                .build();
+    }
+
+    public static NotificationRead toNotificationRead(Notification notification, NotificationRequestDTO request) {
+
+        return NotificationRead.builder()
+                .notification(notification)
+                .member(request.receiver())
+                .isRead(false)
                 .build();
     }
 

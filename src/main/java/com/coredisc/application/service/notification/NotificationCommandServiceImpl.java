@@ -1,6 +1,7 @@
 package com.coredisc.application.service.notification;
 
 import com.coredisc.common.apiPayload.status.ErrorStatus;
+import com.coredisc.common.converter.NotificationConverter;
 import com.coredisc.common.exception.handler.NotificationHandler;
 import com.coredisc.domain.mapping.notificationRead.NotificationRead;
 import com.coredisc.domain.mapping.notificationRead.NotificationReadRepository;
@@ -27,22 +28,10 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
     public void createNotification(NotificationRequestDTO request) {
 
         // 알림 저장
-        Notification notification = notificationRepository.save(
-                Notification.builder()
-                        .sender(request.sender())
-                        .receiver(request.receiver())
-                        .type(request.type())
-                        .targetId(request.targetId())
-                        .content(request.content())
-                        .build()
-        );
+        Notification notification = notificationRepository.save(NotificationConverter.toSaveNotification(request));
 
         // 읽음 여부 저장
-        NotificationRead notificationRead = NotificationRead.builder()
-                .notification(notification)
-                .member(request.receiver())
-                .isRead(false)
-                .build();
+        NotificationRead notificationRead = NotificationConverter.toNotificationRead(notification, request);
 
         notificationReadRepository.save(notificationRead);
     }
