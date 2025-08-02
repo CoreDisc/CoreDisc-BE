@@ -1,5 +1,6 @@
 package com.coredisc.application.service.comment;
 
+import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.CommentConverter;
 import com.coredisc.common.exception.handler.CommentHandler;
@@ -7,11 +8,13 @@ import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.domain.Comment;
 import com.coredisc.domain.comment.CommentRepository;
+import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.presentation.dto.comment.CommentRequestDTO;
+import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final NotificationCommandService notificationCommandService;
 
     public Comment createComment(Long postId, CommentRequestDTO request, Long memberId) {
         // 게시글 존재 확인
@@ -35,6 +39,16 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Comment comment = CommentConverter.toComment(request.getContent(), post, member);
+
+        notificationCommandService.createNotification(
+                new NotificationRequestDTO(
+                        NotificationType.COMMENT, // 알림 타입 (댓글)
+                        member, // sender
+                        post.getMember(), // receiver
+                        member.getNickname()+"님이 게시글에 댓글을 남겼어요.",
+                        post.getId() // 클릭 시 게시글로 이동
+                )
+        );
 
         //Converter 적용
         return commentRepository.save(comment);
