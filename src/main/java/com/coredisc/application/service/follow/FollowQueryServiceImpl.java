@@ -95,11 +95,7 @@ public class FollowQueryServiceImpl implements FollowQueryService {
         if (hasNext) result.remove(pageable.getPageSize());
 
         List<FollowResponseDTO.FollowerDTO> dtos = result.stream()
-                .map(follow -> {
-                    Member follower = follow.getFollower();
-                    boolean isMutual = followRepository.existsByFollowerAndFollowing(targetMember, follower);
-                    return FollowConverter.toFollowerDTO(follow, isMutual);
-                })
+                .map(follow -> FollowConverter.toFollowerDTO(follow))
                 .collect(Collectors.toList());
 
         CursorDTO<FollowResponseDTO.FollowerDTO> cursorDTO = new CursorDTO<>(dtos, hasNext);

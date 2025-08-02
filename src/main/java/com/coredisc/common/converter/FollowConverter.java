@@ -30,6 +30,16 @@ public class FollowConverter {
                 .build();
     }
 
+    // 타사용자의 팔로워 (친한친구, 맞팔여부 제외함)
+    public static FollowResponseDTO.FollowerDTO toFollowerDTO(Follow follow) {
+        return FollowResponseDTO.FollowerDTO.builder()
+                .followerId(follow.getFollower().getId())
+                .nickname(follow.getFollower().getNickname())
+                .username(follow.getFollower().getUsername())
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
+                .build();
+    }
+
     public static FollowResponseDTO.FollowerListDTO toFollowerListDTO(int totalCount, CursorDTO cursorDTO) {
         return FollowResponseDTO.FollowerListDTO.builder()
                 .totalCount(totalCount)

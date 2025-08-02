@@ -21,7 +21,9 @@ public class FollowResponseDTO {
         private String nickname;
         private String username;
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
-        private boolean isCircle;
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private Boolean isCircle;
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private Boolean isMutual;
