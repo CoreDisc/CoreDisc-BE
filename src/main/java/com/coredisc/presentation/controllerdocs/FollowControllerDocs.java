@@ -43,7 +43,8 @@ public interface FollowControllerDocs {
             @Parameter(name = "cursorId", description = "마지막으로 조회한 followId입니다. 첫 요청 때는 null, queryString입니다."),
             @Parameter(name = "size", description = "기본값 10")
     })
-    ApiResponse<FollowResponseDTO.FollowerListDTO> getUserFollowers(@PathVariable String targetUsername,
+    ApiResponse<FollowResponseDTO.FollowerListDTO> getUserFollowers(@CurrentMember Member member,
+                                                                    @PathVariable String targetUsername,
                                                                     @RequestParam(required = false) Long cursorId,
                                                                     @RequestParam(required = false) Integer size);
 
@@ -52,7 +53,8 @@ public interface FollowControllerDocs {
             @Parameter(name = "cursorId", description = "마지막으로 조회한 followId입니다. 첫 요청 때는 null, queryString입니다."),
             @Parameter(name = "size", description = "기본값 10")
     })
-    ApiResponse<FollowResponseDTO.FollowingListDTO> getUserFollowings(@PathVariable String targetUsername,
-                                                                  @RequestParam(required = false) Long cursorId,
-                                                                  @RequestParam(required = false) Integer size);
+    ApiResponse<FollowResponseDTO.FollowingListDTO> getUserFollowings(@CurrentMember Member member,
+                                                                      @PathVariable String targetUsername,
+                                                                      @RequestParam(required = false) Long cursorId,
+                                                                      @RequestParam(required = false) Integer size);
 }

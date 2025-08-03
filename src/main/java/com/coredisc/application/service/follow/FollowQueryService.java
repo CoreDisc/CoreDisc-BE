@@ -16,9 +16,9 @@ public interface FollowQueryService {
     FollowResponseDTO.FollowerListDTO getCircleFollowers(Member member, Long cursorId, Pageable pageable);
 
     // 타사용자의 팔로워 목록 조회
-    FollowResponseDTO.FollowerListDTO getUserFollowers(String targetUsername, Long cursorId, Pageable pageable);
+    FollowResponseDTO.FollowerListDTO getUserFollowers(Member member, String targetUsername, Long cursorId, Pageable pageable);
 
     // 타사용자의 팔로잉 목록 조회
-    FollowResponseDTO.FollowingListDTO getUserFollowings(String targetUsername, Long cursorId, Pageable pageable);
+    FollowResponseDTO.FollowingListDTO getUserFollowings(Member member, String targetUsername, Long cursorId, Pageable pageable);
 
 }

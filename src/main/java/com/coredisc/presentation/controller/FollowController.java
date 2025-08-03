@@ -63,21 +63,23 @@ public class FollowController implements FollowControllerDocs {
 
     @GetMapping("/api/followers/{targetUsername}")
     public ApiResponse<FollowResponseDTO.FollowerListDTO> getUserFollowers(
+            @CurrentMember Member member,
             @PathVariable String targetUsername,
             @RequestParam(required = false) Long cursorId,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         Pageable pageable = PageRequest.of(0, size);
-        return ApiResponse.onSuccess(followQueryService.getUserFollowers(targetUsername, cursorId, pageable));
+        return ApiResponse.onSuccess(followQueryService.getUserFollowers(member, targetUsername, cursorId, pageable));
     }
 
     @GetMapping("/api/followings/{targetUsername}")
     public ApiResponse<FollowResponseDTO.FollowingListDTO> getUserFollowings(
+            @CurrentMember Member member,
             @PathVariable String targetUsername,
             @RequestParam(required = false) Long cursorId,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         Pageable pageable = PageRequest.of(0, size);
-        return ApiResponse.onSuccess(followQueryService.getUserFollowings(targetUsername, cursorId, pageable));
+        return ApiResponse.onSuccess(followQueryService.getUserFollowings(member, targetUsername, cursorId, pageable));
     }
 }

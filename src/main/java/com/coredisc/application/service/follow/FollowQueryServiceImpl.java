@@ -3,6 +3,8 @@ package com.coredisc.application.service.follow;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.FollowConverter;
 import com.coredisc.common.exception.handler.MemberHandler;
+import com.coredisc.common.exception.handler.MyHomeHandler;
+import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
@@ -24,6 +26,7 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     private final QueryFollowRepository queryFollowRepository;
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+    private final BlockRepository blockRepository;
 
     @Override
     public FollowResponseDTO.FollowerListDTO getFollowers(Member member, Long cursorId, Pageable pageable) {
@@ -84,10 +87,15 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     }
 
     @Override
-    public FollowResponseDTO.FollowerListDTO getUserFollowers(String targetUsername, Long cursorId, Pageable pageable) {
+    public FollowResponseDTO.FollowerListDTO getUserFollowers(Member member, String targetUsername, Long cursorId, Pageable pageable) {
 
         Member targetMember = memberRepository.findByUsername(targetUsername)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 차단된 사용자일 때
+        if(blockRepository.existsByBlockerAndBlocked(member, targetMember)) {
+            throw new MyHomeHandler(ErrorStatus.BLOCKED_MEMBER_REQUEST);
+        }
 
         List<Follow> result = queryFollowRepository.findFollowers(targetMember, cursorId, pageable);
 
@@ -105,10 +113,15 @@ public class FollowQueryServiceImpl implements FollowQueryService {
     }
 
     @Override
-    public FollowResponseDTO.FollowingListDTO getUserFollowings(String targetUsername, Long cursorId, Pageable pageable) {
+    public FollowResponseDTO.FollowingListDTO getUserFollowings(Member member, String targetUsername, Long cursorId, Pageable pageable) {
 
         Member targetMember = memberRepository.findByUsername(targetUsername)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 차단된 사용자일 때
+        if(blockRepository.existsByBlockerAndBlocked(member, targetMember)) {
+            throw new MyHomeHandler(ErrorStatus.BLOCKED_MEMBER_REQUEST);
+        }
 
         List<Follow> result = queryFollowRepository.findFollowings(targetMember, cursorId, pageable);
 
