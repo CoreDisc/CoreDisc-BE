@@ -15,4 +15,10 @@ public interface FollowQueryService {
     // 친한 친구 목록 조회
     FollowResponseDTO.FollowerListDTO getCircleFollowers(Member member, Long cursorId, Pageable pageable);
 
+    // 타사용자의 팔로워 목록 조회
+    FollowResponseDTO.FollowerListDTO getUserFollowers(Member member, String targetUsername, Long cursorId, Pageable pageable);
+
+    // 타사용자의 팔로잉 목록 조회
+    FollowResponseDTO.FollowingListDTO getUserFollowings(Member member, String targetUsername, Long cursorId, Pageable pageable);
+
 }
