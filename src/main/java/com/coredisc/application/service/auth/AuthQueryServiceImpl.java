@@ -44,13 +44,13 @@ public class AuthQueryServiceImpl implements AuthQueryService{
     @Override
     public boolean verifyUser(AuthRequestDTO.VerifyUserDTO request) {
 
-        return memberRepository.existsByNameAndUsername(request.getName(), request.getUsername());
+        return memberRepository.existsByEmailAndUsername(request.getEmail(), request.getUsername());
     }
 
     @Override
     public Member findMember(AuthRequestDTO.VerifyUserDTO request) {
 
-        return memberRepository.findByNameAndUsername(request.getName(), request.getUsername())
+        return memberRepository.findByEmailAndUsername(request.getEmail(), request.getUsername())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 }

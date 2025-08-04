@@ -49,13 +49,13 @@ public class MemberRepositoryAdaptor implements MemberRepository {
     }
 
     @Override
-    public boolean existsByNameAndUsername(String name, String username) {
-        return jpaMemberRepository.existsByNameAndUsername(name, username);
+    public boolean existsByEmailAndUsername(String email, String username) {
+        return jpaMemberRepository.existsByEmailAndUsername(email, username);
     }
 
     @Override
-    public Optional<Member> findByNameAndUsername(String name, String username) {
-        return jpaMemberRepository.findByNameAndUsername(name, username);
+    public Optional<Member> findByEmailAndUsername(String email, String username) {
+        return jpaMemberRepository.findByEmailAndUsername(email, username);
     }
 
     @Override
