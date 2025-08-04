@@ -107,11 +107,12 @@ public class AuthRequestDTO {
     @Getter
     public static class VerifyUserDTO {
 
-        @NotBlank(message = "이름 입력은 필수입니다.")
-        private String name;
-
         @NotBlank(message = "아이디 입력은 필수입니다.")
         private String username;
+
+        @NotBlank(message = "이메일 입력은 필수입니다.")
+        @Email(message = "이메일 형식이 맞지 않습니다.")
+        private String email;
     }
 
     @Getter
