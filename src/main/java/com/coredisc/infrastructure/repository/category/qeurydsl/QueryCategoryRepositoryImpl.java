@@ -21,19 +21,24 @@ public class QueryCategoryRepositoryImpl implements QueryCategoryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CategoryResponseDTO.CategoryDTO> findCategoryList() {
+    public List<CategoryResponseDTO.CategoryDTO> findCategoryList(Member member) {
         QCategory qCategory = QCategory.category;
         QQuestionCategory qQuestionCategory = QQuestionCategory.questionCategory;
+        QPersonalQuestion personal = QPersonalQuestion.personalQuestion;
+        QOfficialQuestion official = QOfficialQuestion.officialQuestion;
 
         return jpaQueryFactory
                 .select(Projections.constructor(
                         CategoryResponseDTO.CategoryDTO.class,
                         qCategory.id,
                         qCategory.name,
-                        qQuestionCategory.id.count()
+                        personal.id.count().add(official.id.count())
                 ))
                 .from(qCategory)
                 .leftJoin(qQuestionCategory).on(qQuestionCategory.category.eq(qCategory))
+                .leftJoin(qQuestionCategory.personalQuestion, personal)
+                .on(personal.member.eq(member))
+                .leftJoin(qQuestionCategory.officialQuestion, official) 
                 .groupBy(qCategory.id)
                 .fetch();
     }

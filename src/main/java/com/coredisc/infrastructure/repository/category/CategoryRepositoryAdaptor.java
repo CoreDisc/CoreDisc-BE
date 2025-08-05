@@ -24,8 +24,8 @@ public class CategoryRepositoryAdaptor implements CategoryRepository {
     }
 
     @Override
-    public List<CategoryResponseDTO.CategoryDTO> findCategoryList(){
-        return queryCategoryRepository.findCategoryList();
+    public List<CategoryResponseDTO.CategoryDTO> findCategoryList(Member member){
+        return queryCategoryRepository.findCategoryList(member);
     }
 
     @Override

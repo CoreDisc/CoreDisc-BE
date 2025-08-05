@@ -10,7 +10,7 @@ public interface CategoryRepository {
 
     Optional<Category> findById(Long id);
 
-    List<CategoryResponseDTO.CategoryDTO> findCategoryList();
+    List<CategoryResponseDTO.CategoryDTO> findCategoryList(Member member);
 
     List<CategoryResponseDTO.CategoryDTO> findCategoryListByKeyword(Member member, String keyword);
 }

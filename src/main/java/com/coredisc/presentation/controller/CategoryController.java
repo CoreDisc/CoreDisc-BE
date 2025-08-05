@@ -22,7 +22,7 @@ public class CategoryController implements CategoryControllerDocs {
     @GetMapping("/categories")
     public ApiResponse<List<CategoryResponseDTO.CategoryDTO>> getCategoryList(@CurrentMember Member member){
 
-        return ApiResponse.onSuccess(categoryQueryService.getCategoryList());
+        return ApiResponse.onSuccess(categoryQueryService.getCategoryList(member));
     }
 
     @GetMapping("/categories/search")

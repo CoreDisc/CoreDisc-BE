@@ -15,9 +15,9 @@ public class CategoryQueryServiceImpl implements CategoryQueryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public List<CategoryResponseDTO.CategoryDTO> getCategoryList(){
+    public List<CategoryResponseDTO.CategoryDTO> getCategoryList(Member member){
 
-        return categoryRepository.findCategoryList();
+        return categoryRepository.findCategoryList(member);
     }
 
 
