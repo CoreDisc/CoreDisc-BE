@@ -24,4 +24,12 @@ public class CategoryController implements CategoryControllerDocs {
 
         return ApiResponse.onSuccess(categoryQueryService.getCategoryList());
     }
+
+    @GetMapping("/categories/search")
+    public ApiResponse<List<CategoryResponseDTO.CategoryDTO>> getCategoryListByKeyword(@CurrentMember Member member, @RequestParam(name = "keyword") String keyword) {
+
+        return ApiResponse.onSuccess(categoryQueryService.getCategoryListByKeyword(member, keyword));
+
+    }
+
 }
