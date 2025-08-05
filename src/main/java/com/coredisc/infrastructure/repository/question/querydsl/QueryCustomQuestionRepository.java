@@ -19,6 +19,7 @@ public interface QueryCustomQuestionRepository {
 
     public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
             Long memberId,
+            Long categoryId,
             String keyword,
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,

@@ -86,6 +86,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
 
     public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
             Long memberId,
+            Long categoryId,
             String keyword,
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,
@@ -99,6 +100,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                         "   LEFT JOIN question_category qc ON qc.personal_question_id = p.id " +
                         "   LEFT JOIN category c ON qc.category_id = c.id " +
                         "   WHERE p.member_id = :memberId " +
+                        "     AND c.id = :categoryId " +
                         "     AND (LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
                         "          OR c.name = :keyword) " +
                         "   UNION ALL " +
@@ -108,8 +110,9 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                         "   FROM official_question o " +
                         "   LEFT JOIN question_category qc2 ON qc2.official_question_id = o.id " +
                         "   LEFT JOIN category c2 ON qc2.category_id = c2.id " +
-                        "   WHERE LOWER(o.contents) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                        "      OR c2.name = :keyword " +
+                        "   WHERE c2.id = :categoryId " +
+                        "      And (LOWER(o.contents) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                        "          OR c2.name = :keyword) " +
                         ") AS combined " +
                         (cursorCreatedAt != null ?
                                 "WHERE (combined.created_at < :cursorCreatedAt) " +
@@ -122,6 +125,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
         Query query = entityManager.createNativeQuery(nativeSql);
 
         query.setParameter("memberId", memberId);
+        query.setParameter("categoryId", categoryId);
         query.setParameter("keyword", keyword);
         query.setParameter("limit", pageSize + 1);
 
