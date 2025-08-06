@@ -6,6 +6,8 @@ import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+
 public interface MemberQueryService {
 
     // CurrentMemberResolver를 위해 Member 찾기
@@ -25,4 +27,8 @@ public interface MemberQueryService {
 
     // 검색 화면 사용자 검색
     CursorDTO<MemberResponseDTO.SearchMemberResultDTO> getMemberSearchList(Member member, String keyword, Boolean record, Long cursorId, Integer pageSize);
+
+
+    // 마이홈 내가 작성한 질문 리스트 조회
+    CursorDTO<MemberResponseDTO.MyHomeQuestionDTO> getMyHomeQuestions(Member member, Long categoryId, LocalDateTime cursorCreatedAt, String cursorQuestionType, Long cursorId, Pageable page);
 }

@@ -8,6 +8,8 @@ import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.common.exception.handler.MyHomeHandler;
 import com.coredisc.common.util.FormatNumberUtil;
 import com.coredisc.domain.block.BlockRepository;
+import com.coredisc.domain.category.Category;
+import com.coredisc.domain.category.CategoryRepository;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.common.enums.SearchType;
@@ -23,12 +25,14 @@ import com.coredisc.domain.profileImg.ProfileImg;
 import com.coredisc.domain.profileImg.ProfileImgRepository;
 import com.coredisc.domain.searchHistory.SearchHistory;
 import com.coredisc.domain.searchHistory.SearchHistoryRepository;
+import com.coredisc.infrastructure.repository.question.CustomQuestionRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +48,8 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final BlockRepository blockRepository;
     private final DiscRepository discRepository;
     private final SearchHistoryRepository searchHistoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final CustomQuestionRepository customQuestionRepository;
 
 
     @Override
@@ -256,6 +262,18 @@ public class MemberQueryServiceImpl implements MemberQueryService {
                 .toList();
 
         return new CursorDTO<>(memberSearchList, hasNext);
+    }
+
+
+    // 마이홈 내가 작성한 질문 리스트 조회
+    @Override
+    public CursorDTO<MemberResponseDTO.MyHomeQuestionDTO> getMyHomeQuestions(Member member, Long categoryId, LocalDateTime cursorCreatedAt, String cursorQuestionType, Long cursorId, Pageable page) {
+
+        // 카테고리 유무
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+
+        return customQuestionRepository.findMyHomeQuestionListByCategories(member.getId(), categoryId, cursorCreatedAt, cursorQuestionType, cursorId, page.getPageSize());
     }
 
 }

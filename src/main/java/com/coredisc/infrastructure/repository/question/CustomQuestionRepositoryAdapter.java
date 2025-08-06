@@ -4,6 +4,7 @@ import com.coredisc.domain.category.Category;
 import com.coredisc.domain.member.Member;
 import com.coredisc.infrastructure.repository.question.querydsl.QueryCustomQuestionRepository;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -39,5 +40,17 @@ public class CustomQuestionRepositoryAdapter implements CustomQuestionRepository
             int pageSize
     ) {
         return queryCustomQuestionRepository.findBasicQuestionListByKeyword(memberId, categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+    }
+
+    @Override
+    public CursorDTO<MemberResponseDTO.MyHomeQuestionDTO> findMyHomeQuestionListByCategories (
+            Long memberId,
+            Long categoryId,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize
+    ) {
+        return queryCustomQuestionRepository.findMyHomeQuestionListByCategories(memberId, categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
 }

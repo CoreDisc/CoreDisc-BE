@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
@@ -130,5 +132,27 @@ public class MemberController implements MemberControllerDocs {
                                                                             @RequestPart("image")MultipartFile image) {
 
         return ApiResponse.onSuccess(memberCommandService.resetProfileImg(member, image));
+    }
+
+
+    // 마이홈 - 내가 작성한 질문들
+    @Override
+    @GetMapping("/my-home/questions")
+    public ApiResponse<CursorDTO<MemberResponseDTO.MyHomeQuestionDTO>> getMyHomeQuestions(@CurrentMember Member member,
+                                                                                      @RequestParam(name = "categoryId") Long categoryId,
+                                                                                      @RequestParam(name = "cursorCreatedAt", required = false) String cursorCreatedAtStr,
+                                                                                      @RequestParam(name = "cursorQuestionType", required = false) String cursorQuestionType,
+                                                                                      @RequestParam(name = "cursorId", required = false) Long cursorId,
+                                                                                      @RequestParam(name="size", required = false) Integer size) {
+
+        LocalDateTime cursorCreatedAt = null;
+        if (cursorCreatedAtStr != null && !cursorCreatedAtStr.isEmpty()) {
+            cursorCreatedAt = LocalDateTime.parse(cursorCreatedAtStr);
+        }
+
+        if (size == null)
+            size = DEFAULT_SIZE;
+
+        return ApiResponse.onSuccess(memberQueryService.getMyHomeQuestions(member, categoryId, cursorCreatedAt, cursorQuestionType, cursorId, PageRequest.of(0, size)));
     }
 }
