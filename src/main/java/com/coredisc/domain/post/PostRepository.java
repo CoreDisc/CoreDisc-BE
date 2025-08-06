@@ -49,4 +49,6 @@ public interface PostRepository {
     // 특정 회원이 특정 날짜에 발행한 게시글이 있는가?
     boolean existsByMemberAndStatusAndCreatedAtBetween(Member member, PostStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
+    List<Post> findAllByStatusAndCreatedAtBefore(PostStatus status, LocalDateTime createdAt);
+
     }

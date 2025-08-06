@@ -1,6 +1,6 @@
 package com.coredisc;
 
-import com.coredisc.infrastructure.schedule.BatchScheduler;
+import com.coredisc.application.schedule.BatchScheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
