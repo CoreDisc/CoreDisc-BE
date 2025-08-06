@@ -1,6 +1,7 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.common.util.FileUtil;
+import com.coredisc.domain.post.PostLike;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.post.Post;
@@ -12,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -322,6 +324,14 @@ public class PostConverter {
                 .PostIds(tempPosts.stream()
                         .map(Post::getId)
                         .toList())
+                .build();
+    }
+
+    public static PostLikeDto toPostLikeDto(PostLike postLike, boolean like)
+    {
+        return PostLikeDto.builder()
+                .liked(like)
+                .postId(postLike.getPost().getId())
                 .build();
     }
 }

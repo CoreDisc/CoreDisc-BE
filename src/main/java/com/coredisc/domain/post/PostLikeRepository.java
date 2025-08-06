@@ -1,11 +1,11 @@
 package com.coredisc.domain.post;
 
 import com.coredisc.domain.member.Member;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface PostLikeRepository extends JpaRepository<PostLike,Long> {
-
+public interface PostLikeRepository{
 
     boolean existsByMemberAndPost(Member member, Post post);
+
+    PostLike createPostLike(PostLike postLike);
 }

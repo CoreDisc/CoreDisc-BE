@@ -8,7 +8,11 @@ import lombok.*;
 
 @Entity
 @Getter
-@Table(name = "post_like"
+@Table(name = "post_like",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_post_member",
+                columnNames = {"post_id", "member_id"}
+        )
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -26,5 +30,13 @@ public class PostLike extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
+    public static PostLike create(Post post, Member member) {
+        return PostLike.builder()
+                .post(post)
+                .member(member)
+                .build();
+    }
+
 
 }

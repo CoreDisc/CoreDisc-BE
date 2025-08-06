@@ -11,6 +11,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostResponseDTO {
+
+    @Getter
+    @Builder
+    public static class PostLikeDto {
+       private Long postId;
+       private boolean liked;
+
+    }
     @Getter
     @Builder
     public static class CreatePostResultDto {
