@@ -409,11 +409,11 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostLikeDto toPostLikeDto(PostLike postLike, boolean like)
+    public static PostLikeDto toPostLikeDto(Long postId, boolean like)
     {
         return PostLikeDto.builder()
+                .postId(postId)
                 .liked(like)
-                .postId(postLike.getPost().getId())
                 .build();
     }
 }

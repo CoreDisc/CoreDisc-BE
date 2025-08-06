@@ -24,7 +24,7 @@ public class PostLikeCommandServiceImpl implements PostLikeCommandService{
     private final PostLikeRepository postLikeRepository;
 
     @Transactional
-    public PostResponseDTO.PostLikeDto create(Long postId, Member member) {
+    public PostResponseDTO.PostLikeDto createLike(Long postId, Member member) {
         // post 존재 여부 확인
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostHandler(ErrorStatus.POST_NOT_FOUND)
@@ -44,6 +44,18 @@ public class PostLikeCommandServiceImpl implements PostLikeCommandService{
             throw new LikeHandler(ErrorStatus.POST_LIKE_DUPLICATED);
         }
 
-        return PostConverter.toPostLikeDto(savedPostlike,true);
+        return PostConverter.toPostLikeDto(savedPostlike.getPost().getId(),true);
+    }
+
+    @Transactional
+    public PostResponseDTO.PostLikeDto deleteLike(Long postId, Member member) {
+        Post post = postRepository.findById(postId)
+                        .orElseThrow(
+                                () -> new PostHandler(ErrorStatus.POST_NOT_FOUND)
+                        );
+
+        postLikeRepository.deleteByPostAndMember(post,member);
+
+        return PostConverter.toPostLikeDto(postId,false);
     }
 }

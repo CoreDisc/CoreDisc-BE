@@ -105,7 +105,7 @@ public class PostController implements PostControllerDocs {
             @PathVariable Long postId,
             @CurrentMember Member member) {
 
-        return ApiResponse.onSuccess( postLikeCommandService.create(postId, member));
+        return ApiResponse.onSuccess( postLikeCommandService.createLike(postId, member));
     }
 
     @DeleteMapping("/{postId}/likes")
@@ -113,7 +113,8 @@ public class PostController implements PostControllerDocs {
             @PathVariable Long postId,
             @CurrentMember Member member) {
 
-        return null;
+        return ApiResponse.onSuccess(postLikeCommandService.deleteLike(postId,member));
+
     }
 
     @PutMapping("/{postId}/publish")

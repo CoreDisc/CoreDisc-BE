@@ -8,4 +8,6 @@ public interface PostLikeRepository{
     boolean existsByMemberAndPost(Member member, Post post);
 
     PostLike createPostLike(PostLike postLike);
+
+    void deleteByPostAndMember(Post post, Member member);
 }

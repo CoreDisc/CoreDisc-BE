@@ -23,4 +23,9 @@ public class PostLikeRepositoryAdaptor implements PostLikeRepository {
     public PostLike createPostLike(PostLike postLike) {
         return jpaPostLikeRepository.save(postLike);
     }
+
+    @Override
+    public void deleteByPostAndMember(Post post , Member member) {
+        jpaPostLikeRepository.deleteByPostAndMember(post,member);
+    }
 }
