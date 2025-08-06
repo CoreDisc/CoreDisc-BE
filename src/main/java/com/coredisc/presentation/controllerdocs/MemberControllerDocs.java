@@ -94,7 +94,7 @@ public interface MemberControllerDocs {
             @Parameter(name = "categoryId", description = "카테고리id입니다."),
             @Parameter(name = "cursorCreatedAt", description = "커서 - 마지막 질문 생성일자 (ISO 8601 형식), 첫 요청 때는 null"),
             @Parameter(name = "cursorQuestionType", description = "커서 - 마지막 질문 타입 (PERSONAL, OFFICIAL), 첫 요청 때는 null"),
-            @Parameter(name = "cursorId", description = "마지막으로 조회한 postId, 첫 요청 때는 null, queryString입니다."),
+            @Parameter(name = "cursorId", description = "마지막으로 조회한 질문의 id, 첫 요청 때는 null, queryString입니다."),
             @Parameter(name = "size", description = "기본값 10, queryString입니다.")
     })
     ApiResponse<CursorDTO<MemberResponseDTO.MyHomeQuestionDTO>> getMyHomeQuestions(@CurrentMember Member member,
