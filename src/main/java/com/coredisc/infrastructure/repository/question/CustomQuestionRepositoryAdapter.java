@@ -31,12 +31,13 @@ public class CustomQuestionRepositoryAdapter implements CustomQuestionRepository
     @Override
     public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
             Long memberId,
+            Long categoryId,
             String keyword,
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,
             Long cursorId,
             int pageSize
     ) {
-        return queryCustomQuestionRepository.findBasicQuestionListByKeyword(memberId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+        return queryCustomQuestionRepository.findBasicQuestionListByKeyword(memberId, categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
     }
 }

@@ -67,6 +67,7 @@ public class QuestionController implements QuestionControllerDocs {
     @GetMapping("/basic/search")
     public ApiResponse<CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO>> getBasicQuestionSearchList(
             @CurrentMember Member member,
+            @RequestParam(name = "categoryId") Long categoryId,
             @RequestParam(name = "keyword") String keyword,
             @RequestParam(name = "cursorCreatedAt", required = false) String cursorCreatedAtStr,
             @RequestParam(name = "cursorQuestionType", required = false) String cursorQuestionType,
@@ -81,7 +82,7 @@ public class QuestionController implements QuestionControllerDocs {
         if (size == null)
             size = DEFAULT_PAGE_SIZE;
 
-        return ApiResponse.onSuccess( questionQueryService.getBasicQuestionSearchList(member, keyword, cursorCreatedAt, cursorQuestionType, cursorId, size) );
+        return ApiResponse.onSuccess( questionQueryService.getBasicQuestionSearchList(member, categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, size) );
     }
 
     // 내가 발행한 공유 질문 리스트 조회 (개수 포함 ver)

@@ -2,6 +2,7 @@ package com.coredisc.infrastructure.repository.category;
 
 import com.coredisc.domain.category.Category;
 import com.coredisc.domain.category.CategoryRepository;
+import com.coredisc.domain.member.Member;
 import com.coredisc.infrastructure.repository.category.qeurydsl.QueryCategoryRepository;
 import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,12 @@ public class CategoryRepositoryAdaptor implements CategoryRepository {
     }
 
     @Override
-    public List<CategoryResponseDTO.CategoryDTO> findCategoryList(){
-        return queryCategoryRepository.findCategoryList();
+    public List<CategoryResponseDTO.CategoryDTO> findCategoryList(Member member){
+        return queryCategoryRepository.findCategoryList(member);
+    }
+
+    @Override
+    public List<CategoryResponseDTO.CategoryDTO> findCategoryListByKeyword(Member member, String keyword){
+        return queryCategoryRepository.findCategoryListByKeyword(member, keyword);
     }
 }
