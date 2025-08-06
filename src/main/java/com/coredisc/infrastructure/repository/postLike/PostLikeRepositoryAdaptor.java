@@ -1,0 +1,31 @@
+package com.coredisc.infrastructure.repository.postLike;
+
+import com.coredisc.domain.member.Member;
+import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostLike;
+import com.coredisc.domain.post.PostLikeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+public class PostLikeRepositoryAdaptor implements PostLikeRepository {
+
+
+    private final JpaPostLikeRepository jpaPostLikeRepository;
+
+    @Override
+    public boolean existsByMemberAndPost(Member member, Post post) {
+        return jpaPostLikeRepository.existsByMemberAndPost(member,post);
+    }
+
+    @Override
+    public PostLike createPostLike(PostLike postLike) {
+        return jpaPostLikeRepository.save(postLike);
+    }
+
+    @Override
+    public void deleteByPostAndMember(Post post , Member member) {
+        jpaPostLikeRepository.deleteByPostAndMember(post,member);
+    }
+}

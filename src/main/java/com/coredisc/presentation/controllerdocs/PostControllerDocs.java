@@ -120,4 +120,16 @@ public interface PostControllerDocs {
             @CurrentMember Member member
             );
 
+    @Operation(summary = "좋아요 추가", description = "특정 게시글의 좋아요를 추가합니다.")
+    ApiResponse<PostResponseDTO.PostLikeDto> likePost(
+            @PathVariable Long postId,
+            @CurrentMember Member member
+    );
+
+    @Operation(summary = "좋아요 삭제", description = "특정 게시글의 좋아요를 삭제합니다.")
+    ApiResponse<PostResponseDTO.PostLikeDto> unlikePost(
+            @PathVariable Long postId,
+            @CurrentMember Member member
+    );
+
 }

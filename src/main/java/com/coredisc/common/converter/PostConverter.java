@@ -1,6 +1,7 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.common.util.FileUtil;
+import com.coredisc.domain.post.PostLike;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.post.Post;
@@ -8,10 +9,13 @@ import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,6 +23,7 @@ import static com.coredisc.domain.post.QPostAnswer.postAnswer;
 import static com.coredisc.domain.post.QPostAnswerImage.postAnswerImage;
 import static com.coredisc.presentation.dto.post.PostResponseDTO.*;
 
+@Slf4j
 public class PostConverter {
 
     private PostConverter() {
@@ -144,13 +149,21 @@ public class PostConverter {
     /**
      * Post 엔티티를 PostDetailResponseDTO로 변환
      */
-    public static PostDetailDto toPostDetailResponse(Post post, List<String> questions, boolean isLiked) {
+    public static PostDetailDto toPostDetailResponse(Post post, List<PostAnswer> answers, List<String> questions, boolean isLiked) {
+
+        for (String question : questions) {
+            log.info("question = {}",question);
+        }
+
+        for (PostAnswer answer : post.getAnswers()) {
+            log.info("answer= {}",answer.getId());
+        }
         return PostDetailDto.builder()
                 .postId(post.getId())
                 .member(toDetailMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
                 .visibility(post.getPublicity())
-                .answers(toFeedAnswerResponses(post.getAnswers(),questions))
+                .answers(toFeedAnswerResponses(answers,questions))
                 .selectiveDiary(toDetailSelectiveDiary(post))
                 .statistics(toDetailStatistics(post))
                 .isLiked(isLiked)
@@ -188,20 +201,91 @@ public class PostConverter {
      */
     private static List<PostFeedResponseDTO.PostSummary.Answer> toFeedAnswerResponses(List<PostAnswer> answers, List<String> questions) {
 
-        // 두 리스트 모두 1,2,3,4 questionOrder 순으로 저장되었다면?
+        if (answers.isEmpty() || questions.isEmpty()) {
+            log.warn("Empty answers or questions - Answers: {}, Questions: {}",
+                    answers.size(), questions.size());
+            return new ArrayList<>();
+        }
 
-        return IntStream.range(0,answers.size())
-                .mapToObj( i ->
-                        {
-                            PostAnswer answer = answers.get(i);
-                            String questionContent = questions.get(i);
 
-                            return toFeedAnswerResponse(answer,questionContent);
-                        }
-                )
-                .toList();
+        Map<Integer, PostAnswer> answerMap = answers.stream()
+                .collect(Collectors.toMap(
+                        PostAnswer::getAnswerOrder,
+                        answer -> answer,
+                        (existing, replacement) -> existing  // 중복 시 기존 값 유지
+                ));
+
+        return IntStream.range(0, questions.size())
+                .mapToObj(i -> {
+                    int answerOrder = i + 1;  // 1,2,3,4
+                    String questionContent = questions.get(i);
+                    PostAnswer answer = answerMap.get(answerOrder);
+
+                    if (answer != null) {
+                        return toSafeAnswerResponse(answer, questionContent);
+                    } else {
+                        // 답변이 없는 경우 기본값 반환
+                        log.warn("No answer found for order: {}", answerOrder);
+                        return createEmptyAnswerResponse(questionContent);
+                    }
+                })
+                .collect(Collectors.toList());
 
     }
+
+    private static PostFeedResponseDTO.PostSummary.Answer createEmptyAnswerResponse(String questionContent) {
+        return PostFeedResponseDTO.PostSummary.Answer.builder()
+                .answerId(null)
+                .answerType(null)
+                .questionContent(questionContent)
+                .imageAnswer(null)
+                .textAnswer(null)
+                .build();
+    }
+
+    private static PostFeedResponseDTO.PostSummary.Answer toSafeAnswerResponse(
+            PostAnswer answer,
+            String questionContent) {
+
+        return PostFeedResponseDTO.PostSummary.Answer.builder()
+                .answerId(answer.getId())
+                .answerType(answer.getType())
+                .questionContent(questionContent)
+                .imageAnswer(answer.getType() == AnswerType.IMAGE ?
+                        toSafeImageAnswer(answer.getPostAnswerImage()) : null)
+                .textAnswer(answer.getType() == AnswerType.TEXT ?
+                        toSafeTextAnswer(answer.getTextContent()) : null)
+                .build();
+    }
+
+
+    /**
+     * ✅ 안전한 이미지 답변 변환
+     */
+    private static PostFeedResponseDTO.PostSummary.Answer.ImageAnswer toSafeImageAnswer(PostAnswerImage image) {
+        if (image == null) {
+            return null;
+        }
+
+        return PostFeedResponseDTO.PostSummary.Answer.ImageAnswer.builder()
+                .thumbnailUrl(image.getThumbnailUrl())
+                .build();
+    }
+
+    /**
+     * ✅ 안전한 텍스트 답변 변환
+     */
+    private static PostFeedResponseDTO.PostSummary.Answer.TextAnswer toSafeTextAnswer(String textContent) {
+        if (textContent == null || textContent.trim().isEmpty()) {
+            return null;
+        }
+
+        return PostFeedResponseDTO.PostSummary.Answer.TextAnswer.builder()
+                .content(textContent)
+                .build();
+    }
+
+
 
     /**
      * PostAnswer를 Feed용 Answer DTO로 변환
@@ -322,6 +406,14 @@ public class PostConverter {
                 .PostIds(tempPosts.stream()
                         .map(Post::getId)
                         .toList())
+                .build();
+    }
+
+    public static PostLikeDto toPostLikeDto(Long postId, boolean like)
+    {
+        return PostLikeDto.builder()
+                .postId(postId)
+                .liked(like)
                 .build();
     }
 }

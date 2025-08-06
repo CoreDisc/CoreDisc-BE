@@ -1,5 +1,6 @@
 package com.coredisc.presentation.controller;
 
+import com.coredisc.application.service.like.PostLikeCommandService;
 import com.coredisc.application.service.post.PostCommandService;
 import com.coredisc.application.service.post.PostQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
@@ -7,6 +8,7 @@ import com.coredisc.common.converter.PostConverter;
 import com.coredisc.domain.common.enums.FeedType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
+import com.coredisc.domain.post.PostLike;
 import com.coredisc.presentation.controllerdocs.PostControllerDocs;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
@@ -27,6 +29,7 @@ public class PostController implements PostControllerDocs {
 
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;
+    private final PostLikeCommandService postLikeCommandService;
 
     @PostMapping
     public ApiResponse<PostResponseDTO.CreatePostResultDto> createPost(@CurrentMember Member member,
@@ -95,6 +98,23 @@ public class PostController implements PostControllerDocs {
         PostResponseDTO.TempAnswerPostDto response = PostConverter.toTempAnswerPostDto(tempPosts);
 
         return ApiResponse.onSuccess(response);
+    }
+
+    @PostMapping("/{postId}/likes")
+    public ApiResponse<PostResponseDTO.PostLikeDto> likePost(
+            @PathVariable Long postId,
+            @CurrentMember Member member) {
+
+        return ApiResponse.onSuccess( postLikeCommandService.createLike(postId, member));
+    }
+
+    @DeleteMapping("/{postId}/likes")
+    public ApiResponse<PostResponseDTO.PostLikeDto> unlikePost(
+            @PathVariable Long postId,
+            @CurrentMember Member member) {
+
+        return ApiResponse.onSuccess(postLikeCommandService.deleteLike(postId,member));
+
     }
 
     @PutMapping("/{postId}/publish")

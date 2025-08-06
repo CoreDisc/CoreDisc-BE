@@ -98,7 +98,18 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     @Override
     public PostResponseDTO.PostDetailDto findPostDetail(Member member, Long postId) {
-        Post post = postRepository.findPostDetail(member,postId);
+
+        Post findPost = postRepository.findById(postId).orElseThrow(
+                () -> new PostHandler(ErrorStatus.POST_NOT_FOUND)
+        );
+
+        Post post = postRepository.findPostDetail(findPost.getMember(),postId);
+
+        List<PostAnswer> answers = postRepository.findTempPostWithAnswers(postId);
+
+        for (PostAnswer answer : answers) {
+            log.info("answer = {}",answer);
+        }
 
         // 게시글 존재 여부 예외처리
         if(post == null) throw new PostHandler(ErrorStatus.POST_NOT_FOUND);
@@ -111,14 +122,18 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         LocalDate date = post.getCreatedAt().toLocalDate();
 
-        List<TodayQuestion> questions = findQuestionContent(member,date);
+        List<TodayQuestion> questions = findQuestionContent(post.getMember(),date);
 
         List<String> questionContents = questions.stream()
                 .map(
                         TodayQuestion::getQuestionContent
                 ).toList();
 
-        return PostConverter.toPostDetailResponse(post,questionContents, isLiked);
+        for (String questionContent : questionContents) {
+            log.info("question Content = {}",questionContent);
+        }
+
+        return PostConverter.toPostDetailResponse(post,answers, questionContents, isLiked);
     }
 
     private List<TodayQuestion> findQuestionContent(Member member, LocalDate date) {

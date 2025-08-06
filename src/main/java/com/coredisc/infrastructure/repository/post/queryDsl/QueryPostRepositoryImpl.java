@@ -18,6 +18,7 @@ import com.coredisc.presentation.dto.calendar.CalendarPostDTO;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +36,7 @@ import static com.coredisc.domain.post.QPostAnswerImage.*;
 import static com.coredisc.domain.profileImg.QProfileImg.*;
 import static com.coredisc.domain.todayQuestion.QTodayQuestion.*;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class QueryPostRepositoryImpl implements QueryPostRepository {
@@ -44,7 +46,7 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     @Override
     public List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable) {
 
-        QPost p = QPost.post;
+        QPost p = post;
         QPostAnswer pa = QPostAnswer.postAnswer;
         QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
 
@@ -65,7 +67,7 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     @Override
     public List<Post> findUserPostsWithAnswers(Member member, boolean isCircle, Long cursorId, Pageable pageable) {
 
-        QPost p = QPost.post;
+        QPost p = post;
         QPostAnswer pa = QPostAnswer.postAnswer;
         QPostAnswerImage pai = QPostAnswerImage.postAnswerImage;
 
@@ -90,7 +92,7 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     @Override
     public boolean existsByMemberAndIdLessThan(Member member, Long id,
                                                Set<PublicityType> allowTypes) {
-        QPost p = QPost.post;
+        QPost p = post;
         Integer fetchOne = jpaQueryFactory
                 .selectOne()
                 .from(p)
@@ -272,17 +274,21 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
 
     @Override
     public Post findPostDetail(Long memberId, Long postId) {
-        // 엔티티 조회로 한 번에 조회하고 Converter 로 변환하기
 
-        return  jpaQueryFactory
-                .selectFrom(post)
-                .leftJoin(post.answers, postAnswer).fetchJoin()
-                .leftJoin(postAnswer.postAnswerImage, postAnswerImage).fetchJoin()
-                .leftJoin(post.member, member).fetchJoin()
+        Post post = jpaQueryFactory
+                .selectFrom(QPost.post)
+                .leftJoin(QPost.post.member, member).fetchJoin()
                 .leftJoin(member.profileImg, profileImg).fetchJoin()
-                .where(post.id.eq(postId)
-                        .and(post.status.eq(PostStatus.PUBLISHED)))
+                .where(QPost.post.id.eq(postId)
+                        .and(QPost.post.status.eq(PostStatus.PUBLISHED)))
                 .fetchOne();
+
+        if (post == null) {
+            return null;
+        }
+
+
+        return post;
     }
 
 
@@ -293,7 +299,7 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
     // 캘린더 기능에 사용하기 위한 메소드 추가
     @Override
     public List<CalendarPostDTO> findPostInfoByMemberAndMonth(int year, int month, Member member) {
-        QPost p = QPost.post;
+        QPost p = post;
 
         LocalDate start = DateUtil.getStartDate(year, month);
         LocalDate end = DateUtil.getEndDate(year, month);
