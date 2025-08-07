@@ -3,6 +3,7 @@ package com.coredisc.infrastructure.repository.question.querydsl;
 import com.coredisc.domain.category.Category;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public interface QueryCustomQuestionRepository {
             int pageSize
     );
 
-    public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
+    CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> findBasicQuestionListByKeyword(
             Long memberId,
             Long categoryId,
             String keyword,
@@ -26,4 +27,14 @@ public interface QueryCustomQuestionRepository {
             Long cursorId,
             int pageSize
     );
+
+    CursorDTO<MemberResponseDTO.MyHomeQuestionDTO> findMyHomeQuestionListByCategories (
+            Long memberId,
+            Long categoryId,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize
+    );
+
 }

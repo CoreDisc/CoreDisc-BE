@@ -88,4 +88,19 @@ public interface MemberControllerDocs {
                                                                      @Parameter(description = "이미지 파일 (jpeg, jpg, png, gif, webp, 최대 10MB)",
                                                                              content = @Content(mediaType = "multipart/form-data"))
                                                                      @RequestPart("image") MultipartFile image);
+
+    @Operation(summary = "마이홈 내가 작성한 질문 리스트 조회", description = "마이홈 본인 질문 리스트 조회입니다. 커서 기반 페이징입니다.")
+    @Parameters({
+            @Parameter(name = "categoryId", description = "카테고리id입니다."),
+            @Parameter(name = "cursorCreatedAt", description = "커서 - 마지막 질문 생성일자 (ISO 8601 형식), 첫 요청 때는 null"),
+            @Parameter(name = "cursorQuestionType", description = "커서 - 마지막 질문 타입 (PERSONAL, OFFICIAL), 첫 요청 때는 null"),
+            @Parameter(name = "cursorId", description = "마지막으로 조회한 질문의 id, 첫 요청 때는 null, queryString입니다."),
+            @Parameter(name = "size", description = "기본값 10, queryString입니다.")
+    })
+    ApiResponse<CursorDTO<MemberResponseDTO.MyHomeQuestionDTO>> getMyHomeQuestions(@CurrentMember Member member,
+                                                                               @RequestParam(name = "categoryId") Long categoryId,
+                                                                               @RequestParam(name = "cursorCreatedAt", required = false) String cursorCreatedAt,
+                                                                               @RequestParam(name = "cursorQuestionType", required = false) String cursorQuestionType,
+                                                                               @RequestParam(name = "cursorId", required = false) Long cursorId,
+                                                                               @RequestParam(name="size", required = false) Integer size);
 }

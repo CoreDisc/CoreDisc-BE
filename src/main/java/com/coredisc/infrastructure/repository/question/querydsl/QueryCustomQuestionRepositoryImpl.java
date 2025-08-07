@@ -1,6 +1,7 @@
 package com.coredisc.infrastructure.repository.question.querydsl;
 
 import com.coredisc.presentation.dto.cursor.CursorDTO;
+import com.coredisc.presentation.dto.member.MemberResponseDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -157,5 +158,68 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
         return new CursorDTO<>(values, hasNext);
     }
 
+    @Override
+    public CursorDTO<MemberResponseDTO.MyHomeQuestionDTO> findMyHomeQuestionListByCategories(
+            Long memberId,
+            Long categoryId,
+            LocalDateTime cursorCreatedAt,
+            String cursorQuestionType,
+            Long cursorId,
+            int pageSize
+    ) {
+        String nativeSql =
+                "SELECT * FROM (" +
+                        "    SELECT p.id AS id, 'PERSONAL' AS question_type, p.content AS question, p.created_at AS created_at " +
+                        "    FROM personal_question p " +
+                        "    JOIN question_category qc ON qc.personal_question_id = p.id " +
+                        "    WHERE p.member_id = :memberId " +
+                        "      AND qc.category_id = :categoryId " +
+                        "  UNION ALL " +
+                        "    SELECT o.id AS id, 'OFFICIAL' AS question_type, o.contents AS question, o.created_at AS created_at " +
+                        "    FROM official_question o " +
+                        "    JOIN question_category qc ON qc.official_question_id = o.id " +
+                        "    WHERE o.member_id = :memberId " +
+                        "      AND qc.category_id = :categoryId " +
+                        ") AS combined " +
+                        (cursorCreatedAt != null
+                                ? "WHERE (combined.created_at < :cursorCreatedAt) OR " +
+                                "(combined.created_at = :cursorCreatedAt AND combined.question_type < :cursorQuestionType) OR " +
+                                "(combined.created_at = :cursorCreatedAt AND combined.question_type = :cursorQuestionType AND combined.id < :cursorId) "
+                                : "") +
+                        "ORDER BY combined.created_at DESC, combined.question_type DESC, combined.id DESC " +
+                        "LIMIT :pageSize";
 
+        Query query = entityManager.createNativeQuery(nativeSql);
+
+        query.setParameter("memberId", memberId);
+        query.setParameter("categoryId", categoryId);
+        query.setParameter("pageSize", pageSize + 1);
+
+        // (생성날짜, 질문타입, 질문id)를 커서 구분 기준으로
+        if (cursorCreatedAt != null) {
+            query.setParameter("cursorCreatedAt", Timestamp.valueOf(cursorCreatedAt));
+            query.setParameter("cursorQuestionType", cursorQuestionType);
+            query.setParameter("cursorId", cursorId);
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> questionList = query.getResultList();
+
+        boolean hasNext = questionList.size() > pageSize;
+
+        if (hasNext) {
+            questionList = questionList.subList(0, pageSize);
+        }
+
+        List<MemberResponseDTO.MyHomeQuestionDTO> values = questionList.stream()
+                .map(row -> new MemberResponseDTO.MyHomeQuestionDTO(
+                        ((Number) row[0]).longValue(),            // id
+                        (String) row[1],                          // questionType
+                        (String) row[2],                          // question
+                        ((Timestamp) row[3]).toLocalDateTime()   // createdAt
+                ))
+                .toList();
+
+        return new CursorDTO<>(values, hasNext);
+    }
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 public class MemberResponseDTO {
 
     @Getter
@@ -101,4 +103,19 @@ public class MemberResponseDTO {
         private ProfileImgResponseDTO.ProfileImgDTO profileImgDTO;
     }
 
+    // 마이홈 - 내가 작성한 질문들
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MyHomeQuestionDTO {
+
+        private Long id;
+
+        private String questionType;
+
+        private String question;
+
+        private LocalDateTime createdAt;
+    }
 }
