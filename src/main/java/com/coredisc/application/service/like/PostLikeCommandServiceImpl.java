@@ -1,14 +1,17 @@
 package com.coredisc.application.service.like;
 
+import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.PostConverter;
 import com.coredisc.common.exception.handler.LikeHandler;
 import com.coredisc.common.exception.handler.PostHandler;
+import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostLike;
 import com.coredisc.domain.post.PostLikeRepository;
 import com.coredisc.domain.post.PostRepository;
+import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,6 +25,7 @@ public class PostLikeCommandServiceImpl implements PostLikeCommandService{
 
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
+    private final NotificationCommandService notificationCommandService;
 
     @Transactional
     public PostResponseDTO.PostLikeDto createLike(Long postId, Member member) {
@@ -40,6 +44,19 @@ public class PostLikeCommandServiceImpl implements PostLikeCommandService{
             savedPostlike = postLikeRepository.createPostLike(postLike);
         } catch (DataIntegrityViolationException e) {
             throw new LikeHandler(ErrorStatus.POST_LIKE_DUPLICATED);
+        }
+
+        // 자신의 게시글에 좋아요를 누를 시에는 알림이 생성되지 않도록
+        if ( !post.getMember().equals(member)) {
+            notificationCommandService.createNotification(
+                    new NotificationRequestDTO(
+                            NotificationType.LIKE, // 알림 타입 (좋아요)
+                            member, //sender
+                            post.getMember(), // receiver
+                            member.getNickname()+"님이 게시글에 마음을 남겼어요.",
+                            post.getId() // 클릭 시 게시글로 이동
+                    )
+            );
         }
 
         return PostConverter.toPostLikeDto(savedPostlike.getPost().getId(),true);
