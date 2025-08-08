@@ -115,6 +115,11 @@ public class PostRepositoryAdaptor implements PostRepository {
     }
 
     @Override
+    public List<Long> findDistinctMemberIdsByStatusAndCreatedAtBetween(PostStatus postStatus, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return jpaPostRepository.findDistinctMemberIdsByStatusAndCreatedAtBetween(postStatus, startOfDay, endOfDay);
+    }
+
+    @Override
     public List<Post> findPostsByCreatedDate(LocalDate targetDate) {
         return queryPostRepository.findPostsByCreatedDate(targetDate);
     }

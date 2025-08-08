@@ -24,6 +24,19 @@ public interface JpaPostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(Member member, LocalDateTime start, LocalDateTime end);
 
     List<Post> findAllByStatusAndCreatedAtBefore(PostStatus status, LocalDateTime startOfDay);
+
+    @Query("""
+        select distinct p.member.id
+        from Post p
+        where p.status = :status
+          and p.createdAt >= :start
+          and p.createdAt < :end
+    """)
+    List<Long> findDistinctMemberIdsByStatusAndCreatedAtBetween(
+            @Param("status") PostStatus status,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
 }
 
 
