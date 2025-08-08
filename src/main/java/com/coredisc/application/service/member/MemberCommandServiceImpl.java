@@ -180,6 +180,27 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
     }
 
+    @Override
+    public ProfileImgResponseDTO.ProfileImgDTO resetToDefaultProfileImg(Member member) {
+
+        // DB에 기본 프로필 이미지가 존재하지 않을 경우
+        ProfileImg defualtProfileImg = profileImgRepository.findById(1L)
+                .orElseThrow(() -> new ProfileImgHandler(ErrorStatus.DEFAULT_PROFILE_IMG_NOT_FOUND));
+
+        // 사용자 현재 프로필 이미지
+        ProfileImg oldProfileImg = member.getProfileImg();
+
+        // 사용자가 이미 기본 프로필 이미지일 경우
+        if(oldProfileImg.getImgUrl().equals(defualtProfileImg.getImgUrl())) {
+            throw new ProfileImgHandler(ErrorStatus.PROFILE_IMG_ALREADY_DEFAULT);
+        }
+
+        oldProfileImg.setImgUrl(defualtProfileImg.getImgUrl());
+        profileImgRepository.save(oldProfileImg);
+
+        return ProfileImgConverter.toProfileImgDTO(oldProfileImg);
+    }
+
 
     private void logoutMember(String accessToken) {
 
