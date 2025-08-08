@@ -110,6 +110,11 @@ public class PostRepositoryAdaptor implements PostRepository {
     }
 
     @Override
+    public List<Post> findAllByStatusAndCreatedAtBefore(PostStatus status, LocalDateTime createdAt) {
+        return jpaPostRepository.findAllByStatusAndCreatedAtBefore(status, createdAt);
+    }
+
+    @Override
     public List<Post> findPostsByCreatedDate(LocalDate targetDate) {
         return queryPostRepository.findPostsByCreatedDate(targetDate);
     }

@@ -407,10 +407,35 @@ public class PostCommandServiceImpl implements PostCommandService {
      * 임시저장 게시글 정리 (배치 작업용)
      */
     @Transactional
-    public void cleanupOldTempPosts(int daysOld) {
-        // 일정 기간 이상 된 임시저장 게시글들을 정리
-        // 실제 구현에서는 JpaRepository의 deleteOldTempPosts 메서드 활용
-        log.info("{}일 이전 임시저장 게시글 정리 작업 시작", daysOld);
+    public void cleanupOldTempPosts(LocalDate cutoffDate) {
+        log.info("[배치] {}일 이전 임시저장 게시글 정리 작업 시작", cutoffDate);
+
+
+        List<Post> postToDelete = postRepository.findAllByStatusAndCreatedAtBefore(PostStatus.TEMP, cutoffDate.plusDays(1).atStartOfDay());
+
+        int deletedCount =0;
+
+
+        for(Post post : postToDelete) {
+            try {
+                List<String> imageUrls =extractImageUrls(post);
+                List<String> thumbnailUrls = extractThumbnailUrls(post);
+
+                amazonS3Manager.deleteImagesByUrls(imageUrls);
+                amazonS3Manager.deleteImagesByUrls(thumbnailUrls);
+
+                postRepository.delete(post);
+                deletedCount++;
+
+            }
+            catch (Exception e) {
+                log.error("TEMP 게시글 삭제 실패 - ID: {}, 에러: {}", post.getId(), e.getMessage(), e);
+                throw new PostHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
+            }
+        }
+
+
+        log.info("[배치] 임시저장 게시글 삭제 완료 - 총 {}건", deletedCount);
     }
 
 }
