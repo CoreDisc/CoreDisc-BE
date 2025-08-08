@@ -82,6 +82,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 프로필 이미지 관련 에러
     DEFAULT_PROFILE_IMG_NOT_FOUND(HttpStatus.NOT_FOUND, "PROFILE_IMG4001", "기본 프로필 이미지가 존재하지 않습니다."),
+    PROFILE_IMG_ALREADY_DEFAULT(HttpStatus.CONFLICT,"PROFILE_IMG4002", "이미 기본 프로필 이미지로 설정되어 있습니다."),
 
     // 마이홈 관련 에러
     SELF_PROFILE_REQUEST(HttpStatus.BAD_REQUEST, "MY_HOME4001", "자기 자신의 프로필은 해당 API로 요청할 수 없습니다."),

@@ -28,4 +28,7 @@ public interface MemberCommandService {
 
     // 프로필 사진 변경
     ProfileImgResponseDTO.ProfileImgDTO resetProfileImg(Member member, MultipartFile newProfileImg);
+
+    // 기본 프로필 사진으로 변경
+    ProfileImgResponseDTO.ProfileImgDTO resetToDefaultProfileImg(Member member);
 }
