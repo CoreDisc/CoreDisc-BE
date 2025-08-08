@@ -6,7 +6,6 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 

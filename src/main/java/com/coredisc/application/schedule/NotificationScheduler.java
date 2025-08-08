@@ -1,13 +1,10 @@
 package com.coredisc.application.schedule;
 
 import com.coredisc.application.service.notification.NotificationCommandService;
-import com.coredisc.common.apiPayload.status.ErrorStatus;
-import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.common.enums.PostStatus;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
-import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostRepository;
 import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import lombok.RequiredArgsConstructor;
