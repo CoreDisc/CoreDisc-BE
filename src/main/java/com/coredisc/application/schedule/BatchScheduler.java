@@ -1,6 +1,7 @@
-package com.coredisc.infrastructure.schedule;
+package com.coredisc.application.schedule;
 
 import com.coredisc.application.service.disc.DiscBatchService;
+import com.coredisc.application.service.post.PostCommandService;
 import com.coredisc.application.service.reportStat.ReportStatBatchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ public class BatchScheduler {
 
     private final DiscBatchService discBatchService;
     private final ReportStatBatchService reportStatBatchService;
+    private final PostCommandService postCommandService;
 
     // 매일 자정 (00:00:00)
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
@@ -24,6 +26,7 @@ public class BatchScheduler {
         log.info("🔄 [배치] {}일자 통계 데이터 생성 시작", targetDate);
         runDailyBatch(targetDate);
         log.info("✅ [배치] {}일자 통계 데이터 생성 완료", targetDate);
+        postCommandService.cleanupOldTempPosts(targetDate);
     }
 
     // 매월 1일 00:00:00

@@ -6,6 +6,9 @@ import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 public interface PostCommandService {
 
     public PostResponseDTO.CreatePostResultDto createEmptyPost(Member member, PostRequestDTO.CreatePostDto req);
@@ -18,4 +21,5 @@ public interface PostCommandService {
 
     void deletePost(Member member, Long postId);
 
+    void cleanupOldTempPosts(LocalDate cutoffDate);
 }
