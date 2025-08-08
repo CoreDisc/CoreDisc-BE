@@ -134,6 +134,13 @@ public class MemberController implements MemberControllerDocs {
         return ApiResponse.onSuccess(memberCommandService.resetProfileImg(member, image));
     }
 
+    @Override
+    @PatchMapping("/profile-image/default")
+    public ApiResponse<ProfileImgResponseDTO.ProfileImgDTO> resetToDefaultProfileImg(@CurrentMember Member member) {
+        
+        return ApiResponse.onSuccess(memberCommandService.resetToDefaultProfileImg(member));
+    }
+
 
     // 마이홈 - 내가 작성한 질문들
     @Override
