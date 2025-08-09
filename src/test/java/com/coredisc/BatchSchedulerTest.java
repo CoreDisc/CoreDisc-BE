@@ -19,7 +19,7 @@ public class BatchSchedulerTest {
 
     @Test
     public void testRunBatchForMonth() {
-        LocalDate targetMonth = LocalDate.of(2025, 7, 1);
+        LocalDate targetMonth = LocalDate.of(2025, 8, 1);
         batchScheduler.runBatchForMonth(targetMonth);
     }
 
