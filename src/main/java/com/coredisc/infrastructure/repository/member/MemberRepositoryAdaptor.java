@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -79,6 +80,11 @@ public class MemberRepositoryAdaptor implements MemberRepository {
             int pageSize
     ) {
         return queryMemberRepository.findMemberListByKeyword(keyword, cursorId, pageSize);
+    }
+
+    @Override
+    public List<Member> findAllById(Set<Long> receiverIds) {
+        return jpaMemberRepository.findAllById(receiverIds);
     }
 
 }

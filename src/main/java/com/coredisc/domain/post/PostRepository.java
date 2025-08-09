@@ -51,4 +51,5 @@ public interface PostRepository {
 
     List<Post> findAllByStatusAndCreatedAtBefore(PostStatus status, LocalDateTime createdAt);
 
-    }
+    List<Long> findDistinctMemberIdsByStatusAndCreatedAtBetween(PostStatus postStatus, LocalDateTime startOfDay, LocalDateTime endOfDay);
+}
