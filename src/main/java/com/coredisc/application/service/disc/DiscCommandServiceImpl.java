@@ -64,7 +64,6 @@ public class DiscCommandServiceImpl implements DiscCommandService {
         return discRepository.save(disc);
     }
 
-    @Transactional
     public boolean createDiscIfNotExists(Member member, int year, int month) {
         boolean exists = discRepository.existsByMemberAndYearAndMonth(member, year, month);
         if (!exists) {
