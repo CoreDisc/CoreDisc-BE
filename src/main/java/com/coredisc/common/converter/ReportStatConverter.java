@@ -113,6 +113,7 @@ public class ReportStatConverter {
 
     public static ReportStatResponseDTO.DailyDetailListDTO toDailyDetailListDTO(List<Post> posts) {
         Map<LocalDate, String> detailMap = posts.stream()
+                .filter(post -> post.getDailyDetail() != null && !post.getDailyDetail().isBlank())  // dailyDetail이 비어있지 않은 경우만
                 .collect(Collectors.toMap(
                         post -> post.getCreatedAt().toLocalDate(),
                         Post::getDailyDetail,
