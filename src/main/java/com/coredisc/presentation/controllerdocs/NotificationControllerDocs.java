@@ -4,6 +4,7 @@ import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.notification.NotificationResponseDTO;
+import com.coredisc.presentation.dto.notificationReminderSetting.NotificationReminderSettingResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,4 +39,8 @@ public interface NotificationControllerDocs {
     ApiResponse<CursorDTO<NotificationResponseDTO>> getNotifications(@CurrentMember Member member,
                                                                      @RequestParam(required = false) Long cursorId,
                                                                      @RequestParam(required = false) Integer size);
+
+    // 리마인더 알림 설정 화면 조회
+    @Operation(summary = "리마인더 알림 설정 조회", description = "리마인더 알림 설정 조회 기능입니다.")
+    ApiResponse<NotificationReminderSettingResponseDTO> getNotificationReminderSettings(@CurrentMember Member member);
 }
