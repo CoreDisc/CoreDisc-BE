@@ -26,4 +26,10 @@ public class NotificationReminderSetting {
 
     private LocalTime dailyReminderTime;
     private LocalTime unansweredReminderTime;
+
+    public void updateDailyReminderEnabled(boolean enabled) { this.dailyReminderEnabled = enabled; }
+    public void updateUnansweredReminderEnabled(boolean enabled) { this.unansweredReminderEnabled = enabled; }
+    public void changeDailyReminderTime(int hour, int minute) { this.dailyReminderTime = LocalTime.of(hour, minute); }
+    public void changeUnansweredReminderTime(int hour, int minute) { this.unansweredReminderTime = LocalTime.of(hour, minute); }
+
 }
