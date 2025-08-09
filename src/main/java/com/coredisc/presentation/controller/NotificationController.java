@@ -54,7 +54,7 @@ public class NotificationController implements NotificationControllerDocs {
         return ApiResponse.onSuccess(notificationQueryService.getNotifications(member, cursorId, pageable));
     }
 
-    @GetMapping("/api/notifications/reminder/setting")
+    @GetMapping("/api/notification-settings/reminder")
     public ApiResponse<NotificationReminderSettingResponseDTO> getNotificationReminderSettings(Member member) {
 
         return ApiResponse.onSuccess(notificationReminderSettingQueryService.getNotificationReminderSetting(member));
