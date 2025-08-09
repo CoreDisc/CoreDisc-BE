@@ -1,7 +1,10 @@
 package com.coredisc.common.converter;
 
 import com.coredisc.domain.mapping.notificationReminderSetting.NotificationReminderSetting;
+import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.notificationReminderSetting.NotificationReminderSettingResponseDTO;
+
+import java.time.LocalTime;
 
 public class NotificationReminderSettingConverter {
 
@@ -17,18 +20,13 @@ public class NotificationReminderSettingConverter {
         );
     }
 
-    // 기본값으로 1번, 2번 알림은 켜두기 (true)
-    // 기본값으로 1번은 8시, 2번은 18시로 설정
-    // TODO: 날짜 변경 가능성 있음
-    public static NotificationReminderSettingResponseDTO defaultResponse() {
-
-        return new NotificationReminderSettingResponseDTO(
-                true,
-                true,
-                8,
-                0,
-                18,
-                0
-        );
+    public static NotificationReminderSetting toDefault(Member member) {
+        return NotificationReminderSetting.builder()
+                .member(member)
+                .dailyReminderEnabled(true)
+                .unansweredReminderEnabled(true)
+                .dailyReminderTime(LocalTime.of(8, 0))
+                .unansweredReminderTime(LocalTime.of(18, 0))
+                .build();
     }
 }

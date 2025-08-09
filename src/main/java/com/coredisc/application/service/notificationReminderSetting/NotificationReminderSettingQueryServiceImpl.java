@@ -18,8 +18,8 @@ public class NotificationReminderSettingQueryServiceImpl implements Notification
     @Override
     public NotificationReminderSettingResponseDTO getNotificationReminderSetting(Member member) {
 
-        return notificationReminderSettingRepository.findByMember(member)
-                .map(NotificationReminderSettingConverter::toResponseDTO)
-                .orElseGet(NotificationReminderSettingConverter::defaultResponse);
+        return NotificationReminderSettingConverter.toResponseDTO(
+                notificationReminderSettingRepository.findByMember(member).get()
+        );
     }
 }

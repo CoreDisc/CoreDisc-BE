@@ -18,4 +18,9 @@ public class NotificationReminderSettingRepositoryAdaptor implements Notificatio
     public Optional<NotificationReminderSetting> findByMember(Member member) {
         return jpaNotificationReminderSettingRepository.findByMember(member);
     }
+
+    @Override
+    public NotificationReminderSetting save(NotificationReminderSetting notificationReminderSetting) {
+        return jpaNotificationReminderSettingRepository.save(notificationReminderSetting);
+    }
 }
