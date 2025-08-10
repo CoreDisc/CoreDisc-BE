@@ -37,7 +37,8 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/favicon.ico",
             "/api/auth/**",
-            "/api/members/password"
+            "/api/members/password",
+            "/actuator/**",
     };
 
     private final String[] allowGetUrl = {
