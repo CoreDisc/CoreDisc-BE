@@ -74,7 +74,8 @@ public class NotificationReminderSettingCommandServiceImpl implements Notificati
 
         // 둘 다 true 일 때, unanswered 알림 시간 > 데일리 알림 시간
         if (setting.isDailyReminderEnabled() && setting.isUnansweredReminderEnabled()) {
-            if (!setting.getDailyReminderTime().isAfter(setting.getDailyReminderTime())) {
+            // Unanswered > Daily (동일 시각도 안되게)
+            if (!setting.getUnansweredReminderTime().isAfter(setting.getDailyReminderTime())) {
                 throw new NotificationReminderSettingHandler(ErrorStatus.INVALID_REMINDER_TIME_ORDER);
             }
         }
