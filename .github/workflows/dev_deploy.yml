@@ -64,18 +64,6 @@ jobs:
       - name: Docker push
         run: docker push "${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest"
 
-
-      ## deploy to production
-      # 1) compose / prometheus 설정파일 서버로 업로드
-      - name: Upload compose & prometheus files
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "docker-compose.yml,prometheus.yml"
-          target: "/home/ubuntu/coredisc"
-
       - name: Deploy to prod
         uses: appleboy/ssh-action@v0.1.6
         id: deploy-prod
