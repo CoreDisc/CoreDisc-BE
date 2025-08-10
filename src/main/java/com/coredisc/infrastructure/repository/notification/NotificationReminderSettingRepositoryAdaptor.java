@@ -6,6 +6,7 @@ import com.coredisc.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,5 +23,15 @@ public class NotificationReminderSettingRepositoryAdaptor implements Notificatio
     @Override
     public NotificationReminderSetting save(NotificationReminderSetting notificationReminderSetting) {
         return jpaNotificationReminderSettingRepository.save(notificationReminderSetting);
+    }
+
+    @Override
+    public List<NotificationReminderSetting> findAllByDailyReminderEnabledTrueAndDailyReminderTime(int hh, int mm) {
+        return jpaNotificationReminderSettingRepository.findAllByDailyReminderEnabledTrueAndDailyReminderTime(hh, mm);
+    }
+
+    @Override
+    public List<NotificationReminderSetting> findAllByUnansweredReminderEnabledTrueAndDailyReminderTime(int hh, int mm) {
+        return jpaNotificationReminderSettingRepository.findAllByUnansweredReminderEnabledTrueAndDailyReminderTime(hh, mm);
     }
 }
