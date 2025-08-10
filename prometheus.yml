@@ -8,7 +8,5 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 10s
     static_configs:
-      - targets: ['app:8080']  # docker-compose 네트워크 이름 사용
-        labels:
-          application: 'coredisc'
-          environment: 'production'
+      - targets:
+          - 'host.docker.internal:8080'
