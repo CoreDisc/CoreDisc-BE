@@ -66,7 +66,11 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         LocalDateTime start = DateUtil.getStartDateTime(year, month);
         LocalDateTime end = DateUtil.getEndDateTime(year, month);
 
-        return postRepository.findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, start, end);
+        List<Post> posts = postRepository.findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, start, end);
+        if (posts.isEmpty()) {
+            throw new ReportStatHandler(ErrorStatus.STATS_NOT_FOUND);
+        }
+        return posts;
     }
 
 

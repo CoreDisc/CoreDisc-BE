@@ -69,6 +69,7 @@ public class ReportStatBatchServiceImpl implements ReportStatBatchService {
                     String question = tq.getQuestionContent();
                     return ReportStatConverter.toDailyRandomQuestionStats(member, question, targetDate);
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         dailyRandomQuestionStatRepository.saveAll(stats);

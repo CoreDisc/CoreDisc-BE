@@ -68,22 +68,31 @@ public class ReportStatConverter {
     }
 
     public static List<MonthlyFixedQuestionStat> toMonthlyFixedQuestionStats(List<TodayQuestion> questions, Set<Long> memberIds, int year, int month) {
-        return questions.stream()
-                .filter(q -> memberIds.contains(q.getMember().getId()))
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(
-                                q -> q.getMember().getId() + "-" + q.getQuestionOrder(),
-                                q -> MonthlyFixedQuestionStat.builder()
-                                        .memberId(q.getMember().getId())
-                                        .year(year)
-                                        .month(month)
-                                        .questionOrder(q.getQuestionOrder())
-                                        .questionContent(q.getQuestionContent())
-                                        .build(),
-                                (existing, replacement) -> existing
-                        ),
-                        map -> new ArrayList<>(map.values())
-                ));
+        if (questions == null || questions.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        Map<String, MonthlyFixedQuestionStat> statMap = new HashMap<>();
+        
+        for (TodayQuestion question : questions) {
+            if (question.getMember() == null || !memberIds.contains(question.getMember().getId())) {
+                continue;
+            }
+            
+            String key = question.getMember().getId() + "-" + question.getQuestionOrder();
+            
+            MonthlyFixedQuestionStat stat = MonthlyFixedQuestionStat.builder()
+                .memberId(question.getMember().getId())
+                .year(year)
+                .month(month)
+                .questionOrder(question.getQuestionOrder())
+                .questionContent(question.getQuestionContent())
+                .build();
+                
+            statMap.put(key, stat);
+        }
+        
+        return new ArrayList<>(statMap.values());
     }
 
     public static MonthlySelectionDiaryStat toOrUpdateMonthlySelectionDiaryStat(
@@ -113,6 +122,7 @@ public class ReportStatConverter {
 
     public static ReportStatResponseDTO.DailyDetailListDTO toDailyDetailListDTO(List<Post> posts) {
         Map<LocalDate, String> detailMap = posts.stream()
+                .filter(post -> post.getDailyDetail() != null && !post.getDailyDetail().isBlank())  // dailyDetail이 비어있지 않은 경우만
                 .collect(Collectors.toMap(
                         post -> post.getCreatedAt().toLocalDate(),
                         Post::getDailyDetail,
