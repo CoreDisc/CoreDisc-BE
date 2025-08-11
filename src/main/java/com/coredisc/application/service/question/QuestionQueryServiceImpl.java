@@ -130,7 +130,75 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             Long cursorId,
             int pageSize){
 
-        return customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+
+        CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> cursorDTO =
+                customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+
+        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
+
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            todayQuestion.ifPresent(myTodayQuestionList::add);
+        }
+
+        List<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList = cursorDTO.getValues().stream()
+                .map(basicQuestionResultDTO -> {
+                    // 오늘 질문 여부
+                    boolean isSelected = myTodayQuestionList.stream()
+                            .anyMatch(q ->
+                                    (
+                                            ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType()))
+                                                    && q.getOfficialQuestion() != null
+                                                    && q.getOfficialQuestion().getId().equals(basicQuestionResultDTO.getId())
+                                    )
+                                            ||
+                                            (
+                                                    "PERSONAL".equals(basicQuestionResultDTO.getQuestionType())
+                                                            && q.getPersonalQuestion() != null
+                                                            && q.getPersonalQuestion().getId().equals(basicQuestionResultDTO.getId())
+                                            )
+                            );
+
+                    // 즐겨찾기 여부
+                    boolean isFavorite = false;
+                    if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
+                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteById(basicQuestionResultDTO.getId());
+                        if (Boolean.TRUE.equals(officialFavorite)) {
+                            isFavorite = true;
+                        } else {
+                            isFavorite = memberOfficialQuestionRepository
+                                    .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(member.getId(), basicQuestionResultDTO.getId());
+                        }
+                    } else if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
+                        isFavorite = false;
+                    }
+
+                    // TODO: converter 분리
+                    return QuestionResponseDTO.BasicQuestionResultDTO.builder()
+                            .id(basicQuestionResultDTO.getId())
+                            .questionType(basicQuestionResultDTO.getQuestionType())
+                            .question(basicQuestionResultDTO.getQuestion())
+                            .isSelected(isSelected)
+                            .isFavorite(isFavorite)
+                            .createdAt(basicQuestionResultDTO.getCreatedAt())
+                            .build();
+                })
+                .toList();
+
+        return new CursorDTO<>(basicQuestionList, cursorDTO.getHasNext());
     }
 
     // 내가 발행한 공유질문 리스트 조회 (개수 포함 ver)
