@@ -197,23 +197,19 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.PopularQuestionListResultDTO toPopularQuestionListResultDTO(List<Tuple> questionTuple, LocalDate startDate, LocalDate endDate) {
+    public static QuestionResponseDTO.PopularQuestionResultDTO toPopularQuestionResultDTO(OfficialQuestion question, String username, Long sharedCount, boolean isSelected, boolean isFavorite) {
 
-        List<QuestionResponseDTO.PopularQuestionResultDTO> questionList = questionTuple.stream()
-                .map(tuple -> {
-                    OfficialQuestion question = tuple.get(0, OfficialQuestion.class);
-                    String username = tuple.get(1, String.class);
-                    String contents = tuple.get(2, String.class);
-                    Long sharedCount = tuple.get(3, Long.class);
+        return QuestionResponseDTO.PopularQuestionResultDTO.builder()
+                .id(question.getId())
+                .username(username)
+                .question(question.getContents())
+                .isSelected(isSelected)
+                .isFavorite(isFavorite)
+                .sharedCount(sharedCount)
+                .build();
+    }
 
-                    return QuestionResponseDTO.PopularQuestionResultDTO.builder()
-                            .id(question.getId())
-                            .username(username)
-                            .question(contents)
-                            .sharedCount(sharedCount)
-                            .build();
-                })
-                .toList();
+    public static QuestionResponseDTO.PopularQuestionListResultDTO toPopularQuestionListResultDTO(List<QuestionResponseDTO.PopularQuestionResultDTO> questionList, LocalDate startDate, LocalDate endDate) {
 
         return QuestionResponseDTO.PopularQuestionListResultDTO.builder()
                 .startDate(startDate)

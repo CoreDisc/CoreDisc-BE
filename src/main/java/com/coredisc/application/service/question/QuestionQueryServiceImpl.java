@@ -324,11 +324,14 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 인기 질문 목록 조회
     @Override
-    public QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList() {
+    public QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList(Member member) {
 
         LocalDate lastWeek = LocalDate.now().minusWeeks(1);
         LocalDate startOfWeek = lastWeek.with(DayOfWeek.MONDAY);
         LocalDate endOfWeek = lastWeek.with(DayOfWeek.SUNDAY);
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
 
         List<Tuple> popularQuestionTuple = officialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
 
@@ -340,7 +343,46 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             }
         }
 
-        return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionTuple, startOfWeek, endOfWeek);
+        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            todayQuestion.ifPresent(myTodayQuestionList::add);
+        }
+
+        List<QuestionResponseDTO.PopularQuestionResultDTO> popularQuestionList = popularQuestionTuple.stream()
+                .map(tuple -> {
+                    OfficialQuestion question = tuple.get(0, OfficialQuestion.class);
+                    String username = tuple.get(1, String.class);
+                    Long sharedCount = tuple.get(3, Long.class);
+
+                    boolean isSelected = myTodayQuestionList.stream()
+                            .anyMatch(q -> q.getOfficialQuestion() != null
+                                    && q.getOfficialQuestion().getId().equals(question.getId()));
+
+                    boolean isFavorite = false;
+                    Boolean officialFavorite =
+                            officialQuestionRepository.findIsFavoriteByIdAndMember(question.getId(), member);
+                    if (Boolean.TRUE.equals(officialFavorite)) {
+                        isFavorite = true;
+                    } else {
+                        isFavorite = memberOfficialQuestionRepository
+                                .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(
+                                        member.getId(), question.getId());
+                    }
+
+                    return QuestionConverter.toPopularQuestionResultDTO(
+                            question, username, sharedCount, isSelected, isFavorite);
+                })
+                .toList();
+
+        return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionList, startOfWeek, endOfWeek);
     }
 
 }

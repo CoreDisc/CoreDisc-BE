@@ -192,6 +192,10 @@ public class QuestionResponseDTO {
 
         private String question;
 
+        private Boolean isSelected;
+
+        private Boolean isFavorite;
+
         private Long sharedCount;
     }
 
