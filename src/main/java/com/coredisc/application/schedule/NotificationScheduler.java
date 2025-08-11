@@ -59,7 +59,7 @@ public class NotificationScheduler {
             notificationCommandService.createNotification(
                     new NotificationRequestDTO(
                             NotificationType.TEMP_POSTS, // 알림 타입(임시저장 게시글)
-                            receiver, // 작성자의 프로필 이미지를 사용할 것이기에 알림 sender를 작성자로 함
+                            null,
                             receiver, // receiver
                             "작성 중인 Core Disc 가 곧 사라져요.",
                             null // 게시글 작성 화면으로 이동해야 하기에 null로 작성 (targetId 없음)
