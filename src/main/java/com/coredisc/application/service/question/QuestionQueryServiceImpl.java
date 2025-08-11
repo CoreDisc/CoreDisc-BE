@@ -104,15 +104,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         isFavorite = false;
                     }
 
-                    // TODO: converter 분리
-                    return QuestionResponseDTO.BasicQuestionResultDTO.builder()
-                            .id(basicQuestionResultDTO.getId())
-                            .questionType(basicQuestionResultDTO.getQuestionType())
-                            .question(basicQuestionResultDTO.getQuestion())
-                            .isSelected(isSelected)
-                            .isFavorite(isFavorite)
-                            .createdAt(basicQuestionResultDTO.getCreatedAt())
-                            .build();
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite);
                 })
                 .toList();
 
@@ -186,15 +178,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         isFavorite = false;
                     }
 
-                    // TODO: converter 분리
-                    return QuestionResponseDTO.BasicQuestionResultDTO.builder()
-                            .id(basicQuestionResultDTO.getId())
-                            .questionType(basicQuestionResultDTO.getQuestionType())
-                            .question(basicQuestionResultDTO.getQuestion())
-                            .isSelected(isSelected)
-                            .isFavorite(isFavorite)
-                            .createdAt(basicQuestionResultDTO.getCreatedAt())
-                            .build();
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite);
                 })
                 .toList();
 
