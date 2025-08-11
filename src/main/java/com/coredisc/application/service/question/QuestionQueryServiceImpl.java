@@ -37,6 +37,8 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     private final MemberOfficialQuestionRepository memberOfficialQuestionRepository;
     private final CategoryRepository categoryRepository;
 
+
+
     // 기본 질문 리스트 조회 (카테고리별)
     @Override
     public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionList(
@@ -58,19 +60,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 customQuestionRepository.findBasicQuestionListByCategories(
                         member.getId(), categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
 
-        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
-
-        for (int order = 1; order <= 4; order++) {
-            Optional<TodayQuestion> todayQuestion;
-
-            if (order == 4) {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
-            } else {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
-            }
-
-            todayQuestion.ifPresent(myTodayQuestionList::add);
-        }
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
 
         List<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList = cursorDTO.getValues().stream()
                 .map(basicQuestionResultDTO -> {
@@ -132,19 +122,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> cursorDTO =
                 customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
 
-        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
-
-        for (int order = 1; order <= 4; order++) {
-            Optional<TodayQuestion> todayQuestion;
-
-            if (order == 4) {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
-            } else {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
-            }
-
-            todayQuestion.ifPresent(myTodayQuestionList::add);
-        }
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
 
         List<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList = cursorDTO.getValues().stream()
                 .map(basicQuestionResultDTO -> {
@@ -228,18 +206,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
         }
 
-        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
-        for (int order = 1; order <= 4; order++) {
-            Optional<TodayQuestion> todayQuestion;
-
-            if (order == 4) {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
-            } else {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
-            }
-
-            todayQuestion.ifPresent(myTodayQuestionList::add);
-        }
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
 
         List<OfficialQuestion> mySharedQuestionsList;
 
@@ -321,18 +288,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
         }
 
-        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
-        for (int order = 1; order <= 4; order++) {
-            Optional<TodayQuestion> todayQuestion;
-
-            if (order == 4) {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
-            } else {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
-            }
-
-            todayQuestion.ifPresent(myTodayQuestionList::add);
-        }
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
 
         List<MemberOfficialQuestion> mySavedSharedQuestionList;
 
@@ -386,18 +342,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             }
         }
 
-        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
-        for (int order = 1; order <= 4; order++) {
-            Optional<TodayQuestion> todayQuestion;
-
-            if (order == 4) {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
-            } else {
-                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
-            }
-
-            todayQuestion.ifPresent(myTodayQuestionList::add);
-        }
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
 
         List<QuestionResponseDTO.PopularQuestionResultDTO> popularQuestionList = popularQuestionTuple.stream()
                 .map(tuple -> {
@@ -426,6 +371,26 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 .toList();
 
         return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionList, startOfWeek, endOfWeek);
+    }
+
+
+    // 메소드 - 선택된 고정 & 랜덤 질문 목록 조회
+    private List<TodayQuestion> getMyTodayQuestionList(Member member, LocalDate today, LocalDate startOfMonth, LocalDate endOfMonth) {
+        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
+
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            todayQuestion.ifPresent(myTodayQuestionList::add);
+        }
+
+        return myTodayQuestionList;
     }
 
 }
