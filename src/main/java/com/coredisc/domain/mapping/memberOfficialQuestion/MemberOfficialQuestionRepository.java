@@ -25,4 +25,6 @@ public interface MemberOfficialQuestionRepository {
 
     List<MemberOfficialQuestion> findByMemberAndCategoryAndCursor(Member member, Category category, Long cursorId, int pageSize);
 
+    boolean existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(Long memberId, Long officialQuestionId);
+
 }

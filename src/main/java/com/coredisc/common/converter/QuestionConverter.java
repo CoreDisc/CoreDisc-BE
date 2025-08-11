@@ -237,4 +237,15 @@ public class QuestionConverter {
                 .createdAt(officialQuestion.getCreatedAt())
                 .build();
     }
+
+    public static QuestionResponseDTO.BasicQuestionResultDTO toBasicQuestionResultDTO(QuestionResponseDTO.BasicQuestionResultDTO basicQuestion, boolean isSelected, boolean isFavorite) {
+        return QuestionResponseDTO.BasicQuestionResultDTO.builder()
+                .id(basicQuestion.getId())
+                .questionType(basicQuestion.getQuestionType())
+                .question(basicQuestion.getQuestion())
+                .isSelected(isSelected)
+                .isFavorite(isFavorite)
+                .createdAt(basicQuestion.getCreatedAt())
+                .build();
+    }
 }
