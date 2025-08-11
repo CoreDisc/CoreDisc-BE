@@ -27,5 +27,5 @@ public interface OfficialQuestionRepository {
 
     List<Tuple> findTop5PopularQuestionsThisWeek(LocalDate startOfWeek, LocalDate endOfWeek);
 
-    Boolean findIsFavoriteById(Long id);
+    Boolean findIsFavoriteByIdAndMember(Long id, Member member);
 }

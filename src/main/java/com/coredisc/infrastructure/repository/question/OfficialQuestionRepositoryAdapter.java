@@ -56,8 +56,8 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     }
 
     @Override
-    public Boolean findIsFavoriteById(Long id) {
-        return jpaOfficialQuestionRepository.findIsFavoriteById(id);
+    public Boolean findIsFavoriteByIdAndMember(Long id, Member member) {
+        return jpaOfficialQuestionRepository.findIsFavoriteByIdAndMember(id, member);
     }
 
 }

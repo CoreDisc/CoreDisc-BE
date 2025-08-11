@@ -93,7 +93,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                     // 즐겨찾기 여부
                     boolean isFavorite = false;
                     if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
-                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteById(basicQuestionResultDTO.getId());
+                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteByIdAndMember(basicQuestionResultDTO.getId(), member);
                         if (Boolean.TRUE.equals(officialFavorite)) {
                             isFavorite = true;
                         } else {
@@ -175,7 +175,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                     // 즐겨찾기 여부
                     boolean isFavorite = false;
                     if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
-                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteById(basicQuestionResultDTO.getId());
+                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteByIdAndMember(basicQuestionResultDTO.getId(), member);
                         if (Boolean.TRUE.equals(officialFavorite)) {
                             isFavorite = true;
                         } else {
