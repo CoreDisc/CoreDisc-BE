@@ -49,10 +49,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             Long cursorId,
             int pageSize) {
 
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
@@ -60,7 +56,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 customQuestionRepository.findBasicQuestionListByCategories(
                         member.getId(), categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
 
-        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList = cursorDTO.getValues().stream()
                 .map(basicQuestionResultDTO -> {
@@ -112,17 +108,13 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             Long cursorId,
             int pageSize){
 
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
         CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> cursorDTO =
                 customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
 
-        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList = cursorDTO.getValues().stream()
                 .map(basicQuestionResultDTO -> {
@@ -198,15 +190,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     @Override
     public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Boolean favorite, Long cursorId, int pageSize){
 
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-
         if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
             throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
         }
 
-        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<OfficialQuestion> mySharedQuestionsList;
 
@@ -280,15 +268,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             Long cursorId,
             int pageSize) {
 
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-
         if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
             throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
         }
 
-        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<MemberOfficialQuestion> mySavedSharedQuestionList;
 
@@ -328,9 +312,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         LocalDate lastWeek = LocalDate.now().minusWeeks(1);
         LocalDate startOfWeek = lastWeek.with(DayOfWeek.MONDAY);
         LocalDate endOfWeek = lastWeek.with(DayOfWeek.SUNDAY);
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
 
         List<Tuple> popularQuestionTuple = officialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
 
@@ -342,7 +323,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             }
         }
 
-        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member, today, startOfMonth, endOfMonth);
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<QuestionResponseDTO.PopularQuestionResultDTO> popularQuestionList = popularQuestionTuple.stream()
                 .map(tuple -> {
@@ -375,7 +356,12 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
 
     // 메소드 - 선택된 고정 & 랜덤 질문 목록 조회
-    private List<TodayQuestion> getMyTodayQuestionList(Member member, LocalDate today, LocalDate startOfMonth, LocalDate endOfMonth) {
+    private List<TodayQuestion> getMyTodayQuestionList(Member member) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
         List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
 
         for (int order = 1; order <= 4; order++) {
