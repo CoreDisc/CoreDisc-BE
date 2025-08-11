@@ -313,8 +313,25 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             Long cursorId,
             int pageSize) {
 
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
         if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
             throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
+        }
+
+        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            todayQuestion.ifPresent(myTodayQuestionList::add);
         }
 
         List<MemberOfficialQuestion> mySavedSharedQuestionList;
@@ -338,7 +355,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         List<QuestionResponseDTO.SavedSharedQuestionResultDTO> mySavedSharedQuestionDTOList = mySavedSharedQuestionList.stream()
                 .map(question -> {
                     long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question.getOfficialQuestion());
-                    return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount);
+                    // isSelected 체크
+                    boolean isSelected = myTodayQuestionList.stream()
+                            .anyMatch(todayQuestion -> todayQuestion.getOfficialQuestion() != null
+                                    && todayQuestion.getOfficialQuestion().getId().equals(question.getId()));
+                    return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount, isSelected);
                 }).toList();
 
         return new CursorDTO<>(mySavedSharedQuestionDTOList, hasNext);
