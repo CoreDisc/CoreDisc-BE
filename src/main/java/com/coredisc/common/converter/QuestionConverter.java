@@ -67,7 +67,7 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.MySharedQuestionResultDTO toMySharedQuestionResultDTO(OfficialQuestion question, long sharedCount) {
+    public static QuestionResponseDTO.MySharedQuestionResultDTO toMySharedQuestionResultDTO(OfficialQuestion question, long sharedCount, Boolean isSelected) {
         List<CategoryResponseDTO.CategoryInfoDTO> categories = question.getQuestionCategoryList().stream()
                 .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
                         .categoryId(qc.getCategory().getId())
@@ -80,6 +80,7 @@ public class QuestionConverter {
                 .categories(categories)
                 .question(question.getContents())
                 .sharedCount(sharedCount)
+                .isSelected(isSelected)
                 .isFavorite(question.getIsFavorite())
                 .createdAt(question.getCreatedAt())
                 .build();

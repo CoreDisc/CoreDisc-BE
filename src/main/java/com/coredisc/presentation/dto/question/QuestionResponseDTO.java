@@ -95,6 +95,8 @@ public class QuestionResponseDTO {
 
         private Long sharedCount;
 
+        private Boolean isSelected;
+
         private Boolean isFavorite;
 
         private LocalDateTime createdAt;
