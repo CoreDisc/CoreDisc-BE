@@ -1,15 +1,12 @@
 package com.coredisc.infrastructure.repository.question;
 
 import com.coredisc.domain.category.Category;
-import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
 import com.coredisc.infrastructure.repository.question.querydsl.QueryOfficialQuestionRepository;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -57,4 +54,10 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     public List<Tuple> findTop5PopularQuestionsThisWeek(LocalDate startOfWeek, LocalDate endOfWeek) {
         return queryOfficialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
     }
+
+    @Override
+    public Boolean findIsFavoriteById(Long id) {
+        return jpaOfficialQuestionRepository.findIsFavoriteById(id);
+    }
+
 }
