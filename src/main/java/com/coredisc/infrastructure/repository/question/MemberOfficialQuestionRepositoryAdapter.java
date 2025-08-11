@@ -59,5 +59,9 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
         return queryMemberOfficialQuestionRepository.findByMemberAndCategoryAndCursor(member, category, cursorId, pageSize);
     }
 
+    @Override
+    public boolean existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(Long memberId, Long officialQuestionId) {
+        return jpaMemberOfficialQuestionRepository.existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(memberId, officialQuestionId);
+    }
 
 }
