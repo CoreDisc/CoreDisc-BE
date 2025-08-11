@@ -13,4 +13,5 @@ public interface JpaOfficialQuestionRepository extends JpaRepository<OfficialQue
      @Query("SELECT o.isFavorite FROM OfficialQuestion o WHERE o.id = :id AND o.member = :member")
      Boolean findIsFavoriteByIdAndMember(@Param("id") Long id, @Param("member") Member member);
 
+     Boolean existsByIdAndMember(Long id, Member member);
 }

@@ -90,7 +90,26 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         isFavorite = false;
                     }
 
-                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite);
+                    // 타사용자 공유 질문 저장 여부
+                    String savedStatus = "NOT_SAVED";
+
+                    if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
+                        savedStatus = "MINE";
+                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
+                        boolean isMine = officialQuestionRepository.existsByIdAndMember(basicQuestionResultDTO.getId(), member);
+
+                        if (isMine) {
+                            savedStatus = "MINE";
+                        } else {
+                            boolean isSaved = memberOfficialQuestionRepository
+                                    .existsByMemberIdAndOfficialQuestionId(member.getId(), basicQuestionResultDTO.getId());
+                            if (isSaved) {
+                                savedStatus = "SAVED";
+                            }
+                        }
+                    }
+                    
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite, savedStatus);
                 })
                 .toList();
 
@@ -148,7 +167,26 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         isFavorite = false;
                     }
 
-                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite);
+                    // 타사용자 공유 질문 저장 여부
+                    String savedStatus = "NOT_SAVED";
+
+                    if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
+                        savedStatus = "MINE";
+                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
+                        boolean isMine = officialQuestionRepository.existsByIdAndMember(basicQuestionResultDTO.getId(), member);
+
+                        if (isMine) {
+                            savedStatus = "MINE";
+                        } else {
+                            boolean isSaved = memberOfficialQuestionRepository
+                                    .existsByMemberIdAndOfficialQuestionId(member.getId(), basicQuestionResultDTO.getId());
+                            if (isSaved) {
+                                savedStatus = "SAVED";
+                            }
+                        }
+                    }
+
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite, savedStatus);
                 })
                 .toList();
 

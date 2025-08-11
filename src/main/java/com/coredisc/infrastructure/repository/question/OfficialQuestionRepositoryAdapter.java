@@ -60,4 +60,9 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
         return jpaOfficialQuestionRepository.findIsFavoriteByIdAndMember(id, member);
     }
 
+    @Override
+    public Boolean existsByIdAndMember(Long id, Member member) {
+        return jpaOfficialQuestionRepository.existsByIdAndMember(id, member);
+    }
+
 }

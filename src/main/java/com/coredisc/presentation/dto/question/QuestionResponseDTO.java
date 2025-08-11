@@ -52,6 +52,8 @@ public class QuestionResponseDTO {
 
         private Boolean isFavorite;
 
+        private String savedStatus;
+
         private LocalDateTime createdAt;
     }
 

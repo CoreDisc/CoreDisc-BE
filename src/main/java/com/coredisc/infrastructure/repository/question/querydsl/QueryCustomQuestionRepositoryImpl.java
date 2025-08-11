@@ -80,6 +80,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                         (String) row[2],                          // question
                         false,                                    // isSelected
                         false,                                    // isFavorite
+                        "",                                        // savedStatus
                         ((Timestamp) row[3]).toLocalDateTime()   // createdAt
                 ))
                 .toList();
@@ -155,6 +156,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                         (String) row[2],                        // question
                         false,                                    // isSelected
                         false,                                    // isFavorite
+                        "",                                        // savedStatus
                         ((Timestamp) row[3]).toLocalDateTime()  // createdAt
                 ))
                 .toList();

@@ -236,13 +236,14 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.BasicQuestionResultDTO toBasicQuestionResultDTO(QuestionResponseDTO.BasicQuestionResultDTO basicQuestion, boolean isSelected, boolean isFavorite) {
+    public static QuestionResponseDTO.BasicQuestionResultDTO toBasicQuestionResultDTO(QuestionResponseDTO.BasicQuestionResultDTO basicQuestion, boolean isSelected, boolean isFavorite, String savedStatus) {
         return QuestionResponseDTO.BasicQuestionResultDTO.builder()
                 .id(basicQuestion.getId())
                 .questionType(basicQuestion.getQuestionType())
                 .question(basicQuestion.getQuestion())
                 .isSelected(isSelected)
                 .isFavorite(isFavorite)
+                .savedStatus(savedStatus)
                 .createdAt(basicQuestion.getCreatedAt())
                 .build();
     }
