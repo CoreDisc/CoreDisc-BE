@@ -149,7 +149,10 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMENT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "COMMENT4003", "댓글에 대한 권한이 없습니다."),
     COMMENT_DEPTH_EXCEEDED(HttpStatus.BAD_REQUEST, "COMMENT4000", "대댓글의 대댓글은 작성할 수 없습니다."),
     COMMENT_TOO_LONG(HttpStatus.BAD_REQUEST, "COMMENT4001", "댓글은 최대 500자까지 작성할 수 있습니다."),
-    COMMENT_CONTENT_EMPTY(HttpStatus.BAD_REQUEST, "COMMENT4002", "댓글 내용을 입력해주세요.");
+    COMMENT_CONTENT_EMPTY(HttpStatus.BAD_REQUEST, "COMMENT4002", "댓글 내용을 입력해주세요."),
+
+    // 리마인더 알림 설정 관련 에러
+    INVALID_REMINDER_TIME_ORDER(HttpStatus.BAD_REQUEST, "NOTIFICATIONREMINDERSETTING4001", "Unanswered 리마인더 시간은 데일리 리마인더 시간보다 늦어야 합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

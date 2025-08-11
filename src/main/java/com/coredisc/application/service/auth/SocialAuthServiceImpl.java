@@ -1,5 +1,6 @@
 package com.coredisc.application.service.auth;
 
+import com.coredisc.application.service.notificationReminderSetting.NotificationReminderSettingCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.converter.ProfileImgConverter;
@@ -43,6 +44,7 @@ public class SocialAuthServiceImpl implements SocialAuthService {
     private final RestTemplate restTemplate;
     private final JwtProvider jwtProvider;
     private final Gson gson;
+    private final NotificationReminderSettingCommandService notificationReminderSettingCommandService;
 
     @Override
     public AuthResponseDTO.LoginResultDTO login(String provider, AuthRequestDTO.SocialLoginDTO request) {
@@ -186,10 +188,15 @@ public class SocialAuthServiceImpl implements SocialAuthService {
             String password = passwordEncoder.encode("OAUTH_USER_" + UUID.randomUUID());
 
             member = createMember(provider, userInfo, randomNickname, randomUsername, password);
-            memberRepository.save(member);
 
             ProfileImg profileImg = ProfileImgConverter.toProfileImg(member, defaultImg);
             member.setProfileImg(profileImg);
+
+            memberRepository.save(member);
+
+            // 회원가입 시 리마인더 알림 설정 생성
+            notificationReminderSettingCommandService.defaultNotificationReminderSetting(member);
+
         } else {
             member = memberOptional.get();
         }

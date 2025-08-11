@@ -1,8 +1,10 @@
 package com.coredisc.domain.postAnswer;
 
+import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +19,11 @@ public interface PostAnswerRepository {
 
     // 특정 게시글의 모든 답변 조회 (questionOrder 순서대로)
     List<PostAnswer> findByPostOrderByQuestionOrder(Post post);
+
+    boolean existsByPostMemberAndAnswerOrderAndPostCreatedAtBetween(
+            Member member,
+            int answerOrder,
+            LocalDateTime startOfDay,
+            LocalDateTime endOfDay
+    );
 }

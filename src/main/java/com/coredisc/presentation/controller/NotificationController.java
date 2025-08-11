@@ -2,11 +2,15 @@ package com.coredisc.presentation.controller;
 
 import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.application.service.notification.NotificationQueryService;
+import com.coredisc.application.service.notificationReminderSetting.NotificationReminderSettingCommandService;
+import com.coredisc.application.service.notificationReminderSetting.NotificationReminderSettingQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.NotificationControllerDocs;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.presentation.dto.notification.NotificationResponseDTO;
+import com.coredisc.presentation.dto.notificationReminderSetting.NotificationReminderSettingRequestDTO;
+import com.coredisc.presentation.dto.notificationReminderSetting.NotificationReminderSettingResponseDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +23,8 @@ public class NotificationController implements NotificationControllerDocs {
 
     private final NotificationQueryService notificationQueryService;
     private final NotificationCommandService notificationCommandService;
+    private final NotificationReminderSettingQueryService notificationReminderSettingQueryService;
+    private final NotificationReminderSettingCommandService notificationReminderSettingCommandService;
 
     @GetMapping("/api/notifications/unread")
     public ApiResponse<Boolean> isUnreadNotifications(@CurrentMember Member member) {
@@ -50,4 +56,20 @@ public class NotificationController implements NotificationControllerDocs {
         Pageable pageable = PageRequest.of(0, size);
         return ApiResponse.onSuccess(notificationQueryService.getNotifications(member, cursorId, pageable));
     }
+
+    @GetMapping("/api/notification-settings/reminder")
+    public ApiResponse<NotificationReminderSettingResponseDTO> getNotificationReminderSettings(Member member) {
+
+        return ApiResponse.onSuccess(notificationReminderSettingQueryService.getNotificationReminderSetting(member));
+    }
+
+    @PatchMapping("/api/notification-settings/reminder")
+    public ApiResponse<NotificationReminderSettingResponseDTO> updateNotificationReminderSettings(
+            @CurrentMember Member member,
+            @RequestBody NotificationReminderSettingRequestDTO.NotificationReminderSettingUpdateDTO request
+    ) {
+
+        return ApiResponse.onSuccess(notificationReminderSettingCommandService.updateNotificationReminderSetting(member, request));
+    }
+
 }

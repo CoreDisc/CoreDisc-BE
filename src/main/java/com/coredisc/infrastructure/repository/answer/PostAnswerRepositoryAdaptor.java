@@ -1,5 +1,6 @@
 package com.coredisc.infrastructure.repository.answer;
 
+import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
@@ -55,6 +56,11 @@ public class PostAnswerRepositoryAdaptor implements PostAnswerRepository {
     @Override
     public List<PostAnswer> findByPostOrderByQuestionOrder(Post post) {
         return List.of();
+    }
+
+    @Override
+    public boolean existsByPostMemberAndAnswerOrderAndPostCreatedAtBetween(Member member, int order, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return jpaPostAnswerRepository.existsByPostMemberAndAnswerOrderAndPostCreatedAtBetween(member, order, startOfDay, endOfDay);
     }
 
 }
