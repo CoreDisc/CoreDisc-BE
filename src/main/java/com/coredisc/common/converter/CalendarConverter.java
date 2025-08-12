@@ -39,7 +39,7 @@ public class CalendarConverter {
         return days;
     }
 
-    public static CalendarResponseDTO.CalendarDTO toCalendarDTO(int year, int month, List<CalendarResponseDTO.DayResultDTO> days, int totalDays, int continuesDays, LocalDate signupDate) {
+    public static CalendarResponseDTO.CalendarDTO toCalendarDTO(int year, int month, List<CalendarResponseDTO.DayResultDTO> days, int totalDays, LocalDate signupDate) {
         YearMonth target = YearMonth.of(year, month);
         boolean hasPrevMonth = target.isAfter(YearMonth.from(signupDate));
         boolean hasNextMonth = target.isBefore(YearMonth.now());
@@ -52,7 +52,6 @@ public class CalendarConverter {
                 .startDay(startDay)
                 .days(days)
                 .totalDays(totalDays)
-                .continuesDays(continuesDays)
                 .hasPrevMonth(hasPrevMonth)
                 .hasNextMonth(hasNextMonth)
                 .build();
