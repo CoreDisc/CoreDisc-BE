@@ -29,8 +29,4 @@ public class MemberOfficialQuestion extends BaseEntity {
     @JoinColumn(name = "official_question_id")
     private OfficialQuestion officialQuestion;
 
-    public void updateFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
-    }
-
 }

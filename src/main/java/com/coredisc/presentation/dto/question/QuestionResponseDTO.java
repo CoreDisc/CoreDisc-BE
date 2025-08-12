@@ -197,15 +197,4 @@ public class QuestionResponseDTO {
         private Long sharedCount;
     }
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class UpdateSavedSharedQuestionFavoriteStatusResultDTO {
-
-        private Long id;
-
-        private LocalDateTime createdAt;
-    }
-
 }

@@ -34,8 +34,4 @@ public interface QuestionCommandService {
 
     // 저장헀던 공유 질문을 삭제
     void deleteMemberOfficialQuestion(Member member, Long questionId);
-
-    // 타사용자 공유질문 즐겨찾기 추가
-    QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO updateSavedSharedQuestionFavoriteStatus(Member member, Long questionId, Boolean isFavorite);
-
 }
