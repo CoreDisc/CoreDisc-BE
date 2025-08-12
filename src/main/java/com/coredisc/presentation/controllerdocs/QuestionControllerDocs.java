@@ -137,12 +137,4 @@ public interface QuestionControllerDocs {
             @Parameter(name = "isFavorite", description = "즐겨찾기 추가/삭제 (true: 추가, false: 삭제)"),
     })
     ApiResponse<QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO> updateSavedSharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite);
-
-
-    @Operation(summary = "내가 공유 질문 즐겨찾기 추가/삭제", description = "내가 작성한 공유 질문을 즐겨찾기에 추가/삭제하는 기능입니다.")
-    @Parameters({
-            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
-            @Parameter(name = "isFavorite", description = "즐겨찾기 추가/삭제 (true: 추가, false: 삭제)"),
-    })
-    ApiResponse<QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO> updateMySharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite);
 }

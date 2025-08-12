@@ -38,7 +38,4 @@ public interface QuestionCommandService {
     // 타사용자 공유질문 즐겨찾기 추가
     QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO updateSavedSharedQuestionFavoriteStatus(Member member, Long questionId, Boolean isFavorite);
 
-    // 내 공유 질문 즐겨찾기 추가
-    QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO updateMySharedQuestionFavoriteStatus(Member member, Long questionId, Boolean isFavorite);
-
 }

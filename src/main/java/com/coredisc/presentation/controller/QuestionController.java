@@ -192,12 +192,4 @@ public class QuestionController implements QuestionControllerDocs {
 
         return ApiResponse.onSuccess( questionCommandService.updateSavedSharedQuestionFavoriteStatus(member, questionId, isFavorite) );
     }
-
-    // 내 공유 질문 즐겨찾기 추가
-    @PatchMapping("/official/mine/{questionId}/favorite")
-    public ApiResponse<QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO> updateMySharedQuestionFavoriteStatus(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @RequestParam(name = "isFavorite") Boolean isFavorite) {
-
-        return ApiResponse.onSuccess( questionCommandService.updateMySharedQuestionFavoriteStatus(member, questionId, isFavorite) );
-    }
-
 }

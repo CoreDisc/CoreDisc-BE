@@ -225,14 +225,6 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO toUpdateMySharedQuestionFavoriteStatusResultDTO(OfficialQuestion officialQuestion) {
-
-        return QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO.builder()
-                .id(officialQuestion.getId())
-                .createdAt(officialQuestion.getCreatedAt())
-                .build();
-    }
-
     public static QuestionResponseDTO.BasicQuestionResultDTO toBasicQuestionResultDTO(QuestionResponseDTO.BasicQuestionResultDTO basicQuestion, boolean isSelected, String savedStatus) {
         return QuestionResponseDTO.BasicQuestionResultDTO.builder()
                 .id(basicQuestion.getId())
