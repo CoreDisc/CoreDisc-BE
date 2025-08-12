@@ -198,20 +198,13 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 내가 발행한 공유 질문 리스트 조회 (카테고리 필터링 포함)
     @Override
-    public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Boolean favorite, Long cursorId, int pageSize){
-
-        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
-            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
-        }
+    public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Long cursorId, int pageSize){
 
         List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<OfficialQuestion> mySharedQuestionsList;
 
-        if (Boolean.TRUE.equals(favorite)) {    // 즐겨찾기
-            mySharedQuestionsList = officialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
-        }
-        else if (categoryId == null || categoryId == 0) {    // 전체 조회
+        if (categoryId == null || categoryId == 0) {    // 전체 조회
             mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별 조회
             Category category = categoryRepository.findById(categoryId)

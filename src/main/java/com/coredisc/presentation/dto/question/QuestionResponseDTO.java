@@ -97,8 +97,6 @@ public class QuestionResponseDTO {
 
         private Boolean isSelected;
 
-        private Boolean isFavorite;
-
         private LocalDateTime createdAt;
     }
 
