@@ -119,14 +119,12 @@ public interface QuestionControllerDocs {
     @Operation(summary = "내가 저장한 공유질문 리스트 조회", description = "사용자가 저장한 타사용자의 공유질문 리스트를 조회하는 기능입니다.")
     @Parameters({
             @Parameter(name = "categoryId", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),
-            @Parameter(name = "favorite", description = "즐겨찾기 필터링"),
             @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null"),
             @Parameter(name = "size", description = "한 페이지당 조회할 질문 수, 기본값 10"),
     })
     ApiResponse<CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO>> getSavedSharedQuestionList(
             @CurrentMember Member member,
             @RequestParam(name = "categoryId", required = false) Long categoryId,
-            @RequestParam(name = "favorite", required = false) Boolean favorite,
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", required = false) Integer size);
 

@@ -267,21 +267,14 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     public CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO> getSavedSharedQuestionList(
             Member member,
             Long categoryId,
-            Boolean favorite,
             Long cursorId,
             int pageSize) {
-
-        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
-            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
-        }
 
         List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<MemberOfficialQuestion> mySavedSharedQuestionList;
 
-        if (Boolean.TRUE.equals(favorite) ) {
-            mySavedSharedQuestionList = memberOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
-        } else if (categoryId == null || categoryId == 0) { // 전체
+        if (categoryId == null || categoryId == 0) { // 전체
             mySavedSharedQuestionList = memberOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별
             Category category = categoryRepository.findById(categoryId)

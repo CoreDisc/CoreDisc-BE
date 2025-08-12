@@ -193,7 +193,6 @@ public class QuestionConverter {
                 .categories(categories)
                 .sharedCount(sharedCount)
                 .isSelected(isSelected)
-                .isFavorite(memberOfficialQuestion.getIsFavorite())
                 .createdAt(officialQuestion.getCreatedAt())
                 .build();
     }

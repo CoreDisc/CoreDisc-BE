@@ -45,7 +45,6 @@ public interface QuestionQueryService {
     CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO> getSavedSharedQuestionList(
             Member member,
             Long categoryId,
-            Boolean favorite,
             Long cursorId,
             int pageSize);
 

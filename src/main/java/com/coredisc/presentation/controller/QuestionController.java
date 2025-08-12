@@ -170,14 +170,13 @@ public class QuestionController implements QuestionControllerDocs {
     public ApiResponse<CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO>> getSavedSharedQuestionList(
             @CurrentMember Member member,
             @RequestParam(name = "categoryId", required = false) Long categoryId,
-            @RequestParam(name = "favorite", required = false) Boolean favorite,
             @RequestParam(name = "cursorId", required = false) Long cursorId,
             @RequestParam(name = "size", required = false) Integer size) {
 
         if (size == null)
             size = DEFAULT_PAGE_SIZE;
 
-        return ApiResponse.onSuccess( questionQueryService.getSavedSharedQuestionList(member, categoryId, favorite, cursorId, size) );
+        return ApiResponse.onSuccess( questionQueryService.getSavedSharedQuestionList(member, categoryId, cursorId, size) );
     }
 
     // 인기 질문 목록 조회
