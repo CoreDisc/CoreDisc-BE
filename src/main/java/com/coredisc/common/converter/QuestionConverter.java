@@ -199,14 +199,13 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.PopularQuestionResultDTO toPopularQuestionResultDTO(OfficialQuestion question, String username, Long sharedCount, boolean isSelected, boolean isFavorite) {
+    public static QuestionResponseDTO.PopularQuestionResultDTO toPopularQuestionResultDTO(OfficialQuestion question, String username, Long sharedCount, boolean isSelected) {
 
         return QuestionResponseDTO.PopularQuestionResultDTO.builder()
                 .id(question.getId())
                 .username(username)
                 .question(question.getContents())
                 .isSelected(isSelected)
-                .isFavorite(isFavorite)
                 .sharedCount(sharedCount)
                 .build();
     }

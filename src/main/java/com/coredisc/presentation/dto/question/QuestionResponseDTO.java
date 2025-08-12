@@ -198,8 +198,6 @@ public class QuestionResponseDTO {
 
         private Boolean isSelected;
 
-        private Boolean isFavorite;
-
         private Long sharedCount;
     }
 

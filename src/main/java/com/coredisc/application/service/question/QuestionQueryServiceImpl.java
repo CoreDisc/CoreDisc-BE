@@ -345,19 +345,8 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                             .anyMatch(q -> q.getOfficialQuestion() != null
                                     && q.getOfficialQuestion().getId().equals(question.getId()));
 
-                    boolean isFavorite = false;
-                    Boolean officialFavorite =
-                            officialQuestionRepository.findIsFavoriteByIdAndMember(question.getId(), member);
-                    if (Boolean.TRUE.equals(officialFavorite)) {
-                        isFavorite = true;
-                    } else {
-                        isFavorite = memberOfficialQuestionRepository
-                                .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(
-                                        member.getId(), question.getId());
-                    }
-
                     return QuestionConverter.toPopularQuestionResultDTO(
-                            question, username, sharedCount, isSelected, isFavorite);
+                            question, username, sharedCount, isSelected);
                 })
                 .toList();
 
