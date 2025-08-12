@@ -43,9 +43,9 @@ public class CalendarQueryServiceImpl implements CalendarQueryService {
     public Integer getContinuousDays(Member member) {
         LocalDate today = LocalDate.now();
         int continuousDays = 0;
-        int batchSize = 100; // 100일 단위로 처리
+        int batchSize = 100; // 100일 단위로 점진적 조회
         
-        // 첫 번째 배치: 오늘부터 100일 전까지
+        // 첫 번째 조회: 오늘부터 100일 전까지
         LocalDate startDate = today.minusDays(batchSize - 1);
         List<Post> posts = postRepository.findAllByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(
             member, 
@@ -53,7 +53,7 @@ public class CalendarQueryServiceImpl implements CalendarQueryService {
             today.atTime(23, 59, 59)
         );
         
-        // 첫 번째 배치에서 연속일수 계산
+        // 첫 번째 조회에서 연속일수 계산
         Set<LocalDate> recordedDates = posts.stream()
             .filter(post -> post.getStatus() == com.coredisc.domain.common.enums.PostStatus.PUBLISHED)
             .map(post -> post.getCreatedAt().toLocalDate())
@@ -66,7 +66,7 @@ public class CalendarQueryServiceImpl implements CalendarQueryService {
             currentDate = currentDate.minusDays(1);
         }
         
-        // 만약 100일을 모두 연속으로 기록했다면, 추가 배치 조회
+        // 만약 100일을 모두 연속으로 기록했다면, 추가 조회
         if (continuousDays == batchSize) {
             // 100일 전부터 200일 전까지 추가 조회
             LocalDate nextStartDate = startDate.minusDays(batchSize);
