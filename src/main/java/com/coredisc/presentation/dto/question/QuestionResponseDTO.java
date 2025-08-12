@@ -52,6 +52,8 @@ public class QuestionResponseDTO {
 
         private Boolean isFavorite;
 
+        private String savedStatus;
+
         private LocalDateTime createdAt;
     }
 
@@ -94,6 +96,8 @@ public class QuestionResponseDTO {
         private String question;
 
         private Long sharedCount;
+
+        private Boolean isSelected;
 
         private Boolean isFavorite;
 
@@ -162,6 +166,8 @@ public class QuestionResponseDTO {
 
         private Long sharedCount;
 
+        private Boolean isSelected;
+
         private Boolean isFavorite;
 
         private LocalDateTime createdAt;
@@ -191,6 +197,10 @@ public class QuestionResponseDTO {
         private String username;
 
         private String question;
+
+        private Boolean isSelected;
+
+        private Boolean isFavorite;
 
         private Long sharedCount;
     }

@@ -17,4 +17,5 @@ public interface JpaMemberOfficialQuestionRepository extends JpaRepository<Membe
 
     boolean existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(Long memberId, Long officialQuestionId);
 
+    boolean existsByMemberIdAndOfficialQuestionId(Long memberId, Long officialQuestionId);
 }

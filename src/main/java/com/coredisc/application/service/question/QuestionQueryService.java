@@ -50,5 +50,5 @@ public interface QuestionQueryService {
             int pageSize);
 
     // 인기 질문 목록 조회
-    QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList();
+    QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList(Member member);
 }

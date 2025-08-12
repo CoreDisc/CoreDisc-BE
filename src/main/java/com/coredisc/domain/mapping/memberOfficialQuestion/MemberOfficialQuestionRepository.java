@@ -27,4 +27,6 @@ public interface MemberOfficialQuestionRepository {
 
     boolean existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(Long memberId, Long officialQuestionId);
 
+    boolean existsByMemberIdAndOfficialQuestionId(Long memberId, Long officialQuestionId);
+
 }

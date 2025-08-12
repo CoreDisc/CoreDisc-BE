@@ -185,7 +185,7 @@ public class QuestionController implements QuestionControllerDocs {
     @GetMapping("/popular")
     public ApiResponse<QuestionResponseDTO.PopularQuestionListResultDTO> getPopularQuestionList(@CurrentMember Member member) {
 
-        return ApiResponse.onSuccess( questionQueryService.getPopularQuestionList() );
+        return ApiResponse.onSuccess( questionQueryService.getPopularQuestionList(member) );
     }
 
     // 타 사용자 공유질문 즐겨찾기 추가
