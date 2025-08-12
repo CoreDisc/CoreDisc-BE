@@ -76,20 +76,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                                             )
                             );
 
-                    // 즐겨찾기 여부
-                    boolean isFavorite = false;
-                    if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
-                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteByIdAndMember(basicQuestionResultDTO.getId(), member);
-                        if (Boolean.TRUE.equals(officialFavorite)) {
-                            isFavorite = true;
-                        } else {
-                            isFavorite = memberOfficialQuestionRepository
-                                    .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(member.getId(), basicQuestionResultDTO.getId());
-                        }
-                    } else if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
-                        isFavorite = false;
-                    }
-
                     // 타사용자 공유 질문 저장 여부
                     String savedStatus = "NOT_SAVED";
 
@@ -109,7 +95,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         }
                     }
                     
-                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite, savedStatus);
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, savedStatus);
                 })
                 .toList();
 
@@ -153,20 +139,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                                             )
                             );
 
-                    // 즐겨찾기 여부
-                    boolean isFavorite = false;
-                    if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
-                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteByIdAndMember(basicQuestionResultDTO.getId(), member);
-                        if (Boolean.TRUE.equals(officialFavorite)) {
-                            isFavorite = true;
-                        } else {
-                            isFavorite = memberOfficialQuestionRepository
-                                    .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(member.getId(), basicQuestionResultDTO.getId());
-                        }
-                    } else if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
-                        isFavorite = false;
-                    }
-
                     // 타사용자 공유 질문 저장 여부
                     String savedStatus = "NOT_SAVED";
 
@@ -186,7 +158,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         }
                     }
 
-                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite, savedStatus);
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, savedStatus);
                 })
                 .toList();
 
