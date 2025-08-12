@@ -25,10 +25,6 @@ public class OfficialQuestion extends BaseEntity {
     @Builder.Default    // false: 기본질문, true: 공유질문
     private boolean isShared = true;
 
-    @Column(nullable = false)   // 즐겨찾기. false = 즐겨찾기 안함, true = 즐겨찾기 함
-    @Builder.Default
-    private Boolean isFavorite = false;
-
     @Column(nullable = false)
     private String contents;
 
