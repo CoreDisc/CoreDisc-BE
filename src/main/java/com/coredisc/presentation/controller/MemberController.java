@@ -3,6 +3,7 @@ package com.coredisc.presentation.controller;
 import com.coredisc.application.service.member.MemberCommandService;
 import com.coredisc.application.service.member.MemberQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
+import com.coredisc.common.apiPayload.status.SuccessStatus;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.MemberControllerDocs;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
@@ -46,11 +47,16 @@ public class MemberController implements MemberControllerDocs {
 
         // username이 변경되었을 시, 토큰 재발급 요청
         if(isUsernameChanged) {
-            return ApiResponse.onSuccess("아이디가 변경되어 인증이 만료되었습니다. 다시 로그인 해주세요.");
+            return ApiResponse.onSuccess(
+                    SuccessStatus.MEMBER_USERNAME_CHANGED,
+                    "아이디가 변경되어 인증이 만료되었습니다. 다시 로그인 해주세요.");
         }
 
         // nickname만 변경되었을 시
-        return ApiResponse.onSuccess("성공적으로 변경되었습니다.");
+        return ApiResponse.onSuccess(
+                SuccessStatus.MEMBER_PROFILE_UPDATED,
+                "성공적으로 변경되었습니다."
+        );
     }
 
     @Override
