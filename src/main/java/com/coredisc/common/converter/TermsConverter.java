@@ -16,8 +16,6 @@ public class TermsConverter {
                 .termsId(terms.getId())
                 .title(terms.getType().getTitle())
                 .content(terms.getContent())
-                // ex) 100 -> 1, 201 -> 2.01로 변환
-                .version(terms.getVersion() / 100 + (terms.getVersion() % 100) / 100.0)
                 .isRequired(terms.getIsRequired())
                 .build();
     }
