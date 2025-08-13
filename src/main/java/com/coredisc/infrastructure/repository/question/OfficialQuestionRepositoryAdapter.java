@@ -26,11 +26,6 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     }
 
     @Override
-    public List<OfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int pageSize) {
-        return queryOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
-    }
-
-    @Override
     public List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize){
         return queryOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
     }
@@ -53,11 +48,6 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     @Override
     public List<Tuple> findTop5PopularQuestionsThisWeek(LocalDate startOfWeek, LocalDate endOfWeek) {
         return queryOfficialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
-    }
-
-    @Override
-    public Boolean findIsFavoriteByIdAndMember(Long id, Member member) {
-        return jpaOfficialQuestionRepository.findIsFavoriteByIdAndMember(id, member);
     }
 
     @Override

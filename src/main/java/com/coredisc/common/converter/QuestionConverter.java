@@ -81,7 +81,6 @@ public class QuestionConverter {
                 .question(question.getContents())
                 .sharedCount(sharedCount)
                 .isSelected(isSelected)
-                .isFavorite(question.getIsFavorite())
                 .createdAt(question.getCreatedAt())
                 .build();
     }
@@ -194,19 +193,17 @@ public class QuestionConverter {
                 .categories(categories)
                 .sharedCount(sharedCount)
                 .isSelected(isSelected)
-                .isFavorite(memberOfficialQuestion.getIsFavorite())
                 .createdAt(officialQuestion.getCreatedAt())
                 .build();
     }
 
-    public static QuestionResponseDTO.PopularQuestionResultDTO toPopularQuestionResultDTO(OfficialQuestion question, String username, Long sharedCount, boolean isSelected, boolean isFavorite) {
+    public static QuestionResponseDTO.PopularQuestionResultDTO toPopularQuestionResultDTO(OfficialQuestion question, String username, Long sharedCount, boolean isSelected) {
 
         return QuestionResponseDTO.PopularQuestionResultDTO.builder()
                 .id(question.getId())
                 .username(username)
                 .question(question.getContents())
                 .isSelected(isSelected)
-                .isFavorite(isFavorite)
                 .sharedCount(sharedCount)
                 .build();
     }
@@ -220,29 +217,12 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO toUpdateSavedSharedQuestionFavoriteStatusResultDTO(MemberOfficialQuestion memberOfficialQuestion) {
-
-        return QuestionResponseDTO.UpdateSavedSharedQuestionFavoriteStatusResultDTO.builder()
-                .id(memberOfficialQuestion.getId())
-                .createdAt(memberOfficialQuestion.getCreatedAt())
-                .build();
-    }
-
-    public static QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO toUpdateMySharedQuestionFavoriteStatusResultDTO(OfficialQuestion officialQuestion) {
-
-        return QuestionResponseDTO.UpdateMySharedQuestionFavoriteStatusResultDTO.builder()
-                .id(officialQuestion.getId())
-                .createdAt(officialQuestion.getCreatedAt())
-                .build();
-    }
-
-    public static QuestionResponseDTO.BasicQuestionResultDTO toBasicQuestionResultDTO(QuestionResponseDTO.BasicQuestionResultDTO basicQuestion, boolean isSelected, boolean isFavorite, String savedStatus) {
+    public static QuestionResponseDTO.BasicQuestionResultDTO toBasicQuestionResultDTO(QuestionResponseDTO.BasicQuestionResultDTO basicQuestion, boolean isSelected, String savedStatus) {
         return QuestionResponseDTO.BasicQuestionResultDTO.builder()
                 .id(basicQuestion.getId())
                 .questionType(basicQuestion.getQuestionType())
                 .question(basicQuestion.getQuestion())
                 .isSelected(isSelected)
-                .isFavorite(isFavorite)
                 .savedStatus(savedStatus)
                 .createdAt(basicQuestion.getCreatedAt())
                 .build();

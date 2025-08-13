@@ -17,10 +17,6 @@ public class MemberOfficialQuestion extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)   // 즐겨찾기. false = 즐겨찾기 안함, true = 즐겨찾기 함
-    @Builder.Default
-    private Boolean isFavorite = false;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -28,9 +24,5 @@ public class MemberOfficialQuestion extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "official_question_id")
     private OfficialQuestion officialQuestion;
-
-    public void updateFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
-    }
 
 }

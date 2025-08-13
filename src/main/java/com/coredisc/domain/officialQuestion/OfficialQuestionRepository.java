@@ -15,8 +15,6 @@ public interface OfficialQuestionRepository {
 
     OfficialQuestion save(OfficialQuestion officialQuestion);
 
-    List<OfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int pageSize);
-
     List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize);
 
     List<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Long cursorId, int pageSize);
@@ -26,8 +24,6 @@ public interface OfficialQuestionRepository {
     Optional<OfficialQuestion> findById(Long id);
 
     List<Tuple> findTop5PopularQuestionsThisWeek(LocalDate startOfWeek, LocalDate endOfWeek);
-
-    Boolean findIsFavoriteByIdAndMember(Long id, Member member);
 
     Boolean existsByIdAndMember(Long id, Member member);
 }
