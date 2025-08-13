@@ -278,7 +278,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Transactional
     public void deleteMemberOfficialQuestion(Member member, Long questionId) {
 
-        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndId(member, questionId)
+        OfficialQuestion officialQuestion = officialQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, officialQuestion)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
 
         memberOfficialQuestionRepository.delete(memberOfficialQuestion);
