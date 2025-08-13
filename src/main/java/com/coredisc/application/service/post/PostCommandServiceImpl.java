@@ -181,6 +181,11 @@ public class PostCommandServiceImpl implements PostCommandService {
         Post post = validatePostOwnership(member, postId);
         PostRequestDTO.SelectiveDiaryDto selectiveDiaryDto = request.getSelectiveDiary();
 
+        // 예외처리 추가 -> 답변이 하나라도 작성 안된 경우
+        if(post.getAnswers().size() != 4) {
+            throw new PostHandler(ErrorStatus.POST_NOT_READY_TO_PUBLISH);
+        }
+
         //발행으로 변경
         post.publish();
         // 선택형 일기 업데이트
