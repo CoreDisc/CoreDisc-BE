@@ -132,7 +132,7 @@ public class PostResponseDTO {
             private Long postId;
             private MemberInfo member;
             private LocalDate selectedDate;
-            private Answer answer;  // 4개 답변 모두 포함
+            private Answer answer;  // 답변 1개 조회
 
             @Getter
             @Builder
