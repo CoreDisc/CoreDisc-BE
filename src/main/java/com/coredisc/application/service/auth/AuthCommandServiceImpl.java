@@ -1,6 +1,7 @@
 package com.coredisc.application.service.auth;
 
 import com.coredisc.application.service.device.DeviceCommandService;
+import com.coredisc.application.service.notificationReminderSetting.NotificationReminderSettingCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.common.converter.MemberTermsConverter;
@@ -50,6 +51,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
     private final DeviceCommandService deviceCommandService;
+    private final NotificationReminderSettingCommandService notificationReminderSettingCommandService;
 
     // 회원가입
     @Override
@@ -119,7 +121,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setProfileImg(profileImg);
 
         try {
-            return memberRepository.save(newMember);
+            Member savedMember = memberRepository.save(newMember);
+
+            // 회원가입 시 리마인더 알림 설정 생성
+            notificationReminderSettingCommandService.defaultNotificationReminderSetting(savedMember);
+
+            return savedMember;
         } catch (DataIntegrityViolationException e) { // race condition 이중 방어
             throw new AuthHandler(ErrorStatus.DUPLICATED_RESOURCE);
         }

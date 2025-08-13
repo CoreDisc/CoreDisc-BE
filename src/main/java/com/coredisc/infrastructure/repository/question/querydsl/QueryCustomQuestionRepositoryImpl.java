@@ -78,6 +78,8 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                         ((Number) row[0]).longValue(),            // id
                         (String) row[1],                          // questionType
                         (String) row[2],                          // question
+                        false,                                    // isSelected
+                        "",                                        // savedStatus
                         ((Timestamp) row[3]).toLocalDateTime()   // createdAt
                 ))
                 .toList();
@@ -151,6 +153,8 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                         ((Number) row[0]).longValue(),          // id
                         (String) row[1],                        // questionType
                         (String) row[2],                        // question
+                        false,                                    // isSelected
+                        "",                                        // savedStatus
                         ((Timestamp) row[3]).toLocalDateTime()  // createdAt
                 ))
                 .toList();

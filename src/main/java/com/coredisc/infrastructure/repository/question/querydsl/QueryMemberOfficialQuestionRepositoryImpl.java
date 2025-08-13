@@ -17,21 +17,7 @@ public class QueryMemberOfficialQuestionRepositoryImpl implements QueryMemberOff
     private final JPAQueryFactory jpaQueryFactory;
 
     private final QMemberOfficialQuestion qMemberOfficialQuestion = QMemberOfficialQuestion.memberOfficialQuestion;
-
-
-    @Override
-    public List<MemberOfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int pageSize) {
-        return jpaQueryFactory
-                .selectFrom(qMemberOfficialQuestion)
-                .where(
-                        qMemberOfficialQuestion.member.eq(member),
-                        qMemberOfficialQuestion.isFavorite.isTrue(),
-                        cursorId != null ? qMemberOfficialQuestion.officialQuestion.id.lt(cursorId) : null
-                )
-                .orderBy(qMemberOfficialQuestion.officialQuestion.id.desc())
-                .limit(pageSize + 1)
-                .fetch();
-    }
+    
 
     @Override
     public List<MemberOfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize) {

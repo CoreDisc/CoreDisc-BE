@@ -1,15 +1,12 @@
 package com.coredisc.infrastructure.repository.question;
 
 import com.coredisc.domain.category.Category;
-import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.officialQuestion.OfficialQuestionRepository;
 import com.coredisc.infrastructure.repository.question.querydsl.QueryOfficialQuestionRepository;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -26,11 +23,6 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     @Override
     public OfficialQuestion save(OfficialQuestion officialQuestion) {
         return jpaOfficialQuestionRepository.save(officialQuestion);
-    }
-
-    @Override
-    public List<OfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int pageSize) {
-        return queryOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
     }
 
     @Override
@@ -57,4 +49,10 @@ public class OfficialQuestionRepositoryAdapter implements OfficialQuestionReposi
     public List<Tuple> findTop5PopularQuestionsThisWeek(LocalDate startOfWeek, LocalDate endOfWeek) {
         return queryOfficialQuestionRepository.findTop5PopularQuestionsThisWeek(startOfWeek, endOfWeek);
     }
+
+    @Override
+    public Boolean existsByIdAndMember(Long id, Member member) {
+        return jpaOfficialQuestionRepository.existsByIdAndMember(id, member);
+    }
+
 }

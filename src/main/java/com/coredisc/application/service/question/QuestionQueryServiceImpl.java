@@ -37,6 +37,8 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     private final MemberOfficialQuestionRepository memberOfficialQuestionRepository;
     private final CategoryRepository categoryRepository;
 
+
+
     // 기본 질문 리스트 조회 (카테고리별)
     @Override
     public CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> getBasicQuestionList(
@@ -45,12 +47,59 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             LocalDateTime cursorCreatedAt,
             String cursorQuestionType,
             Long cursorId,
-            int pageSize){
+            int pageSize) {
 
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
 
-        return customQuestionRepository.findBasicQuestionListByCategories(member.getId(), categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+        CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> cursorDTO =
+                customQuestionRepository.findBasicQuestionListByCategories(
+                        member.getId(), categoryId, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
+
+        List<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList = cursorDTO.getValues().stream()
+                .map(basicQuestionResultDTO -> {
+                    // 오늘 질문 여부
+                    boolean isSelected = myTodayQuestionList.stream()
+                            .anyMatch(q ->
+                                    (
+                                            ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType()))
+                                                    && q.getOfficialQuestion() != null
+                                                    && q.getOfficialQuestion().getId().equals(basicQuestionResultDTO.getId())
+                                    )
+                                            ||
+                                            (
+                                                    "PERSONAL".equals(basicQuestionResultDTO.getQuestionType())
+                                                            && q.getPersonalQuestion() != null
+                                                            && q.getPersonalQuestion().getId().equals(basicQuestionResultDTO.getId())
+                                            )
+                            );
+
+                    // 타사용자 공유 질문 저장 여부
+                    String savedStatus = "NOT_SAVED";
+
+                    if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
+                        savedStatus = "MINE";
+                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
+                        boolean isMine = officialQuestionRepository.existsByIdAndMember(basicQuestionResultDTO.getId(), member);
+
+                        if (isMine) {
+                            savedStatus = "MINE";
+                        } else {
+                            boolean isSaved = memberOfficialQuestionRepository
+                                    .existsByMemberIdAndOfficialQuestionId(member.getId(), basicQuestionResultDTO.getId());
+                            if (isSaved) {
+                                savedStatus = "SAVED";
+                            }
+                        }
+                    }
+                    
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, savedStatus);
+                })
+                .toList();
+
+        return new CursorDTO<>(basicQuestionList, cursorDTO.getHasNext());
     }
 
     // 기본 질문 검색 리스트 조회
@@ -64,7 +113,56 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             Long cursorId,
             int pageSize){
 
-        return customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new QuestionHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+
+        CursorDTO<QuestionResponseDTO.BasicQuestionResultDTO> cursorDTO =
+                customQuestionRepository.findBasicQuestionListByKeyword(member.getId(), categoryId, keyword, cursorCreatedAt, cursorQuestionType, cursorId, pageSize);
+
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
+
+        List<QuestionResponseDTO.BasicQuestionResultDTO> basicQuestionList = cursorDTO.getValues().stream()
+                .map(basicQuestionResultDTO -> {
+                    // 오늘 질문 여부
+                    boolean isSelected = myTodayQuestionList.stream()
+                            .anyMatch(q ->
+                                    (
+                                            ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType()))
+                                                    && q.getOfficialQuestion() != null
+                                                    && q.getOfficialQuestion().getId().equals(basicQuestionResultDTO.getId())
+                                    )
+                                            ||
+                                            (
+                                                    "PERSONAL".equals(basicQuestionResultDTO.getQuestionType())
+                                                            && q.getPersonalQuestion() != null
+                                                            && q.getPersonalQuestion().getId().equals(basicQuestionResultDTO.getId())
+                                            )
+                            );
+
+                    // 타사용자 공유 질문 저장 여부
+                    String savedStatus = "NOT_SAVED";
+
+                    if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
+                        savedStatus = "MINE";
+                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
+                        boolean isMine = officialQuestionRepository.existsByIdAndMember(basicQuestionResultDTO.getId(), member);
+
+                        if (isMine) {
+                            savedStatus = "MINE";
+                        } else {
+                            boolean isSaved = memberOfficialQuestionRepository
+                                    .existsByMemberIdAndOfficialQuestionId(member.getId(), basicQuestionResultDTO.getId());
+                            if (isSaved) {
+                                savedStatus = "SAVED";
+                            }
+                        }
+                    }
+
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, savedStatus);
+                })
+                .toList();
+
+        return new CursorDTO<>(basicQuestionList, cursorDTO.getHasNext());
     }
 
     // 내가 발행한 공유질문 리스트 조회 (개수 포함 ver)
@@ -100,18 +198,13 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 내가 발행한 공유 질문 리스트 조회 (카테고리 필터링 포함)
     @Override
-    public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Boolean favorite, Long cursorId, int pageSize){
+    public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Long cursorId, int pageSize){
 
-        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
-            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
-        }
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<OfficialQuestion> mySharedQuestionsList;
 
-        if (Boolean.TRUE.equals(favorite)) {    // 즐겨찾기
-            mySharedQuestionsList = officialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
-        }
-        else if (categoryId == null || categoryId == 0) {    // 전체 조회
+        if (categoryId == null || categoryId == 0) {    // 전체 조회
             mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별 조회
             Category category = categoryRepository.findById(categoryId)
@@ -129,7 +222,12 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                 mySharedQuestionsList.stream()
                         .map(question -> {
                             long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question);
-                            return QuestionConverter.toMySharedQuestionResultDTO(question, sharedCount);
+                            // isSelected 체크
+                            boolean isSelected = myTodayQuestionList.stream()
+                                    .anyMatch(todayQuestion -> todayQuestion.getOfficialQuestion() != null
+                                            && todayQuestion.getOfficialQuestion().getId().equals(question.getId()));
+
+                            return QuestionConverter.toMySharedQuestionResultDTO(question, sharedCount, isSelected);
                         })
                         .toList();
 
@@ -169,19 +267,14 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     public CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO> getSavedSharedQuestionList(
             Member member,
             Long categoryId,
-            Boolean favorite,
             Long cursorId,
             int pageSize) {
 
-        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
-            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
-        }
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<MemberOfficialQuestion> mySavedSharedQuestionList;
 
-        if (Boolean.TRUE.equals(favorite) ) {
-            mySavedSharedQuestionList = memberOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
-        } else if (categoryId == null || categoryId == 0) { // 전체
+        if (categoryId == null || categoryId == 0) { // 전체
             mySavedSharedQuestionList = memberOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별
             Category category = categoryRepository.findById(categoryId)
@@ -198,7 +291,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         List<QuestionResponseDTO.SavedSharedQuestionResultDTO> mySavedSharedQuestionDTOList = mySavedSharedQuestionList.stream()
                 .map(question -> {
                     long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question.getOfficialQuestion());
-                    return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount);
+                    // isSelected 체크
+                    boolean isSelected = myTodayQuestionList.stream()
+                            .anyMatch(todayQuestion -> todayQuestion.getOfficialQuestion() != null
+                                    && todayQuestion.getOfficialQuestion().getId().equals(question.getId()));
+                    return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount, isSelected);
                 }).toList();
 
         return new CursorDTO<>(mySavedSharedQuestionDTOList, hasNext);
@@ -206,7 +303,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 인기 질문 목록 조회
     @Override
-    public QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList() {
+    public QuestionResponseDTO.PopularQuestionListResultDTO getPopularQuestionList(Member member) {
 
         LocalDate lastWeek = LocalDate.now().minusWeeks(1);
         LocalDate startOfWeek = lastWeek.with(DayOfWeek.MONDAY);
@@ -222,7 +319,49 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             }
         }
 
-        return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionTuple, startOfWeek, endOfWeek);
+        List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
+
+        List<QuestionResponseDTO.PopularQuestionResultDTO> popularQuestionList = popularQuestionTuple.stream()
+                .map(tuple -> {
+                    OfficialQuestion question = tuple.get(0, OfficialQuestion.class);
+                    String username = tuple.get(1, String.class);
+                    Long sharedCount = tuple.get(3, Long.class);
+
+                    boolean isSelected = myTodayQuestionList.stream()
+                            .anyMatch(q -> q.getOfficialQuestion() != null
+                                    && q.getOfficialQuestion().getId().equals(question.getId()));
+
+                    return QuestionConverter.toPopularQuestionResultDTO(
+                            question, username, sharedCount, isSelected);
+                })
+                .toList();
+
+        return QuestionConverter.toPopularQuestionListResultDTO(popularQuestionList, startOfWeek, endOfWeek);
+    }
+
+
+    // 메소드 - 선택된 고정 & 랜덤 질문 목록 조회
+    private List<TodayQuestion> getMyTodayQuestionList(Member member) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        List<TodayQuestion> myTodayQuestionList = new ArrayList<>();
+
+        for (int order = 1; order <= 4; order++) {
+            Optional<TodayQuestion> todayQuestion;
+
+            if (order == 4) {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, order, today);
+            } else {
+                todayQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(member, order, startOfMonth, endOfMonth);
+            }
+
+            todayQuestion.ifPresent(myTodayQuestionList::add);
+        }
+
+        return myTodayQuestionList;
     }
 
 }

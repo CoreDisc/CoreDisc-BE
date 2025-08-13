@@ -45,11 +45,6 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
     }
 
     @Override
-    public List<MemberOfficialQuestion> findFavoritesByMember(Member member, Long cursorId, int size) {
-        return queryMemberOfficialQuestionRepository.findFavoritesByMember(member, cursorId, size);
-    }
-
-    @Override
     public List<MemberOfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize) {
         return queryMemberOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
     }
@@ -59,5 +54,8 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
         return queryMemberOfficialQuestionRepository.findByMemberAndCategoryAndCursor(member, category, cursorId, pageSize);
     }
 
-
+    @Override
+    public boolean existsByMemberIdAndOfficialQuestionId(Long memberId, Long officialQuestionId) {
+        return jpaMemberOfficialQuestionRepository.existsByMemberIdAndOfficialQuestionId(memberId, officialQuestionId);
+    }
 }

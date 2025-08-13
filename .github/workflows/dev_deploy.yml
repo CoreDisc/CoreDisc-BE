@@ -64,7 +64,6 @@ jobs:
       - name: Docker push
         run: docker push "${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:latest"
 
-      ## deploy to production
       - name: Deploy to prod
         uses: appleboy/ssh-action@v0.1.6
         id: deploy-prod

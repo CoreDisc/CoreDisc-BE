@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface QueryOfficialQuestionRepository {
 
-    List<OfficialQuestion> findFavoritesByMember(Member member, Long cusorId, int pageSize);
-
     List<OfficialQuestion> findAllByMemberAndCursor(Member member, Long cursorId, int pageSize);
 
     List<OfficialQuestion> findAllByMemberAndCategory(Member member, Category category, Long cursorId, int pageSize);

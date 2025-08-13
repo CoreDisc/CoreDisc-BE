@@ -24,7 +24,7 @@ public class NotificationConverter {
                 .targetId(notification.getTargetId())
                 .senderId(sender != null ? sender.getId() : null)
                 .senderNickname(sender != null ? sender.getNickname() : null)
-                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(notification.getSender().getProfileImg()))
+                .profileImgDTO(sender != null ? ProfileImgConverter.toProfileImgDTO(sender.getProfileImg()) : null)
                 .isRead(notificationRead.getIsRead())
                 .createdAt(notification.getCreatedAt())
                 .timeStamp(createdAtToTimestamp(notification.getCreatedAt()))
