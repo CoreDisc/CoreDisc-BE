@@ -1,5 +1,6 @@
 package com.coredisc.application.service.question;
 
+import com.coredisc.application.service.fcm.FcmService;
 import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.QuestionCategoryConverter;
@@ -7,6 +8,8 @@ import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.common.enums.QuestionType;
+import com.coredisc.domain.device.Device;
+import com.coredisc.domain.device.DeviceRepository;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
@@ -24,11 +27,14 @@ import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QuestionCommandServiceImpl implements QuestionCommandService {
@@ -39,7 +45,9 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final CategoryRepository categoryRepository;
     private final QuestionCategoryRepository questionCategoryRepository;
     private final MemberOfficialQuestionRepository memberOfficialQuestionRepository;
+    private final DeviceRepository deviceRepository;
     private final NotificationCommandService notificationCommandService;
+    private final FcmService fcmService;
 
     // 내가 작성한 질문 저장
     @Override
@@ -256,7 +264,23 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 )
         );
 
-        // 100회 단위 저장 알림
+        List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(selectedOfficialQuestion.getMember());
+
+        // 푸시 알림 내용 설정
+        String title = "CoreDisc";
+        String body = member.getNickname()+"님이 질문을 저장했어요.";
+
+        for (Device device : devices) {
+            String token = device.getToken();
+            if (fcmService.isTokenValid(token)) {
+                fcmService.sendNotificationToToken(token, title, body);
+                log.info("공유질문 저장 알림 발송됨: memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+            } else {
+                log.warn("공유질문 저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+            }
+        }
+
+        // 공유질문 저장 100회 단위 저장 알림
         Long saveCount = memberOfficialQuestionRepository.countByOfficialQuestion(selectedOfficialQuestion);
         if (saveCount % 100 == 0) {
             notificationCommandService.createNotification(
@@ -268,6 +292,20 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                             selectedOfficialQuestion.getId()
                     )
             );
+
+            // 공유질문 100회 단위 저장 푸시 알림 내용 설정
+            title = "CoreDisc";
+            body = saveCount+"명의 사용자가 질문을 저장했어요.";
+
+            for (Device device : devices) {
+                String token = device.getToken();
+                if (fcmService.isTokenValid(token)) {
+                    fcmService.sendNotificationToToken(token, title, body);
+                    log.info("공유질문 100회 단위 저장 알림 발송됨: memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+                } else {
+                    log.warn("공유질문 100회 단위 저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+                }
+            }
         }
 
         return memberOfficialQuestion;
