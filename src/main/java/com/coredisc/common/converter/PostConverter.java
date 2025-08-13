@@ -176,7 +176,7 @@ public class PostConverter {
     private static PostFeedResponseDTO.PostSummary.MemberInfo toMemberInfo(Post post) {
         return PostFeedResponseDTO.PostSummary.MemberInfo.builder()
                 .memberId(post.getMember().getId())
-                .username(post.getMember().getName())
+                .username(post.getMember().getUsername())
                 .profileImg(post.getMember().getProfileImg() != null ?
                         post.getMember().getProfileImg().getImgUrl() : null)
                 .build();
@@ -188,7 +188,7 @@ public class PostConverter {
     private static PostDetailDto.MemberInfo toDetailMemberInfo(Post post) {
         return PostDetailDto.MemberInfo.builder()
                 .memberId(post.getMember().getId())
-                .nickname(post.getMember().getNickname())
+                .username(post.getMember().getUsername())
                 .profileImg(post.getMember().getProfileImg() != null ?
                         post.getMember().getProfileImg().getImgUrl() : null)
                 .build();
