@@ -1,21 +1,17 @@
 package com.coredisc.common.converter;
 
-import com.coredisc.common.util.FileUtil;
-import com.coredisc.domain.post.PostLike;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.enums.AnswerType;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostAnswer;
 import com.coredisc.domain.post.PostAnswerImage;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -135,14 +131,16 @@ public class PostConverter {
 
 
     /**
-     * Post 엔티티를 PostSummary DTO로 변환 (4개 답변 포함)
+     * Post 엔티티를 PostSummary DTO로 변환 (1개 답변만)
      */
-    public static PostFeedResponseDTO.PostSummary toPostSummary(Post post, List<PostAnswer> answers, List<String> questions) {
+    public static PostFeedResponseDTO.PostSummary toPostSummary(Post post, PostAnswer answer, String question) {
+
+
         return PostFeedResponseDTO.PostSummary.builder()
                 .postId(post.getId())
                 .member(toMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
-                .answers(toFeedAnswerResponses(answers,questions)) // 4개 답변 모두 포함
+                .answer(toFeedAnswerResponse(answer,question)) // 4개 답변 모두 포함
                 .build();
     }
 
@@ -163,7 +161,7 @@ public class PostConverter {
                 .member(toDetailMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
                 .visibility(post.getPublicity())
-                .answers(toFeedAnswerResponses(answers,questions))
+                .answers(toDetailAnswerResponses(answers,questions))
                 .selectiveDiary(toDetailSelectiveDiary(post))
                 .statistics(toDetailStatistics(post))
                 .isLiked(isLiked)
@@ -199,7 +197,7 @@ public class PostConverter {
     /**
      * 4개 답변을 Feed용 Answer DTO 리스트로 변환
      */
-    private static List<PostFeedResponseDTO.PostSummary.Answer> toFeedAnswerResponses(List<PostAnswer> answers, List<String> questions) {
+    private static List<PostFeedResponseDTO.PostSummary.Answer> toDetailAnswerResponses(List<PostAnswer> answers, List<String> questions) {
 
         if (answers.isEmpty() || questions.isEmpty()) {
             log.warn("Empty answers or questions - Answers: {}, Questions: {}",
@@ -237,7 +235,7 @@ public class PostConverter {
         return PostFeedResponseDTO.PostSummary.Answer.builder()
                 .answerId(null)
                 .answerType(null)
-                .questionContent(questionContent)
+                .questionContent(questionContent!= null ? questionContent : "질문 없음")
                 .imageAnswer(null)
                 .textAnswer(null)
                 .build();
@@ -292,15 +290,24 @@ public class PostConverter {
      */
     private static PostFeedResponseDTO.PostSummary.Answer toFeedAnswerResponse(PostAnswer answer, String questionContent) {
 
-        return PostFeedResponseDTO.PostSummary.Answer.builder()
-                .answerId(answer.getId())
-                .answerType(answer.getType())
-                .questionContent(questionContent)
-                .imageAnswer(answer.getType() == AnswerType.IMAGE ?
-                        toFeedImageAnswerResponse(answer.getPostAnswerImage()) : null)
-                .textAnswer(answer.getType() == AnswerType.TEXT ?
-                        toFeedTextAnswerResponse(answer.getTextContent()) : null)
-                .build();
+
+        if(answer != null && questionContent != null) {
+
+            return PostFeedResponseDTO.PostSummary.Answer.builder()
+                    .answerId(answer.getId())
+                    .answerType(answer.getType())
+                    .questionContent(questionContent)
+                    .imageAnswer(answer.getType() == AnswerType.IMAGE ?
+                            toFeedImageAnswerResponse(answer.getPostAnswerImage()) : null)
+                    .textAnswer(answer.getType() == AnswerType.TEXT ?
+                            toFeedTextAnswerResponse(answer.getTextContent()) : null)
+                    .build();
+
+        } else {
+            return createEmptyAnswerResponse(questionContent);
+        }
+
+
     }
 
     /**
