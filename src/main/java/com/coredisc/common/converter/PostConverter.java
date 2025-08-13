@@ -164,7 +164,6 @@ public class PostConverter {
                 .publicity(post.getPublicity())
                 .answers(toDetailAnswerResponses(answers,questions))
                 .selectiveDiary(toDetailSelectiveDiary(post))
-                .statistics(toDetailStatistics(post))
                 .isLiked(isLiked)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())

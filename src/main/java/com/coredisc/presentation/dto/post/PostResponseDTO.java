@@ -176,7 +176,6 @@ public class PostResponseDTO {
         private PublicityType publicity;
         private List<PostFeedResponseDTO.PostSummary.Answer> answers;
         private SelectiveDiary selectiveDiary;
-        private Statistics statistics;
         private Boolean isLiked;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
