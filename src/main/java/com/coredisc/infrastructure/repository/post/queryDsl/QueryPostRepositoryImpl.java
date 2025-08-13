@@ -267,7 +267,7 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                             .map(TodayQuestion::getQuestionContent)
                             .collect(Collectors.toList());
 
-                    return PostConverter.toPostSummary(postEntity, postAnswers, questionContents);
+                    return PostConverter.toPostSummary(postEntity, postAnswers.get(0), questionContents.get(0));
                 })
                 .collect(Collectors.toList());
     }
