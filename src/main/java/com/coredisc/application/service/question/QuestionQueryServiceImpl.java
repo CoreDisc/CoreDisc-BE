@@ -81,7 +81,9 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
                     if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
                         savedStatus = "MINE";
-                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
+                    } else if ("DEFAULT".equals(basicQuestionResultDTO.getQuestionType())){
+                        savedStatus = "CANNOT_SAVE";
+                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType())) {
                         boolean isMine = officialQuestionRepository.existsByIdAndMember(basicQuestionResultDTO.getId(), member);
 
                         if (isMine) {
@@ -144,7 +146,9 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
                     if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
                         savedStatus = "MINE";
-                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
+                    } else if ("DEFAULT".equals(basicQuestionResultDTO.getQuestionType())){
+                        savedStatus = "CANNOT_SAVE";
+                    } else if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType())) {
                         boolean isMine = officialQuestionRepository.existsByIdAndMember(basicQuestionResultDTO.getId(), member);
 
                         if (isMine) {
