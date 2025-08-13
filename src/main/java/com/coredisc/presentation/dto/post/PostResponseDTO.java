@@ -36,7 +36,7 @@ public class PostResponseDTO {
 
     }
     /**
-     * 임시.. today_question_dto
+     * 임시 today_question_dto
      */
     @Getter
     @Builder
@@ -133,12 +133,13 @@ public class PostResponseDTO {
             private MemberInfo member;
             private LocalDate selectedDate;
             private Answer answer;  // 답변 1개 조회
+            private PublicityType publicity; // 공개 여부 -> 전채 공개, 친한 친구 공개 여부 -> OFFICIAL OR CIRCLE
 
             @Getter
             @Builder
             public static class MemberInfo {
                 private Long memberId;
-                private String nickname;
+                private String username;
                 private String profileImg;
             }
 
@@ -172,10 +173,9 @@ public class PostResponseDTO {
         private Long postId;
         private MemberInfo member;
         private LocalDate selectedDate;
-        private PublicityType visibility;
+        private PublicityType publicity;
         private List<PostFeedResponseDTO.PostSummary.Answer> answers;
         private SelectiveDiary selectiveDiary;
-        private Statistics statistics;
         private Boolean isLiked;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -184,7 +184,7 @@ public class PostResponseDTO {
         @Builder
         public static class MemberInfo {
             private Long memberId;
-            private String nickname;
+            private String username;
             private String profileImg;
         }
 

@@ -139,6 +139,7 @@ public class PostConverter {
         return PostFeedResponseDTO.PostSummary.builder()
                 .postId(post.getId())
                 .member(toMemberInfo(post))
+                .publicity(post.getPublicity())
                 .selectedDate(post.getCreatedAt().toLocalDate())
                 .answer(toFeedAnswerResponse(answer,question)) // 4개 답변 모두 포함
                 .build();
@@ -160,10 +161,9 @@ public class PostConverter {
                 .postId(post.getId())
                 .member(toDetailMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
-                .visibility(post.getPublicity())
+                .publicity(post.getPublicity())
                 .answers(toDetailAnswerResponses(answers,questions))
                 .selectiveDiary(toDetailSelectiveDiary(post))
-                .statistics(toDetailStatistics(post))
                 .isLiked(isLiked)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
@@ -176,7 +176,7 @@ public class PostConverter {
     private static PostFeedResponseDTO.PostSummary.MemberInfo toMemberInfo(Post post) {
         return PostFeedResponseDTO.PostSummary.MemberInfo.builder()
                 .memberId(post.getMember().getId())
-                .nickname(post.getMember().getNickname())
+                .username(post.getMember().getUsername())
                 .profileImg(post.getMember().getProfileImg() != null ?
                         post.getMember().getProfileImg().getImgUrl() : null)
                 .build();
@@ -188,7 +188,7 @@ public class PostConverter {
     private static PostDetailDto.MemberInfo toDetailMemberInfo(Post post) {
         return PostDetailDto.MemberInfo.builder()
                 .memberId(post.getMember().getId())
-                .nickname(post.getMember().getNickname())
+                .username(post.getMember().getUsername())
                 .profileImg(post.getMember().getProfileImg() != null ?
                         post.getMember().getProfileImg().getImgUrl() : null)
                 .build();
