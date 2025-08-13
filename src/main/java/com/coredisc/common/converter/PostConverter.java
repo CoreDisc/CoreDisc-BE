@@ -134,11 +134,13 @@ public class PostConverter {
      * Post 엔티티를 PostSummary DTO로 변환 (1개 답변만)
      */
     public static PostFeedResponseDTO.PostSummary toPostSummary(Post post, PostAnswer answer, String question) {
+
+
         return PostFeedResponseDTO.PostSummary.builder()
                 .postId(post.getId())
                 .member(toMemberInfo(post))
                 .selectedDate(post.getCreatedAt().toLocalDate())
-                .answers(toFeedAnswerResponse(answer,question)) // 4개 답변 모두 포함
+                .answer(toFeedAnswerResponse(answer,question)) // 4개 답변 모두 포함
                 .build();
     }
 
@@ -233,7 +235,7 @@ public class PostConverter {
         return PostFeedResponseDTO.PostSummary.Answer.builder()
                 .answerId(null)
                 .answerType(null)
-                .questionContent(questionContent)
+                .questionContent(questionContent!= null ? questionContent : "질문 없음")
                 .imageAnswer(null)
                 .textAnswer(null)
                 .build();
@@ -288,15 +290,24 @@ public class PostConverter {
      */
     private static PostFeedResponseDTO.PostSummary.Answer toFeedAnswerResponse(PostAnswer answer, String questionContent) {
 
-        return PostFeedResponseDTO.PostSummary.Answer.builder()
-                .answerId(answer.getId())
-                .answerType(answer.getType())
-                .questionContent(questionContent)
-                .imageAnswer(answer.getType() == AnswerType.IMAGE ?
-                        toFeedImageAnswerResponse(answer.getPostAnswerImage()) : null)
-                .textAnswer(answer.getType() == AnswerType.TEXT ?
-                        toFeedTextAnswerResponse(answer.getTextContent()) : null)
-                .build();
+
+        if(answer != null && questionContent != null) {
+
+            return PostFeedResponseDTO.PostSummary.Answer.builder()
+                    .answerId(answer.getId())
+                    .answerType(answer.getType())
+                    .questionContent(questionContent)
+                    .imageAnswer(answer.getType() == AnswerType.IMAGE ?
+                            toFeedImageAnswerResponse(answer.getPostAnswerImage()) : null)
+                    .textAnswer(answer.getType() == AnswerType.TEXT ?
+                            toFeedTextAnswerResponse(answer.getTextContent()) : null)
+                    .build();
+
+        } else {
+            return createEmptyAnswerResponse(questionContent);
+        }
+
+
     }
 
     /**
