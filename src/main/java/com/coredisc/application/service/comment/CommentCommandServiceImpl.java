@@ -1,5 +1,6 @@
 package com.coredisc.application.service.comment;
 
+import com.coredisc.application.service.fcm.FcmService;
 import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.CommentConverter;
@@ -9,6 +10,8 @@ import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.domain.Comment;
 import com.coredisc.domain.comment.CommentRepository;
 import com.coredisc.domain.common.enums.NotificationType;
+import com.coredisc.domain.device.Device;
+import com.coredisc.domain.device.DeviceRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.domain.post.Post;
@@ -17,8 +20,12 @@ import com.coredisc.presentation.dto.comment.CommentRequestDTO;
 import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -27,7 +34,9 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final DeviceRepository deviceRepository;
     private final NotificationCommandService notificationCommandService;
+    private final FcmService fcmService;
 
     public Comment createComment(Long postId, CommentRequestDTO request, Long memberId) {
         // 게시글 존재 확인
@@ -49,6 +58,22 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                         post.getId() // 클릭 시 게시글로 이동
                 )
         );
+
+        List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(post.getMember());
+
+        // 푸시 알림 내용 설정
+        String title = "CoreDisc";
+        String body = member.getNickname()+"님이 게시글에 댓글을 남겼어요.";
+
+        for (Device device : devices) {
+            String token = device.getToken();
+            if (fcmService.isTokenValid(token)) {
+                fcmService.sendNotificationToToken(token, title, body);
+                log.info("댓글 알림 발송됨: memberId={}, token={}", post.getMember().getId(), token);
+            } else {
+                log.warn("댓글 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", post.getMember().getId(), token);
+            }
+        }
 
         //Converter 적용
         return commentRepository.save(comment);
