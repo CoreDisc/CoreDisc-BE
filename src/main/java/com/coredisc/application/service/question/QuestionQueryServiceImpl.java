@@ -76,20 +76,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                                             )
                             );
 
-                    // 즐겨찾기 여부
-                    boolean isFavorite = false;
-                    if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
-                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteByIdAndMember(basicQuestionResultDTO.getId(), member);
-                        if (Boolean.TRUE.equals(officialFavorite)) {
-                            isFavorite = true;
-                        } else {
-                            isFavorite = memberOfficialQuestionRepository
-                                    .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(member.getId(), basicQuestionResultDTO.getId());
-                        }
-                    } else if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
-                        isFavorite = false;
-                    }
-
                     // 타사용자 공유 질문 저장 여부
                     String savedStatus = "NOT_SAVED";
 
@@ -109,7 +95,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         }
                     }
                     
-                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite, savedStatus);
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, savedStatus);
                 })
                 .toList();
 
@@ -153,20 +139,6 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                                             )
                             );
 
-                    // 즐겨찾기 여부
-                    boolean isFavorite = false;
-                    if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
-                        Boolean officialFavorite = officialQuestionRepository.findIsFavoriteByIdAndMember(basicQuestionResultDTO.getId(), member);
-                        if (Boolean.TRUE.equals(officialFavorite)) {
-                            isFavorite = true;
-                        } else {
-                            isFavorite = memberOfficialQuestionRepository
-                                    .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(member.getId(), basicQuestionResultDTO.getId());
-                        }
-                    } else if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
-                        isFavorite = false;
-                    }
-
                     // 타사용자 공유 질문 저장 여부
                     String savedStatus = "NOT_SAVED";
 
@@ -186,7 +158,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         }
                     }
 
-                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, isFavorite, savedStatus);
+                    return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, savedStatus);
                 })
                 .toList();
 
@@ -226,20 +198,13 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
     // 내가 발행한 공유 질문 리스트 조회 (카테고리 필터링 포함)
     @Override
-    public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Boolean favorite, Long cursorId, int pageSize){
-
-        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
-            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
-        }
+    public CursorDTO<QuestionResponseDTO.MySharedQuestionResultDTO> getMySharedQuestionList(Member member, Long categoryId, Long cursorId, int pageSize){
 
         List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<OfficialQuestion> mySharedQuestionsList;
 
-        if (Boolean.TRUE.equals(favorite)) {    // 즐겨찾기
-            mySharedQuestionsList = officialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
-        }
-        else if (categoryId == null || categoryId == 0) {    // 전체 조회
+        if (categoryId == null || categoryId == 0) {    // 전체 조회
             mySharedQuestionsList = officialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별 조회
             Category category = categoryRepository.findById(categoryId)
@@ -302,21 +267,14 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     public CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO> getSavedSharedQuestionList(
             Member member,
             Long categoryId,
-            Boolean favorite,
             Long cursorId,
             int pageSize) {
-
-        if (Boolean.TRUE.equals(favorite)  && categoryId != null) {   // 즐겨찾기랑 카테고리 동시 필터링 방지
-            throw new QuestionHandler(ErrorStatus.INVALID_OFFICIAL_QUESTION_FILTER_COMBINATION);
-        }
 
         List<TodayQuestion> myTodayQuestionList = getMyTodayQuestionList(member);
 
         List<MemberOfficialQuestion> mySavedSharedQuestionList;
 
-        if (Boolean.TRUE.equals(favorite) ) {
-            mySavedSharedQuestionList = memberOfficialQuestionRepository.findFavoritesByMember(member, cursorId, pageSize);
-        } else if (categoryId == null || categoryId == 0) { // 전체
+        if (categoryId == null || categoryId == 0) { // 전체
             mySavedSharedQuestionList = memberOfficialQuestionRepository.findAllByMemberAndCursor(member, cursorId, pageSize);
         } else {    // 카테고리별
             Category category = categoryRepository.findById(categoryId)
@@ -373,19 +331,8 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                             .anyMatch(q -> q.getOfficialQuestion() != null
                                     && q.getOfficialQuestion().getId().equals(question.getId()));
 
-                    boolean isFavorite = false;
-                    Boolean officialFavorite =
-                            officialQuestionRepository.findIsFavoriteByIdAndMember(question.getId(), member);
-                    if (Boolean.TRUE.equals(officialFavorite)) {
-                        isFavorite = true;
-                    } else {
-                        isFavorite = memberOfficialQuestionRepository
-                                .existsByMemberIdAndOfficialQuestionIdAndIsFavoriteTrue(
-                                        member.getId(), question.getId());
-                    }
-
                     return QuestionConverter.toPopularQuestionResultDTO(
-                            question, username, sharedCount, isSelected, isFavorite);
+                            question, username, sharedCount, isSelected);
                 })
                 .toList();
 

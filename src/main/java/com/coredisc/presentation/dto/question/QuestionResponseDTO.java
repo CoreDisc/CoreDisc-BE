@@ -50,8 +50,6 @@ public class QuestionResponseDTO {
 
         private Boolean isSelected;
 
-        private Boolean isFavorite;
-
         private String savedStatus;
 
         private LocalDateTime createdAt;
@@ -98,8 +96,6 @@ public class QuestionResponseDTO {
         private Long sharedCount;
 
         private Boolean isSelected;
-
-        private Boolean isFavorite;
 
         private LocalDateTime createdAt;
     }
@@ -168,8 +164,6 @@ public class QuestionResponseDTO {
 
         private Boolean isSelected;
 
-        private Boolean isFavorite;
-
         private LocalDateTime createdAt;
     }
 
@@ -200,31 +194,7 @@ public class QuestionResponseDTO {
 
         private Boolean isSelected;
 
-        private Boolean isFavorite;
-
         private Long sharedCount;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class UpdateSavedSharedQuestionFavoriteStatusResultDTO {
-
-        private Long id;
-
-        private LocalDateTime createdAt;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class UpdateMySharedQuestionFavoriteStatusResultDTO {
-
-        private Long id;
-
-        private LocalDateTime createdAt;
     }
 
 }
