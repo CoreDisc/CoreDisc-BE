@@ -1,5 +1,6 @@
 package com.coredisc.application.service.follow;
 
+import com.coredisc.application.service.fcm.FcmService;
 import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.FollowConverter;
@@ -8,6 +9,8 @@ import com.coredisc.common.exception.handler.FollowHandler;
 import com.coredisc.common.exception.handler.MemberHandler;
 import com.coredisc.domain.block.BlockRepository;
 import com.coredisc.domain.common.enums.NotificationType;
+import com.coredisc.domain.device.Device;
+import com.coredisc.domain.device.DeviceRepository;
 import com.coredisc.domain.follow.Follow;
 import com.coredisc.domain.follow.FollowRepository;
 import com.coredisc.domain.member.Member;
@@ -15,8 +18,12 @@ import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.presentation.dto.notification.NotificationRequestDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -25,7 +32,9 @@ public class FollowCommandServiceImpl implements FollowCommandService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final BlockRepository blockRepository;
+    private final DeviceRepository deviceRepository;
     private final NotificationCommandService notificationCommandService;
+    private final FcmService fcmService;
 
     @Override
     public Follow follow(Member member, Long targetId) {
@@ -58,6 +67,22 @@ public class FollowCommandServiceImpl implements FollowCommandService {
                         member.getId() // 클릭 시 sender의 홈으로 접속해야 하니 sender의 id 전달
                 )
         );
+
+        List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(target);
+
+        // 푸시 알림 내용 설정
+        String title = "CoreDisc";
+        String body = member.getNickname()+"님이 팔로우를 시작했어요.";
+
+        for (Device device : devices) {
+            String token = device.getToken();
+            if (fcmService.isTokenValid(token)) {
+                fcmService.sendNotificationToToken(token, title, body);
+                log.info("팔로우 알림 발송됨: memberId={}, token={}", target.getId(), token);
+            } else {
+                log.warn("팔로우 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", target.getId(), token);
+            }
+        }
 
         return follow;
     }
