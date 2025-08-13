@@ -236,6 +236,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
 
+        // 기본 제공 질문인 경우
+        if (!selectedOfficialQuestion.isShared())
+            throw new QuestionHandler(ErrorStatus.CANNOT_SAVE_BASIC_QUESTION);
+
         // 이미 저장 여부
         if(memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion).isPresent())
             throw new QuestionHandler(ErrorStatus.ALREADY_SAVED_OFFICIAL_QUESTION);
