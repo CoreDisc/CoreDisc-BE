@@ -12,10 +12,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "Calendar", description = "캘린더 관련 API")
 public interface CalendarControllerDocs {
 
-    @Operation(summary = "월간 답변 기록 캘린더 조회", description = "사용자의 한 달 간의 답변 작성 여부와 연속 답변 일수를 조회합니다.")
+    @Operation(summary = "월간 답변 기록 캘린더 조회", description = "사용자의 한 달 간의 답변 작성 여부를 조회합니다.")
     ApiResponse<CalendarResponseDTO.CalendarDTO> getCalendar(
             @RequestParam("year") int year,
             @RequestParam("month") int month,
+            @Parameter(hidden = true) @CurrentMember Member member
+    );
+
+    @Operation(summary = "연속 답변일수 조회", description = "사용자가 연속으로 기록한 일수를 조회합니다.")
+    ApiResponse<Integer> getContinuousDays(
             @Parameter(hidden = true) @CurrentMember Member member
     );
 }

@@ -19,8 +19,6 @@ public class TermsResponseDTO {
 
         private String content;
 
-        private Double version;
-
         private Boolean isRequired;
     }
 }

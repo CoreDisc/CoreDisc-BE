@@ -24,4 +24,9 @@ public class CalendarController implements CalendarControllerDocs {
     public ApiResponse<CalendarResponseDTO.CalendarDTO> getCalendar(@RequestParam int year, @RequestParam int month, @CurrentMember Member member) {
         return ApiResponse.onSuccess(calendarQueryService.getCalendar(year, month, member));
     }
+
+    @GetMapping("/continuous")
+    public ApiResponse<Integer> getContinuousDays(@CurrentMember Member member) {
+        return ApiResponse.onSuccess(calendarQueryService.getContinuousDays(member));
+    }
 }

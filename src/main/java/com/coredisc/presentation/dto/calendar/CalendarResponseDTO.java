@@ -21,7 +21,6 @@ public class CalendarResponseDTO {
         private List<DayResultDTO> days;
 
         private int totalDays;
-        private int continuesDays;
 
         private boolean hasPrevMonth;
         private boolean hasNextMonth;

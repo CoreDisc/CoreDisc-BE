@@ -7,4 +7,5 @@ public interface CalendarQueryService {
 
     CalendarResponseDTO.CalendarDTO getCalendar(int year, int month, Member member);
 
+    Integer getContinuousDays(Member member);
 }
