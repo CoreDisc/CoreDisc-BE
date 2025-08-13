@@ -1,5 +1,8 @@
 package com.coredisc.application.schedule;
 
+import com.coredisc.application.service.fcm.FcmService;
+import com.coredisc.domain.device.Device;
+import com.coredisc.domain.device.DeviceRepository;
 import com.coredisc.domain.mapping.notificationReminderSetting.NotificationReminderSetting;
 import com.coredisc.domain.mapping.notificationReminderSetting.NotificationReminderSettingRepository;
 import com.coredisc.domain.member.Member;
@@ -28,6 +31,8 @@ public class NotificationReminderScheduler {
     private final NotificationReminderSettingRepository notificationReminderSettingRepository;
     private final JpaTodayQuestionRepository todayQuestionRepository;
     private final PostAnswerRepository postAnswerRepository;
+    private final DeviceRepository deviceRepository;
+    private final FcmService fcmService;
 
     @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
     public void reminderNotification() {
@@ -60,11 +65,52 @@ public class NotificationReminderScheduler {
     }
 
     private void processDailyReminder(Member member, LocalDate today) {
+        List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(member);
+
+        if (devices.isEmpty()) {
+            log.info("이 멤버 디바이스 토큰 없음 memberId={}", member.getId());
+            return;
+        }
+
         if (hasTodayQuestions(member, today)) {
-            // TODO: FCM - 질문 생성 알림
+            // FCM - 질문 생성 알림
+
+            for (Device device : devices) {
+                String token = device.getToken();
+
+                // 토큰 유효성 검사
+                if (fcmService.isTokenValid(token)) {
+                    // 유효한 토큰에 대해서만 알림 발송
+                    fcmService.sendNotificationToToken(
+                            token,
+                            "질문 선택 필요",
+                            "오늘의 질문이 완성되지 않았어요.\n" +
+                                    "먼저 하나 골라볼까요?"
+                    );
+                } else {
+                    log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
+                }
+            }
             log.info("DAILY_REMINDER - memberId={} : 오늘의 질문을 생성해 주세요.", member.getId());
         } else if (hasUnansweredQuestions(member, today)) {
-            //TODO: FCM - 답변 작성 알림
+            //FCM - 답변 작성 알림
+
+            for (Device device : devices) {
+                String token = device.getToken();
+
+                // 토큰 유효성 검사
+                if (fcmService.isTokenValid(token)) {
+                    // 유효한 토큰에 대해서만 알림 발송
+                    fcmService.sendNotificationToToken(
+                            token,
+                            "Disc 준비 완료",
+                            "오늘 Disc가 준비됐어요.\n" +
+                                    "Core에 한 조각 더해볼까요?"
+                    );
+                } else {
+                    log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
+                }
+            }
             log.info("DAILY_REMINDER - memberId={} : 오늘의 질문 답변을 작성해 주세요.", member.getId());
         } else {
             log.info("DAILY_REMINDER - memberId={} : 모든 질문 답변 완료했으니까 알림 미발송", member.getId());
@@ -72,11 +118,52 @@ public class NotificationReminderScheduler {
     }
 
     private void processUnansweredReminder(Member member, LocalDate today) {
+        List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(member);
+
+        if (devices.isEmpty()) {
+            log.info("이 멤버 디바이스 토큰 없음 memberId={}", member.getId());
+            return;
+        }
+
         if (hasTodayQuestions(member, today)) {
-            // TODO: FCM - 질문 생성 알림
+            //FCM - 질문 생성 알림
+
+            for (Device device : devices) {
+                String token = device.getToken();
+
+                // 토큰 유효성 검사
+                if (fcmService.isTokenValid(token)) {
+                    // 유효한 토큰에 대해서만 알림 발송
+                    fcmService.sendNotificationToToken(
+                            token,
+                            "마지막 질문 기회",
+                            "Core를 완성하려면 지금이에요.\n" +
+                                    "오늘 질문이 비어있어요."
+                    );
+                } else {
+                    log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
+                }
+            }
             log.info("UNANSWERED_QUESTION - memberId={} : 오늘의 질문을 생성해 주세요.", member.getId());
         } else if (hasUnansweredQuestions(member, today)) {
-            //TODO: FCM - 답변 작성 알림
+            //FCM - 답변 작성 알림
+
+            for (Device device : devices) {
+                String token = device.getToken();
+
+                // 토큰 유효성 검사
+                if (fcmService.isTokenValid(token)) {
+                    // 유효한 토큰에 대해서만 알림 발송
+                    fcmService.sendNotificationToToken(
+                            token,
+                            "CoreDisc 미완성",
+                            "오늘의 CoreDisc가 아직 없어요.\n" +
+                                    "놓치면 내일로 넘어가요."
+                    );
+                } else {
+                    log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
+                }
+            }
             log.info("UNANSWERED_QUESTION - memberId={} : 오늘의 질문 답변을 마저 작성해 주세요.", member.getId());
         } else {
             log.info("UNANSWERED_QUESTION - memberId={} : 모든 질문 답변 완료했으니까 알림 미발송", member.getId());
