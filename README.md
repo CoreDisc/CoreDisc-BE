@@ -31,8 +31,8 @@
     <th>Backend</th>
     <th>Backend</th>
     <th>Backend</th>
-    <th>Frontend</th>
-    <th>Design</th>
+    <th>Backend</th>
+    <th>Backend</th>
   </tr>
   <tr>
     <td align="center">
