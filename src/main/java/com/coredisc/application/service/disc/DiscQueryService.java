@@ -10,7 +10,7 @@ import java.util.List;
 public interface DiscQueryService {
 
     // 나의 디스크 목록 조회
-    Page<Disc> getMyDiscList(Member member, Pageable pageable);
+    List<Disc> getMyDiscList(Member member);
 
     // 나의 디스크 조회
     Disc getDisc(Long discId, Member member);

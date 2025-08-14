@@ -16,9 +16,6 @@ public class DiscResponseDTO {
     @NoArgsConstructor
     public static class DiscListDTO {
         private int totalDiscCount;
-        private int totalPages;
-        private int currentPage;
-        private boolean hasNext;
         private List<DiscDTO> discs;
     }
 

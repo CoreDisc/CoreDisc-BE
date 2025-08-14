@@ -19,7 +19,6 @@ public interface DiscControllerDocs {
 
     @Operation(summary = "디스크 목록 조회", description = "사용자의 월간 디스크 목록을 조회합니다.")
     ApiResponse<DiscResponseDTO.DiscListDTO> getDiscList(
-            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(name = "page") int page,
             @Parameter(hidden = true) @CurrentMember Member member
     );
 
