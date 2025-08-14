@@ -19,6 +19,7 @@ public class PostResponseDTO {
        private boolean liked;
 
     }
+
     @Getter
     @Builder
     public static class CreatePostResultDto {
@@ -29,22 +30,18 @@ public class PostResponseDTO {
         private LocalDate selectedDate;
 
         private PostStatus status; //TEMP
-        private List<TodayQuestionDto> todayQuestions;
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
         private LocalDateTime createdAt;
-
-
     }
+
     /**
      * 임시 today_question_dto
      */
     @Getter
     @Builder
     public static class TodayQuestionDto {
-        private Long questionOrder;            // today_question의 id 0,1,2,3
-        private QuestionType type;        // 0: 고정, 1: 랜덤
+        private Long questionId;
         private String publicity; // PERSONAL 또는 OFFICIAL
-        private String content;      // 질문 내용 ->
         private Boolean isAnswered; //답변 완료 여부
         private AnswerType answerType; // 답변 타입 (있는 경우)
     }

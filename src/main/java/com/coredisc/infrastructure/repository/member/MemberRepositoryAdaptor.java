@@ -68,6 +68,11 @@ public class MemberRepositoryAdaptor implements MemberRepository {
     public Optional<Member> findById(Long memberId) { return jpaMemberRepository.findById(memberId); }
 
     @Override
+    public Optional<Member> findByUsernameAndStatus(String username, Boolean status) {
+        return jpaMemberRepository.findByUsernameAndStatus(username, status);
+    }
+
+    @Override
     public Page<Member> findAllForDiscCreation(Pageable pageable) {
         return jpaMemberRepository.findAllForDiscCreation(pageable);
     }

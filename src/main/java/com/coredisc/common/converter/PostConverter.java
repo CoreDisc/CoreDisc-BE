@@ -30,20 +30,12 @@ public class PostConverter {
                                                            List<TodayQuestion> todayQuestions,
                                                            LocalDate selectedDate) {
 
-        List<TodayQuestionDto> questionDtos = todayQuestions.stream()
-                .map(tq -> TodayQuestionDto.builder()
-                        .questionOrder(tq.getId())
-                        .type(tq.getQuestionType())
-                        .isAnswered(false)
-                        .build())
-                .collect(Collectors.toList());
 
         return CreatePostResultDto.builder()
                 .postId(post.getId())
                 .memberId(post.getMember().getId())
                 .selectedDate(selectedDate)
                 .status(post.getStatus())
-                .todayQuestions(questionDtos)
                 .createdAt(post.getCreatedAt())
                 .build();
     }

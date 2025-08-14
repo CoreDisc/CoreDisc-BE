@@ -18,6 +18,7 @@ public interface JpaMemberRepository extends JpaRepository<Member, Long> {
     boolean existsByEmailAndUsername(String email, String username);
     Optional<Member> findByEmailAndUsername(String email, String username);
     Optional<Member> findByEmail(String email);
+    Optional<Member> findByUsernameAndStatus(String username, Boolean status);
 
     @Query("SELECT m FROM Member m WHERE m.status = true")
     Page<Member> findAllForDiscCreation(Pageable pageable);
