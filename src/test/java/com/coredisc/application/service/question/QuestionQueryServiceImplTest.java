@@ -110,7 +110,7 @@ class QuestionQueryServiceImplTest {
     }
 
     @Test
-    void getMyTodayQuestion_4questionsExist_daily() {
+    void getMyTodayQuestion_3questionsExist_daily() {
 
         // given: TodayQuestion 3개 생성
         TodayQuestion tq1 = TodayQuestion.builder().id(1L).questionOrder(1).build();
@@ -128,6 +128,37 @@ class QuestionQueryServiceImplTest {
                 .thenReturn(Optional.of(tq2));
         when(todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(testMember, 3, startOfMonth, endOfMonth))
                 .thenReturn(Optional.of(tq3));
+
+        // order 4 : 오늘 질문
+        when(todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(testMember, 4, today))
+                .thenReturn(Optional.empty());
+
+        // when
+        List<QuestionResponseDTO.SelectedTodayQuestionResultDTO> result =
+                questionQueryServiceImpl.getMyTodayQuestion(testMember);
+
+        // then
+        assertThat(result).hasSize(4);
+        assertThat(result).allSatisfy(dto -> assertThat(dto).isNotNull());
+
+        result.forEach(dto -> System.out.println("TodayQuestion id: " + dto.getId()));
+    }
+
+    @Test
+    void getMyTodayQuestion_4questionsNotExist() {
+
+        // given: TodayQuestion 3개 생성
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        // order 1~3 : 한달 질문
+        when(todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(testMember, 1, startOfMonth, endOfMonth))
+                .thenReturn(Optional.empty());
+        when(todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(testMember, 2, startOfMonth, endOfMonth))
+                .thenReturn(Optional.empty());
+        when(todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(testMember, 3, startOfMonth, endOfMonth))
+                .thenReturn(Optional.empty());
 
         // order 4 : 오늘 질문
         when(todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(testMember, 4, today))
