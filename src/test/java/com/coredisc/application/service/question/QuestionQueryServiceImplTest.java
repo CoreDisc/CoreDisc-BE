@@ -5,6 +5,7 @@ import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,6 +39,7 @@ class QuestionQueryServiceImplTest {
     }
 
     @Test
+    @DisplayName("선택한 질문 조회")
     void getMyTodayQuestion_questionsExist() {
 
         // given: TodayQuestion 4개 생성
