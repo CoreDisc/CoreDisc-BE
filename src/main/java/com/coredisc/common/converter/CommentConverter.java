@@ -20,7 +20,7 @@ public class CommentConverter {
     public static CommentResponseDTO.MemberInfo toMemberInfo(Member member) {
         return CommentResponseDTO.MemberInfo.builder()
                 .memberId(member.getId())
-                .nickname(member.getNickname())
+                .username(member.getUsername())
                 .profileImg(member.getProfileImg().getImgUrl())
                 .build();
     }

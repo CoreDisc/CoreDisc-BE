@@ -60,7 +60,7 @@ public class CommentResponseDTO {
     @Builder
     public static class MemberInfo {
         private Long memberId;
-        private String nickname;
+        private String username;
         private String profileImg;
 
     }
