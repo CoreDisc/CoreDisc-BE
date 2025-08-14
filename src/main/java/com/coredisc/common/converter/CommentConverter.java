@@ -20,7 +20,7 @@ public class CommentConverter {
     public static CommentResponseDTO.MemberInfo toMemberInfo(Member member) {
         return CommentResponseDTO.MemberInfo.builder()
                 .memberId(member.getId())
-                .nickname(member.getNickname())
+                .username(member.getUsername())
                 .profileImg(member.getProfileImg().getImgUrl())
                 .build();
     }
@@ -33,6 +33,7 @@ public class CommentConverter {
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .depth(comment.getDepth())
                 .member(CommentConverter.toMemberInfo(comment.getMember()))
+                .timeStamp(comment.toTimeStamp())
                 .build();
     }
 
@@ -55,7 +56,10 @@ public class CommentConverter {
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .depth(comment.getDepth())
                 .member(CommentConverter.toMemberInfo(comment.getMember()))
+                .replyCount(comment.getReplyCount())
+                .timeStamp(comment.toTimeStamp())
                 .hasReplies(hasChild)
+
                 .build();
     }
 
