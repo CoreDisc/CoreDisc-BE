@@ -42,3 +42,9 @@ src/main/resources
 uploads
 
 /src/main/generated/
+
+## 모니터링
+/grafana-data/
+/prometheus/prometheus.yml
+/grafana-provisioning/datasources/datasource.yml
+/docker-compose.monitoring.yml
