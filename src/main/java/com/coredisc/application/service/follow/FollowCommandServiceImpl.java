@@ -21,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -74,10 +76,15 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         String title = "CoreDisc";
         String body = member.getNickname()+"님이 팔로우를 시작했어요.";
 
+        // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
+        Map<String, String> data = new HashMap<>();
+        data.put("notificationType", NotificationType.FOLLOW.name());
+        data.put("targetId", String.valueOf(member.getId()));
+
         for (Device device : devices) {
             String token = device.getToken();
             if (fcmService.isTokenValid(token)) {
-                fcmService.sendNotificationToToken(token, title, body);
+                fcmService.sendNotificationToToken(token, title, body, data);
                 log.info("팔로우 알림 발송됨: memberId={}, token={}", target.getId(), token);
             } else {
                 log.warn("팔로우 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", target.getId(), token);

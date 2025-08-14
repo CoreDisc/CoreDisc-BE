@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -77,11 +75,16 @@ public class NotificationScheduler {
             String title = "저장 만료 임박";
             String body = "작성 중인 Core Disc 가 곧 사라져요.";
 
+            // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId (여기는 Null))
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.TEMP_POSTS.name());
+            // targetId는 추가하지 않음
+
             if (!devices.isEmpty()) {
                 for (Device device : devices) {
                     String token = device.getToken();
                     if (fcmService.isTokenValid(token)) {
-                        fcmService.sendNotificationToToken(token, title, body);
+                        fcmService.sendNotificationToToken(token, title, body, data);
                         log.info("임시저장 알림 발송됨: memberId={}, token={}", receiver.getId(), token);
                     } else {
                         log.warn("임시저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", receiver.getId(), token);

@@ -6,17 +6,20 @@ import org.springframework.stereotype.Service;
 
 import com.google.firebase.messaging.MessagingErrorCode;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class FcmService {
 
-    public void sendNotificationToToken(String token, String title, String body) {
+    public void sendNotificationToToken(String token, String title, String body, Map<String, String> data) {
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(Notification.builder()
                         .setTitle(title)
                         .setBody(body)
                         .build())
+                .putAllData(data)
                 .build();
 
         try {

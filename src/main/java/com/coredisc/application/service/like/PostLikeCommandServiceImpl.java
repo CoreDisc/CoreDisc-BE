@@ -22,7 +22,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -74,10 +76,15 @@ public class PostLikeCommandServiceImpl implements PostLikeCommandService{
         String title = "CoreDisc";
         String body = member.getNickname() + "님이 게시글에 마음을 남겼어요.";
 
+        // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
+        Map<String, String> data = new HashMap<>();
+        data.put("notificationType", NotificationType.LIKE.name());
+        data.put("targetId", String.valueOf(post.getId()));
+
         for (Device device : devices) {
             String token = device.getToken();
             if (fcmService.isTokenValid(token)) {
-                fcmService.sendNotificationToToken(token, title, body);
+                fcmService.sendNotificationToToken(token, title, body, data);
                 log.info("좋아요 알림 발송됨: memberId={}, token={}", post.getMember().getId(), token);
             } else {
                 log.warn("좋아요 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", post.getMember().getId(), token);

@@ -1,6 +1,7 @@
 package com.coredisc.application.schedule;
 
 import com.coredisc.application.service.fcm.FcmService;
+import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.device.Device;
 import com.coredisc.domain.device.DeviceRepository;
 import com.coredisc.domain.mapping.notificationReminderSetting.NotificationReminderSetting;
@@ -19,7 +20,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -75,6 +78,11 @@ public class NotificationReminderScheduler {
         if (hasTodayQuestions(member, today)) {
             // FCM - 질문 생성 알림
 
+            // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.DAILY_REMINDER.name());
+            // targetId는 추가하지 않음
+
             for (Device device : devices) {
                 String token = device.getToken();
 
@@ -85,7 +93,8 @@ public class NotificationReminderScheduler {
                             token,
                             "질문 선택 필요",
                             "오늘의 질문이 완성되지 않았어요.\n" +
-                                    "먼저 하나 골라볼까요?"
+                                    "먼저 하나 골라볼까요?",
+                            data
                     );
                 } else {
                     log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
@@ -94,6 +103,11 @@ public class NotificationReminderScheduler {
             log.info("DAILY_REMINDER - memberId={} : 오늘의 질문을 생성해 주세요.", member.getId());
         } else if (hasUnansweredQuestions(member, today)) {
             //FCM - 답변 작성 알림
+
+            // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.DAILY_REMINDER_ANSWER.name());
+            // targetId는 추가하지 않음
 
             for (Device device : devices) {
                 String token = device.getToken();
@@ -105,7 +119,8 @@ public class NotificationReminderScheduler {
                             token,
                             "Disc 준비 완료",
                             "오늘 Disc가 준비됐어요.\n" +
-                                    "Core에 한 조각 더해볼까요?"
+                                    "Core에 한 조각 더해볼까요?",
+                            data
                     );
                 } else {
                     log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
@@ -128,6 +143,11 @@ public class NotificationReminderScheduler {
         if (hasTodayQuestions(member, today)) {
             //FCM - 질문 생성 알림
 
+            // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.UNANSWERED_QUESTION.name());
+            // targetId는 추가하지 않음
+
             for (Device device : devices) {
                 String token = device.getToken();
 
@@ -138,7 +158,8 @@ public class NotificationReminderScheduler {
                             token,
                             "마지막 질문 기회",
                             "Core를 완성하려면 지금이에요.\n" +
-                                    "오늘 질문이 비어있어요."
+                                    "오늘 질문이 비어있어요.",
+                            data
                     );
                 } else {
                     log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
@@ -147,6 +168,11 @@ public class NotificationReminderScheduler {
             log.info("UNANSWERED_QUESTION - memberId={} : 오늘의 질문을 생성해 주세요.", member.getId());
         } else if (hasUnansweredQuestions(member, today)) {
             //FCM - 답변 작성 알림
+
+            // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.UNANSWERED_QUESTION_ANSWER.name());
+            // targetId는 추가하지 않음
 
             for (Device device : devices) {
                 String token = device.getToken();
@@ -158,7 +184,8 @@ public class NotificationReminderScheduler {
                             token,
                             "CoreDisc 미완성",
                             "오늘의 CoreDisc가 아직 없어요.\n" +
-                                    "놓치면 내일로 넘어가요."
+                                    "놓치면 내일로 넘어가요.",
+                            data
                     );
                 } else {
                     log.warn("유효하지 않은 토큰 발견: memberId={}, token={}", member.getId(), token);
