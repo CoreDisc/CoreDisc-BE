@@ -53,6 +53,11 @@ public class CommentResponseDTO {
         private MemberInfo member;
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private boolean hasReplies;
+        // 댓글 작성 시각 표시 ("방금 전", "5분 전", "2시간 전", "3일 전" 등)
+        private String timeStamp;
+        // 답글 수
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private Integer replyCount;
 
     }
 
