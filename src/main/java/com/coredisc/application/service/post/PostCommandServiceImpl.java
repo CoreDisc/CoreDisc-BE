@@ -11,9 +11,9 @@ import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
 import com.coredisc.domain.postAnswer.PostAnswerRepository;
 import com.coredisc.domain.postAnswerImage.PostAnswerImageRepository;
+import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.infrastructure.aws.s3.AmazonS3Manager;
 import com.coredisc.infrastructure.aws.s3.ImageUploadResult;
-import com.coredisc.infrastructure.repository.question.JpaTodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostRequestDTO;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostRepository postRepository;
     private final PostAnswerRepository postAnswerRepository;
     private final PostAnswerImageRepository postAnswerImageRepository;
-    private final JpaTodayQuestionRepository todayQuestionRepository;
+    private final TodayQuestionRepository todayQuestionRepository;
     private final AmazonS3Manager amazonS3Manager;
 
     //  빈 게시글 생성
@@ -181,6 +181,11 @@ public class PostCommandServiceImpl implements PostCommandService {
         Post post = validatePostOwnership(member, postId);
         PostRequestDTO.SelectiveDiaryDto selectiveDiaryDto = request.getSelectiveDiary();
 
+        // 예외처리 추가 -> 답변이 하나라도 작성 안된 경우
+        if(post.getAnswers().size() != 4) {
+            throw new PostHandler(ErrorStatus.POST_NOT_READY_TO_PUBLISH);
+        }
+
         //발행으로 변경
         post.publish();
         // 선택형 일기 업데이트
@@ -212,7 +217,6 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
 
         post.validateOwnership(member);
-        //TODO : 삭제 전 추가 검증 로직
 
         // imageUrl 불러오기
         List<String> imageUrls = extractImageUrls(post);
