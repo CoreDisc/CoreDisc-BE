@@ -182,7 +182,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     public AuthResponseDTO.LoginResultDTO login(AuthRequestDTO.LoginDTO request) {
 
-        Member member = memberRepository.findByUsername(request.getUsername())
+        Member member = memberRepository.findByUsernameAndStatus(request.getUsername(), true)
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if(!passwordEncoder.matches(request.getPassword(), member.getPassword())) {

@@ -19,6 +19,7 @@ public interface MemberRepository {
     Optional<Member> findByEmailAndUsername(String email, String username);
     Optional<Member> findByEmail(String email);
     Optional<Member> findById(Long followerId);
+    Optional<Member> findByUsernameAndStatus(String username, Boolean status);
 
     Page<Member> findAllForDiscCreation(Pageable pageable);
 
