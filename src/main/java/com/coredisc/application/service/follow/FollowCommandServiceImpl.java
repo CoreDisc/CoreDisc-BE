@@ -80,6 +80,7 @@ public class FollowCommandServiceImpl implements FollowCommandService {
         Map<String, String> data = new HashMap<>();
         data.put("notificationType", NotificationType.FOLLOW.name());
         data.put("targetId", String.valueOf(member.getId()));
+        data.put("username", member.getNickname());
 
         for (Device device : devices) {
             String token = device.getToken();
