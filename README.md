@@ -70,6 +70,37 @@
 
 <br />
 
+## 프로젝트 구조
+
+```
+src/main/java/com/coredisc
+├── presentation            # Presentation Layer: 클라이언트와 상호작용
+│   ├── controller          # API Endpoints (HTTP 요청 처리)
+│   └── dto                 # 데이터 전송 객체 (Request/Response)
+│
+├── application             # Application Layer: 유스케이스 처리
+│   ├── service             # 비즈니스 로직 흐름 제어, 트랜잭션 관리
+│   └── schedule            # 스케줄링 작업
+│
+├── domain                  # Domain Layer: 핵심 비즈니스 로직
+│   ├── model               # 도메인 모델 (Entity, VO)
+│   └── repository          # 데이터 영속성 인터페이스 정의
+│
+├── infrastructure          # Infrastructure Layer: 외부 시스템 연동, 기술 구현
+│   ├── repository          # 데이터 영속성 구현체 (JPA, etc.)
+│   └── aws.s3              # 외부 서비스(S3) 연동 구현
+│
+├── common                  # Common: 프로젝트 전반에서 사용되는 공통 모듈
+│   ├── apiPayload          # 공통 API 응답 형식
+│   ├── exception           # 커스텀 예외 처리
+│   └── util                # 유틸리티 클래스
+│
+└── security                # Security: 인증/인가 관련
+    ├── auth                # 인증 관련 로직
+    └── jwt                 # JWT 토큰 처리
+```
+
+
 
 ## 🗂️ APIs
 작성한 API는 아래에서 확인할 수 있습니다.
@@ -102,10 +133,10 @@
 
 <br />
 
-## 🛠️ 프로젝트 아키텍쳐
+## 🛠️ 서버 아키텍쳐
 <img width="700" height="570" alt="image" src="https://github.com/user-attachments/assets/c3ef32af-0169-4021-bedd-5ca3a7fdb7c8" />
 
-
-
-
-
+## Branch Guideline
+- main브랜치(배포용)
+- develop 브랜치(개발용)
+- feature/#이슈번호(각자 기능 개발할 때 생성할 브랜치 이름 양식)
