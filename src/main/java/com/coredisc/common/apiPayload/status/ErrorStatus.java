@@ -153,7 +153,9 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMENT_CONTENT_EMPTY(HttpStatus.BAD_REQUEST, "COMMENT4002", "댓글 내용을 입력해주세요."),
 
     // 리마인더 알림 설정 관련 에러
-    INVALID_REMINDER_TIME_ORDER(HttpStatus.BAD_REQUEST, "NOTIFICATIONREMINDERSETTING4001", "Unanswered 리마인더 시간은 데일리 리마인더 시간보다 늦어야 합니다.");
+    INVALID_REMINDER_TIME_ORDER(HttpStatus.BAD_REQUEST, "NOTIFICATIONREMINDERSETTING4001", "Unanswered 리마인더 시간은 데일리 리마인더 시간보다 늦어야 합니다."),
+    INVALID_DAILY_REMINDER_TIME(HttpStatus.BAD_REQUEST, "NOTIFICATIONREMINDERSETTING4002", "DAILY 리마인더 시간은 5분 단위로 설정할 수 있습니다."),
+    INVALID_UNANSWERED_REMINDER_TIME(HttpStatus.BAD_REQUEST, "NOTIFICATIONREMINDERSETTING4003", "Unanswered 리마인더 시간은 5분 단위로 설정할 수 있습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
