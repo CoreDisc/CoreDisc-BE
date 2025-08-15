@@ -50,8 +50,14 @@ public class NotificationReminderSettingCommandServiceImpl implements Notificati
 
         // 데일리 리마인더 알림 시간 변경
         if (request.getDailyReminderHour() != null || request.getDailyReminderMinute() != null) {
-            int h = (request.getDailyReminderHour()   != null) ? request.getDailyReminderHour()   : setting.getDailyReminderTime().getHour();
             int m = (request.getDailyReminderMinute() != null) ? request.getDailyReminderMinute() : setting.getDailyReminderTime().getMinute();
+
+            // 분 단위가 5의 배수가 아닌 경우 예외 발생하도록
+            if (m % 5 != 0) {
+                throw new NotificationReminderSettingHandler(ErrorStatus.INVALID_DAILY_REMINDER_TIME);
+            }
+
+            int h = (request.getDailyReminderHour() != null) ? request.getDailyReminderHour() : setting.getDailyReminderTime().getHour();
             setting.changeDailyReminderTime(h, m);
         }
 
@@ -62,8 +68,14 @@ public class NotificationReminderSettingCommandServiceImpl implements Notificati
 
         // unanswered 알림 시간 변경
         if (request.getUnansweredReminderHour() != null || request.getUnansweredReminderMinute() != null) {
-            int h = (request.getUnansweredReminderHour()   != null) ? request.getUnansweredReminderHour()   : setting.getUnansweredReminderTime().getHour();
             int m = (request.getUnansweredReminderMinute() != null) ? request.getUnansweredReminderMinute() : setting.getUnansweredReminderTime().getMinute();
+
+            // 분 단위가 5의 배수가 아닌 경우 예외 발생
+            if (m % 5 != 0) {
+                throw new NotificationReminderSettingHandler(ErrorStatus.INVALID_UNANSWERED_REMINDER_TIME);
+            }
+
+            int h = (request.getUnansweredReminderHour() != null) ? request.getUnansweredReminderHour() : setting.getUnansweredReminderTime().getHour();
             setting.changeUnansweredReminderTime(h, m);
         }
 
