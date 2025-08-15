@@ -8,7 +8,7 @@
 <br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.07.01~현재-green?style=flat&logo=&logoColor=white" />]()
 
 </div> 
-
+<br />
 
 ## 프로젝트 소개 — Coredisc
 
@@ -110,26 +110,17 @@ src/main/java/com/coredisc
 
 <br />
 
-## ⚙ 기술 스택
-### Back-end
-<div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Java.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringBoot.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringSecurity.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringDataJPA.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Mysql.png?raw=true" width="80">
-</div>
-
-### Infra
-<div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/AWSEC2.png?raw=true" width="80">
-</div>
-
-### Tools
-<div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Github.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Notion.png?raw=true" width="80">
-</div>
+## ⚙ Skills
+- Java 17
+- Spring Framework (Spring Boot 3, Spring Web, Spring Data Jpa, Spring Batch, Spring Security)
+- Redis, JPA, QueryDSL, MySql
+- Junit5, Spring Test
+- Gradle
+- Nginx
+- AWS Service (EC2, RDS, S3)
+- Promtheus, Grafana
+- Git, GitHub Actions
+- GitHub, Discord, Swagger
 
 <br />
 
