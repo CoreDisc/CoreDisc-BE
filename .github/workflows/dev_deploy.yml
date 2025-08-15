@@ -46,6 +46,16 @@ jobs:
           echo "${{ secrets.APPLICATION_YML }}" >> ./application.yml
         shell: bash
 
+      ## fireBase json 생성
+      - name: make firebase serviceAccountKey.json
+        if: contains(github.ref, 'develop')
+        shell: bash
+        run: |
+          mkdir -p ./src/main/resources/firebase
+          cat > ./src/main/resources/firebase/serviceAccountKey.json << 'EOF'
+          ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          EOF
+
         # gradle build
       - name: Build with Gradle
         run: ./gradlew build -x test

@@ -3,7 +3,6 @@ package com.coredisc.common.converter;
 import com.coredisc.domain.Comment;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
-import com.coredisc.presentation.dto.comment.CommentRequestDTO;
 import com.coredisc.presentation.dto.comment.CommentResponseDTO;
 
 public class CommentConverter {
@@ -33,11 +32,10 @@ public class CommentConverter {
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .depth(comment.getDepth())
                 .member(CommentConverter.toMemberInfo(comment.getMember()))
-                .timeStamp(comment.toTimeStamp())
                 .build();
     }
 
-    public static CommentResponseDTO.CommentCreateResponse toReplyCreateResponse(Comment comment) {
+    public static CommentResponseDTO.CommentCreateResponse toReplyCreateResponse(Comment comment, boolean isOwner) {
         return CommentResponseDTO.CommentCreateResponse.builder()
                 .commentId(comment.getId())
                 .postId(comment.getPost().getId())
@@ -45,10 +43,12 @@ public class CommentConverter {
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .depth(comment.getDepth())
                 .member(toMemberInfo(comment.getMember()))
+                .timeStamp(comment.toTimeStamp())
+                .isOwner(isOwner)
                 .build();
     }
 
-    public static CommentResponseDTO.CommentCreateResponse toCreateResponseWithChildExists(Comment comment,boolean hasChild) {
+    public static CommentResponseDTO.CommentCreateResponse toCreateResponseWithChildExists(Comment comment,boolean hasChild, boolean isOwner) {
         return CommentResponseDTO.CommentCreateResponse.builder()
                 .commentId(comment.getId())
                 .postId(comment.getPost().getId())
@@ -57,6 +57,7 @@ public class CommentConverter {
                 .depth(comment.getDepth())
                 .member(CommentConverter.toMemberInfo(comment.getMember()))
                 .replyCount(comment.getReplyCount())
+                .isOwner(isOwner)
                 .timeStamp(comment.toTimeStamp())
                 .hasReplies(hasChild)
 

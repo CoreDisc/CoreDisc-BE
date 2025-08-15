@@ -26,7 +26,7 @@ public class CommentQueryServiceImpl implements CommentQueryService{
         CursorDTO<Comment> page = commentRepository.findParentCommentByCursor(postId, cursorId, size, member.getId());
 
         return new CursorDTO<>(page.getValues().stream()
-                .map(comment -> CommentConverter.toCreateResponseWithChildExists(comment,comment.hasChild()))
+                .map(comment -> CommentConverter.toCreateResponseWithChildExists(comment,comment.hasChild(), comment.isOwner(member.getId())))
                 .toList(),page.getHasNext());
     }
 
@@ -36,7 +36,7 @@ public class CommentQueryServiceImpl implements CommentQueryService{
         CursorDTO<Comment> page = commentRepository.findRepliesByParentId(parentId, cursorId, size,member.getId());
 
         return new CursorDTO<>(page.getValues().stream()
-                .map(CommentConverter::toCreateResponse)
+                .map(comment -> CommentConverter.toReplyCreateResponse(comment,comment.isOwner(member.getId())))
                 .toList(),page.getHasNext());
     }
 
