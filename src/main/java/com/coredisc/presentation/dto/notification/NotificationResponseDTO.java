@@ -27,6 +27,7 @@ public record NotificationResponseDTO (
     Long targetId,
     Long senderId,
     String senderNickname,
+    String senderUsername,
     ProfileImgResponseDTO.ProfileImgDTO profileImgDTO,
     boolean isRead,
     LocalDateTime createdAt,
