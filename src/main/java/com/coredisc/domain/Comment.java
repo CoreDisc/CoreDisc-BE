@@ -6,6 +6,9 @@ import com.coredisc.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +66,40 @@ public class Comment extends BaseEntity {
 
     public boolean hasChild() {
         return !this.replies.isEmpty();
+    }
+
+
+    // 답글 수 조회
+    public Integer getReplyCount() {
+        return this.replies.size();
+
+    }
+
+    public String toTimeStamp() {
+
+        Period period = Period.between(this.createdAt.toLocalDate(), LocalDateTime.now().toLocalDate());
+        long years = period.getYears();
+        long months = period.getMonths();
+        long days = period.getDays();
+
+        Duration duration = Duration.between(this.createdAt, LocalDateTime.now());
+        long hours = duration.toHours();
+        long minutes = duration.toMinutes();
+        long seconds = duration.getSeconds();
+
+        if (years > 0) {
+            return years + "년 전";
+        } else if (months > 0) {
+            return months + "개월 전";
+        } else if (days > 0) {
+            return days + "일 전";
+        } else if (hours > 0) {
+            return hours + "시간 전";
+        } else if (minutes > 0) {
+            return minutes + "분 전";
+        } else {
+            return "방금 전";
+        }
     }
 
 }

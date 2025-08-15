@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -30,6 +31,11 @@ public class DiscRepositoryAdaptor implements DiscRepository {
     @Override
     public Page<Disc> findByMember(Member member, Pageable pageable) {
         return jpaDiscRepository.findByMember(member, pageable);
+    }
+
+    @Override
+    public List<Disc> findAllByMemberOrderByYearDescMonthDesc(Member member) {
+        return jpaDiscRepository.findAllByMemberOrderByYearDescMonthDesc(member);
     }
 
     @Override
