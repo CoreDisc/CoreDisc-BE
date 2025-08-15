@@ -221,7 +221,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
             if(jwtProvider.validateAccessToken(accessToken)) {
                 // 디바이스 토큰 비활성화
-                deviceCommandService.deactivateDeviceToken(jwtProvider.getUsername(accessToken), accessToken);
+                deviceCommandService.deactivateDeviceToken(jwtProvider.getUsername(accessToken), deviceToken);
                 // 블랙리스트에 저장
                 redisUtil.set(accessToken, "logout");
                 redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
