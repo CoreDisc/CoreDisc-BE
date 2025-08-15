@@ -50,7 +50,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 )
         );
 
-        //Converter 적용
+
         return commentRepository.save(comment);
 
     }

@@ -2,7 +2,6 @@ package com.coredisc.presentation.controller;
 
 import com.coredisc.application.service.comment.CommentCommandService;
 import com.coredisc.application.service.comment.CommentQueryService;
-import com.coredisc.application.service.comment.CommentQueryServiceImpl;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.converter.CommentConverter;
 import com.coredisc.domain.Comment;
@@ -14,8 +13,6 @@ import com.coredisc.presentation.dto.cursor.CursorDTO;
 import com.coredisc.security.jwt.annotaion.CurrentMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController("/api/")
 @RequiredArgsConstructor
@@ -43,7 +40,7 @@ public class CommentController implements CommentControllerDocs {
 
         Comment comment = commentCommandService.createReply(commentId,request,member.getId());
 
-        return ApiResponse.onSuccess(CommentConverter.toReplyCreateResponse(comment));
+        return ApiResponse.onSuccess(CommentConverter.toReplyCreateResponse(comment,comment.isOwner(member.getId())));
     }
 
     @GetMapping("/posts/{postId}/comments")
