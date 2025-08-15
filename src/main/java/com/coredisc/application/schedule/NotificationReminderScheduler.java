@@ -37,7 +37,7 @@ public class NotificationReminderScheduler {
     private final DeviceRepository deviceRepository;
     private final FcmService fcmService;
 
-    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul")
     public void reminderNotification() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
