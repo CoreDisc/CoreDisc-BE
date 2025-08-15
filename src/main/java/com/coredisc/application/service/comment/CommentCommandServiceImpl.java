@@ -88,7 +88,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
             log.info("자신의 게시글에 댓글 작성: memberId={}이므로 알림 미발송", member.getId());
         }
 
-        //Converter 적용
+
         return commentRepository.save(comment);
 
     }
