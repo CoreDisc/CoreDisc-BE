@@ -52,7 +52,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public boolean resetNicknameAndUsernameMyHome(String accessToken, Member member,
+    public boolean resetNicknameAndUsernameMyHome(String accessToken, Member member, String deviceToken,
                                                   MemberRequestDTO.MyHomeResetNicknameAndUsernameDTO request) {
 
         boolean isUsernameChanged = false;
@@ -78,7 +78,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         // username 변경시 기존 accessToken 블랙리스트 저장
         if (isUsernameChanged) {
-            logoutMember(accessToken);
+            logoutMember(accessToken, deviceToken, request.getNewUsername());
         }
 
         return isUsernameChanged;
@@ -123,7 +123,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void resetUsernameMyHome(String accessToken, Member member, MemberRequestDTO.MyHomeResetUsernameDTO request) {
+    public void resetUsernameMyHome(String accessToken, Member member, String deviceToken, MemberRequestDTO.MyHomeResetUsernameDTO request) {
 
         if(member.getUsername().equals(request.getNewUsername())) {
             throw new AuthHandler(ErrorStatus.SAME_USERNAME_REQUEST);
@@ -136,7 +136,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         member.setUsername(request.getNewUsername());
         memberRepository.save(member);
 
-        logoutMember(accessToken);
+        logoutMember(accessToken, deviceToken, request.getNewUsername());
     }
 
     @Override
@@ -202,11 +202,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
 
-    private void logoutMember(String accessToken) {
+    private void logoutMember(String accessToken, String deviceToken, String newUsername) {
 
         if(accessToken.startsWith("Bear ")) {
             accessToken = accessToken.substring(7);
         }
+        // 디바이스 토큰 비활성화
+        deviceCommandService.deactivateDeviceToken(newUsername, deviceToken);
+
         redisUtil.set(accessToken, "logout");
         redisUtil.expire(accessToken, jwtProvider.getRemainingExpiration(accessToken), TimeUnit.MILLISECONDS);
         // RefreshToken 삭제

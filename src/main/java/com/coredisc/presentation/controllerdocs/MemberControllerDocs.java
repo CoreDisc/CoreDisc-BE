@@ -27,6 +27,7 @@ public interface MemberControllerDocs {
     @Operation(summary = "마이홈 닉네임, 아이디 변경", description = "닉네임, 아이디 변경 기능입니다.")
     ApiResponse<String> resetNicknameAndUsernameMyHome(@RequestHeader("accessToken") String accessToken,
                                                        @CurrentMember Member member,
+                                                       @RequestParam String deviceToken,
                                                        @RequestBody @Valid MemberRequestDTO.MyHomeResetNicknameAndUsernameDTO request);
 
     @Operation(summary = "계정 탈퇴", description = "계정 탈퇴 기능입니다.")
@@ -68,6 +69,7 @@ public interface MemberControllerDocs {
     @Operation(summary = "마이홈 계정 관리 아이디 변경", description = "계정 관리 아이디 변경 기능입니다.")
     ApiResponse<String> resetUsernameMyHome(@RequestHeader("accessToken") String accessToken,
                                             @CurrentMember Member member,
+                                            @RequestParam String deviceToken,
                                             @RequestBody MemberRequestDTO.MyHomeResetUsernameDTO request);
 
     @Schema(name = "ImageUploadSchema", description = "이미지 파일만 전송하는 multipart 요청")

@@ -11,7 +11,7 @@ public interface MemberCommandService {
     void resetPassword(MemberRequestDTO.ResetPasswordDTO request);
 
     // 마이 홈 - 닉네임, 아이디 변경
-    boolean resetNicknameAndUsernameMyHome(String accessToken, Member member,
+    boolean resetNicknameAndUsernameMyHome(String accessToken, Member member, String deviceToken,
                                            MemberRequestDTO.MyHomeResetNicknameAndUsernameDTO request);
 
     // 계정 탈퇴
@@ -24,7 +24,7 @@ public interface MemberCommandService {
     void resetPasswordMyHome(Member member, MemberRequestDTO.MyHomeResetPasswordDTO request);
 
     // 계정 관리 - 아이디 변경
-    void resetUsernameMyHome(String accessToken, Member member, MemberRequestDTO.MyHomeResetUsernameDTO request);
+    void resetUsernameMyHome(String accessToken, Member member, String deviceToken, MemberRequestDTO.MyHomeResetUsernameDTO request);
 
     // 프로필 사진 변경
     ProfileImgResponseDTO.ProfileImgDTO resetProfileImg(Member member, MultipartFile newProfileImg);
