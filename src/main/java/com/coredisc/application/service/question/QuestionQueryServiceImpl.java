@@ -298,7 +298,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                     // isSelected 체크
                     boolean isSelected = myTodayQuestionList.stream()
                             .anyMatch(todayQuestion -> todayQuestion.getOfficialQuestion() != null
-                                    && todayQuestion.getOfficialQuestion().getId().equals(question.getId()));
+                                    && todayQuestion.getOfficialQuestion().equals(question.getOfficialQuestion()));
                     return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount, isSelected);
                 }).toList();
 
