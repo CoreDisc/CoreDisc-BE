@@ -33,4 +33,9 @@ public class DeviceRepositoryAdaptor implements DeviceRepository {
     public List<Device> findAllByMember(Member member) {
         return jpaDeviceRepository.findAllByMember(member);
     }
+
+    @Override
+    public List<Device> findByMemberAndIsActiveTrue(Member member) {
+        return jpaDeviceRepository.findByMemberAndIsActiveTrue(member);
+    }
 }

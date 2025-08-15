@@ -1,8 +1,11 @@
 package com.coredisc.application.schedule;
 
+import com.coredisc.application.service.fcm.FcmService;
 import com.coredisc.application.service.notification.NotificationCommandService;
 import com.coredisc.domain.common.enums.NotificationType;
 import com.coredisc.domain.common.enums.PostStatus;
+import com.coredisc.domain.device.Device;
+import com.coredisc.domain.device.DeviceRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.member.MemberRepository;
 import com.coredisc.domain.post.PostRepository;
@@ -16,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -28,7 +29,9 @@ public class NotificationScheduler {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final DeviceRepository deviceRepository;
     private final NotificationCommandService notificationCommandService;
+    private final FcmService fcmService;
 
     // 매일 23시 임시저장 알림
     // 발행되지 않고 임시저장된 게시글이 있을 때, 알림 생성
@@ -65,6 +68,30 @@ public class NotificationScheduler {
                             null // 게시글 작성 화면으로 이동해야 하기에 null로 작성 (targetId 없음)
                     )
             );
+
+            List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(receiver);
+
+            // 푸시 알림 내용 설정
+            String title = "저장 만료 임박";
+            String body = "작성 중인 Core Disc 가 곧 사라져요.";
+
+            // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId (여기는 Null))
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.TEMP_POSTS.name());
+            // targetId는 추가하지 않음
+
+            if (!devices.isEmpty()) {
+                for (Device device : devices) {
+                    String token = device.getToken();
+                    if (fcmService.isTokenValid(token)) {
+                        fcmService.sendNotificationToToken(token, title, body, data);
+                        log.info("임시저장 알림 발송됨: memberId={}, token={}", receiver.getId(), token);
+                    } else {
+                        log.warn("임시저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", receiver.getId(), token);
+                    }
+                }
+            }
+
             sent++;
         }
         log.info("[임시저장 알림테스트] 임시저장 게시글 만료 알림 전송 완료 - 총 {}명", sent);

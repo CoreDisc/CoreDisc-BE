@@ -11,4 +11,5 @@ public interface DeviceRepository {
     Device save(Device device);
     void deleteAllByMember(Member member);
     List<Device> findAllByMember(Member member);
+    List<Device> findByMemberAndIsActiveTrue(Member member);
 }
