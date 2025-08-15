@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'springboot'
+    scheme: http
+    metrics_path: /actuator/prometheus        # context-path가 있으면 앞에 추가하세요.
+    static_configs:
+      - targets: ['api.coredisc.site']        # ← EC2 도메인
+        labels:
+          app: myapp
