@@ -106,13 +106,23 @@ public class FollowCommandServiceImpl implements FollowCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 팔로우한 이력이 없을 경우
-        if (!followRepository.existsByFollowerAndFollowing(member, target)){
+        Follow followToTarget = followRepository.findByFollowerAndFollowing(member, target);
+        if (followToTarget == null){
             throw new FollowHandler(ErrorStatus.FOLLOW_NOT_FOUND);
         }
 
-        Follow follow = followRepository.findByFollowerAndFollowing(member, target);
+        // 언팔로우 시, 친한친구 상태 해제
+        if (followToTarget.isCircle()){
+            followToTarget.updateCircle(false);
+        }
 
-        followRepository.delete(follow);
+        // 상대방이 나를 친한친구로 설정해둔 거 해제
+        Follow followFromTarget = followRepository.findByFollowerAndFollowing(target, member);
+        if (followFromTarget != null && followFromTarget.isCircle()) {
+            followFromTarget.updateCircle(false);
+        }
+
+        followRepository.delete(followToTarget);
     }
 
     @Override
