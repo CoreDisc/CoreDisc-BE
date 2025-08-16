@@ -219,6 +219,7 @@ public class QueryCustomQuestionRepositoryImpl implements QueryCustomQuestionRep
                 .map(row -> new MemberResponseDTO.MyHomeQuestionDTO(
                         ((Number) row[0]).longValue(),            // id
                         (String) row[1],                          // questionType
+                        "OFFICIAL".equalsIgnoreCase((String) row[1]), // isShared
                         (String) row[2],                          // question
                         ((Timestamp) row[3]).toLocalDateTime()   // createdAt
                 ))

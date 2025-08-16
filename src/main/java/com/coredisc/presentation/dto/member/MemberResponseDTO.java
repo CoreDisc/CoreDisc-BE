@@ -114,6 +114,8 @@ public class MemberResponseDTO {
 
         private String questionType;
 
+        private Boolean isShared;
+
         private String question;
 
         private LocalDateTime createdAt;
