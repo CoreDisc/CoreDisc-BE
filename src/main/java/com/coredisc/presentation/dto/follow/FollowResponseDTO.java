@@ -17,6 +17,7 @@ public class FollowResponseDTO {
     @NoArgsConstructor
     @Builder
     public static class FollowerDTO {
+        private Long followId;
         private Long followerId;
         private String nickname;
         private String username;
@@ -43,6 +44,7 @@ public class FollowResponseDTO {
     @NoArgsConstructor
     @Builder
     public static class FollowingDTO {
+        private Long followId;
         private Long followingId;
         private String nickname;
         private String username;

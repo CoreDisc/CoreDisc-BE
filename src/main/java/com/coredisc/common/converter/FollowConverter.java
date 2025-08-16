@@ -21,6 +21,7 @@ public class FollowConverter {
     // 팔로워, 친한 친구
     public static FollowResponseDTO.FollowerDTO toFollowerDTO(Follow follow, Boolean isMutual) {
         return FollowResponseDTO.FollowerDTO.builder()
+                .followId(follow.getId())
                 .followerId(follow.getFollower().getId())
                 .nickname(follow.getFollower().getNickname())
                 .username(follow.getFollower().getUsername())
@@ -33,6 +34,7 @@ public class FollowConverter {
     // 타사용자의 팔로워 (친한친구, 맞팔여부 제외함)
     public static FollowResponseDTO.FollowerDTO toFollowerDTO(Follow follow) {
         return FollowResponseDTO.FollowerDTO.builder()
+                .followId(follow.getId())
                 .followerId(follow.getFollower().getId())
                 .nickname(follow.getFollower().getNickname())
                 .username(follow.getFollower().getUsername())
@@ -58,6 +60,7 @@ public class FollowConverter {
 
     public static FollowResponseDTO.FollowingDTO toFollowingDTO(Follow follow) {
         return FollowResponseDTO.FollowingDTO.builder()
+                .followId(follow.getId())
                 .followingId(follow.getFollowing().getId())
                 .nickname(follow.getFollowing().getNickname())
                 .username(follow.getFollowing().getUsername())
