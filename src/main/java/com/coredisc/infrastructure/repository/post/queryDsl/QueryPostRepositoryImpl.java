@@ -143,17 +143,20 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
         condition.and(post.status.eq(PostStatus.PUBLISHED));
 
         // 피드 타입별 필터링
+        BooleanBuilder memberCondition = new BooleanBuilder();
+
         if (feedType == FeedType.ALL) {
-            // 팔로우하는 모든 사용자의 게시글
-            condition.and(post.member.id.in(
+            // 팔로우하는 모든 사용자의 게시글 + 내 게시글
+            memberCondition.or(post.member.id.eq(memberId)); // 내 게시글 포함
+            memberCondition.or(post.member.id.in(
                     jpaQueryFactory
                             .select(follow.following.id)
                             .from(follow)
                             .where(follow.follower.id.eq(memberId))
             ));
         } else if (feedType == FeedType.CORE) {
-            // 친한친구로 설정한 사용자들의 게시글
-            condition.and(post.member.id.in(
+            // 친한친구로 설정한 사용자들의 게시글만 (내 게시글 제외)
+            memberCondition.and(post.member.id.in(
                     jpaQueryFactory
                             .select(follow.following.id)
                             .from(follow)
@@ -161,6 +164,8 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                                     .and(follow.isCircle.eq(true)))
             ));
         }
+
+        condition.and(memberCondition);
 
         // 공개 범위 필터링
         BooleanBuilder visibilityCondition = new BooleanBuilder();
@@ -178,8 +183,15 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                                         .where(follow.follower.id.eq(memberId)
                                                 .and(follow.isCircle.eq(true)))
                         ))
-
         );
+
+        // ALL 피드에서만 내 게시글의 모든 공개범위 허용
+        if (feedType == FeedType.ALL) {
+            visibilityCondition.or(
+                    post.member.id.eq(memberId)
+                            .and(post.publicity.in(PublicityType.OFFICIAL, PublicityType.CIRCLE, PublicityType.PERSONAL))
+            );
+        }
 
         condition.and(visibilityCondition);
 
