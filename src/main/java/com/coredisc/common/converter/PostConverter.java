@@ -140,15 +140,9 @@ public class PostConverter {
     /**
      * Post 엔티티를 PostDetailResponseDTO로 변환
      */
-    public static PostDetailDto toPostDetailResponse(Post post, List<PostAnswer> answers, List<String> questions, boolean isLiked) {
+    public static PostDetailDto toPostDetailResponse(Post post, List<PostAnswer> answers, List<String> questions, boolean isLiked, boolean isOwner) {
 
-        for (String question : questions) {
-            log.info("question = {}",question);
-        }
 
-        for (PostAnswer answer : post.getAnswers()) {
-            log.info("answer= {}",answer.getId());
-        }
         return PostDetailDto.builder()
                 .postId(post.getId())
                 .member(toDetailMemberInfo(post))
@@ -157,6 +151,7 @@ public class PostConverter {
                 .answers(toDetailAnswerResponses(answers,questions))
                 .selectiveDiary(toDetailSelectiveDiary(post))
                 .isLiked(isLiked)
+                .isOwner(isOwner)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
