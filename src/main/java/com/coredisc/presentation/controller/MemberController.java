@@ -4,6 +4,7 @@ import com.coredisc.application.service.member.MemberCommandService;
 import com.coredisc.application.service.member.MemberQueryService;
 import com.coredisc.common.apiPayload.ApiResponse;
 import com.coredisc.common.apiPayload.status.SuccessStatus;
+import com.coredisc.common.converter.MemberConverter;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.controllerdocs.MemberControllerDocs;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
@@ -147,6 +148,15 @@ public class MemberController implements MemberControllerDocs {
     public ApiResponse<ProfileImgResponseDTO.ProfileImgDTO> resetToDefaultProfileImg(@CurrentMember Member member) {
         
         return ApiResponse.onSuccess(memberCommandService.resetToDefaultProfileImg(member));
+    }
+
+    @Override
+    @GetMapping("/me/social")
+    public ApiResponse<MemberResponseDTO.CheckSocialResultDTO> checkSocialLogin(@CurrentMember Member member) {
+
+        return ApiResponse.onSuccess(
+                MemberConverter.toCheckSocialResultDTO(member.getIsSocialLogin())
+        );
     }
 
 

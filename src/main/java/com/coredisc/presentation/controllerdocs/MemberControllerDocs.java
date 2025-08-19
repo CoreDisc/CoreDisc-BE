@@ -94,6 +94,9 @@ public interface MemberControllerDocs {
     @Operation(summary = "기본 프로필 사진 변경", description = "사용자 기본 프로필 사진으로 변경 기능입니다.")
     ApiResponse<ProfileImgResponseDTO.ProfileImgDTO> resetToDefaultProfileImg(@CurrentMember Member member);
 
+    @Operation(summary = "사용자 소셜로그인 여부 판별", description = "로그인한 사용자가 소셜로그인 사용자인지 핀별합니다.")
+    ApiResponse<MemberResponseDTO.CheckSocialResultDTO> checkSocialLogin(@CurrentMember Member member);
+
     @Operation(summary = "마이홈 내가 작성한 질문 리스트 조회", description = "마이홈 본인 질문 리스트 조회입니다. 커서 기반 페이징입니다.")
     @Parameters({
             @Parameter(name = "categoryId", description = "카테고리id입니다."),
