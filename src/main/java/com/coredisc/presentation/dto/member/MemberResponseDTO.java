@@ -87,6 +87,15 @@ public class MemberResponseDTO {
         private String content;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CheckSocialResultDTO {
+
+        private boolean isSocialLogin;
+    }
+
     // 검색 화면 사용자 검색
     @Getter
     @Builder

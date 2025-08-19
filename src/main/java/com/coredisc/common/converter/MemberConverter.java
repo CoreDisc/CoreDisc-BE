@@ -186,6 +186,13 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.CheckSocialResultDTO toCheckSocialResultDTO(boolean isSocialLogin) {
+
+        return MemberResponseDTO.CheckSocialResultDTO.builder()
+                .isSocialLogin(isSocialLogin)
+                .build();
+    }
+
     // 검색 화면 사용자 검색
     public static MemberResponseDTO.SearchMemberResultDTO toSearchMemberResultDTO(Member member, ProfileImg profileImg) {
         return MemberResponseDTO.SearchMemberResultDTO.builder()
