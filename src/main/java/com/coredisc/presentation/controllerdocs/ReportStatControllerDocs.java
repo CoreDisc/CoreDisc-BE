@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Tag(name = "Monthly Report", description = "사용자의 월별 리포트 API")
 public interface ReportStatControllerDocs {
 
-    @Operation(summary = "사용자의 월별 리포트 조회", description = "특정 기간 동안 사용자의 활동에 대한 월별 리포트를 조회합니다.")
+    @Operation(summary = "사용자의 월별 리포트 조회", description = "특정 기간 동안 사용자의 활동에 대한 월별 리포트를 조회합니다. 이전/다음 리포트의 존재 여부도 함께 제공됩니다.")
     ApiResponse<ReportStatResponseDTO.MonthlyReportDTO> getMonthlyReport(
             @RequestParam("year") int year,
             @RequestParam("month") int month,

@@ -15,4 +15,5 @@ public interface JpaDiscRepository extends JpaRepository<Disc, Long> {
     List<Disc> findAllByMemberOrderByYearDescMonthDesc(Member member);
     Optional<Disc> findByIdAndMember(Long id, Member member);
     boolean existsByMemberAndYearAndMonth(Member member, int year, int month);
+    boolean existsByMemberIdAndYearAndMonth(Long memberId, int year, int month);
 }

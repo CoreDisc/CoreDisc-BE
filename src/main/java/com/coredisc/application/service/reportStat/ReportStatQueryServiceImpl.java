@@ -3,6 +3,7 @@ package com.coredisc.application.service.reportStat;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.ReportStatHandler;
 import com.coredisc.common.util.DateUtil;
+import com.coredisc.domain.disc.DiscRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.Post;
 import com.coredisc.domain.post.PostRepository;
@@ -31,6 +32,7 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
     private final MonthlyFixedQuestionStatRepository fixedQuestionRepository;
     private final MonthlySelectionDiaryStatRepository monthlySelectionDiaryStatRepository;
     private final PostRepository postRepository;
+    private final DiscRepository discRepository;
 
     @Override
     public ReportRawData.MonthlyReportRawData getMonthlyReportRawData(int year, int month, Long memberId) {
@@ -38,7 +40,39 @@ public class ReportStatQueryServiceImpl implements ReportStatQueryService{
         ReportRawData.MostSelectedQuestionRawData mostSelectedRaw = getMostSelectedQuestions(year, month, memberId);
         ReportRawData.HourlyAnswerRawData peakHourRaw = getHourlyAnswerCountMap(year, month, memberId);
 
-        return new ReportRawData.MonthlyReportRawData(year, month, questionListRaw, mostSelectedRaw, peakHourRaw);
+        // 이전/다음 리포트 존재 여부 확인
+        boolean hasPreviousReport = hasPreviousReport(year, month, memberId);
+        boolean hasNextReport = hasNextReport(year, month, memberId);
+
+        return new ReportRawData.MonthlyReportRawData(year, month, questionListRaw, mostSelectedRaw, peakHourRaw, hasPreviousReport, hasNextReport);
+    }
+
+    @Override
+    public boolean hasPreviousReport(int year, int month, Long memberId) {
+        // 이전 달 계산
+        int prevYear = year;
+        int prevMonth = month - 1;
+        
+        if (prevMonth < 1) {
+            prevMonth = 12;
+            prevYear = year - 1;
+        }
+        
+        return discRepository.existsByMemberIdAndYearAndMonth(memberId, prevYear, prevMonth);
+    }
+
+    @Override
+    public boolean hasNextReport(int year, int month, Long memberId) {
+        // 다음 달 계산
+        int nextYear = year;
+        int nextMonth = month + 1;
+        
+        if (nextMonth > 12) {
+            nextMonth = 1;
+            nextYear = year + 1;
+        }
+        
+        return discRepository.existsByMemberIdAndYearAndMonth(memberId, nextYear, nextMonth);
     }
 
     @Override

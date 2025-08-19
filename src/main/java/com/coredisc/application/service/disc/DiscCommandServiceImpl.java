@@ -3,7 +3,6 @@ package com.coredisc.application.service.disc;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.converter.DiscConverter;
 import com.coredisc.common.exception.handler.DiscHandler;
-import com.coredisc.common.exception.handler.ProfileImgHandler;
 import com.coredisc.domain.common.enums.DiscCoverColor;
 import com.coredisc.domain.disc.Disc;
 import com.coredisc.domain.disc.DiscRepository;
@@ -62,6 +61,24 @@ public class DiscCommandServiceImpl implements DiscCommandService {
     public Disc updateDiscCoverColor(Long discId, DiscCoverColor coverColor, Member member) {
         Disc disc = discRepository.findByIdAndMember(discId, member)
                 .orElseThrow(() -> new DiscHandler(ErrorStatus.DISC_NOT_FOUND));
+
+        if (disc.getCoverImgUrl() != null){
+            String oldUrl = disc.getCoverImgUrl();
+
+            try {
+                // S3에서 기존 이미지 삭제
+                if (amazonS3Manager.isValidS3Url(oldUrl)) {
+                    String oldFileKey = amazonS3Manager.extractFileKeyFromUrl(oldUrl);
+                    if (oldFileKey != null) {
+                        amazonS3Manager.deleteImageByKey("discCoverImages/" + oldFileKey + ".jpg");
+                    }
+                }
+                disc.setCoverImgUrl(null);
+                
+            } catch (Exception e) {
+                throw new DiscHandler(ErrorStatus.UNKNOWN_ERROR);
+            }
+        }
 
         disc.setCoverColor(coverColor);
         return discRepository.save(disc);
