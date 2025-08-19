@@ -11,7 +11,7 @@ import java.util.Map;
 public class ReportStatResponseDTO {
 
     @JsonPropertyOrder({
-            "year", "month", "fixedQuestions", "randomQuestions", "allOneCount", "mostSelectedQuestions", "peakTimeZone"
+            "year", "month", "fixedQuestions", "randomQuestions", "allOneCount", "mostSelectedQuestions", "peakTimeZone", "hasPreviousReport", "hasNextReport"
     })
     @Builder
     @Getter
@@ -25,6 +25,8 @@ public class ReportStatResponseDTO {
         private boolean isAllOneCount;
         private List<SelectedQuestionDTO> mostSelectedQuestions;
         private TimeZoneType peakTimeZone;
+        private boolean hasPreviousReport;
+        private boolean hasNextReport;
     }
 
     @Builder

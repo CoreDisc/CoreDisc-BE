@@ -19,6 +19,8 @@ public class ReportRawData {
         private QuestionListRawData questionListRaw;
         private MostSelectedQuestionRawData mostSelectedRaw;
         private HourlyAnswerRawData peakHourRaw;
+        private boolean hasPreviousReport; // 이전 리포트 존재 여부
+        private boolean hasNextReport;     // 다음 리포트 존재 여부
     }
 
     @Getter

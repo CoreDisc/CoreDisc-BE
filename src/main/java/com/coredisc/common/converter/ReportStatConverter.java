@@ -189,6 +189,8 @@ public class ReportStatConverter {
                 .isAllOneCount(isAllOneCount)
                 .mostSelectedQuestions(mostSelected)
                 .peakTimeZone(peakTime)
+                .hasPreviousReport(rawData.isHasPreviousReport())
+                .hasNextReport(rawData.isHasNextReport())
                 .build();
     }
 }
