@@ -107,10 +107,6 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         List<PostAnswer> answers = postRepository.findTempPostWithAnswers(postId);
 
-        for (PostAnswer answer : answers) {
-            log.info("answer = {}",answer);
-        }
-
         // 게시글 존재 여부 예외처리
         if(post == null) throw new PostHandler(ErrorStatus.POST_NOT_FOUND);
 
@@ -119,6 +115,10 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         // 좋아요 여부 체크
         boolean isLiked = checkIsLiked(member.getId(),postId);
+
+        // 본인 여부 체크
+        boolean isOwner = checkIsOwner(member.getId(), post.getMember().getId());
+
 
         LocalDate date = post.getCreatedAt().toLocalDate();
 
@@ -129,11 +129,8 @@ public class PostQueryServiceImpl implements PostQueryService {
                         TodayQuestion::getQuestionContent
                 ).toList();
 
-        for (String questionContent : questionContents) {
-            log.info("question Content = {}",questionContent);
-        }
 
-        return PostConverter.toPostDetailResponse(post,answers, questionContents, isLiked);
+        return PostConverter.toPostDetailResponse(post,answers, questionContents, isLiked, isOwner );
     }
 
     private List<TodayQuestion> findQuestionContent(Member member, LocalDate date) {
@@ -164,6 +161,10 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
 
         return postLikeRepository.existsByMemberAndPost(member, post);
+    }
+
+    private boolean checkIsOwner(Long currentMemberId, Long postOwnerId) {
+        return currentMemberId.equals(postOwnerId);
     }
 
 

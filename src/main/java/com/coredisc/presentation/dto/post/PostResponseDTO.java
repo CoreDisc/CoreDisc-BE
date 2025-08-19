@@ -174,6 +174,7 @@ public class PostResponseDTO {
         private List<PostFeedResponseDTO.PostSummary.Answer> answers;
         private SelectiveDiary selectiveDiary;
         private Boolean isLiked;
+        private Boolean isOwner;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
