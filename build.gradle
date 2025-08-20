@@ -71,6 +71,8 @@ dependencies {
 
     // firebase
     implementation 'com.google.firebase:firebase-admin:9.5.0'
+    //EXIF 메타데이터 처리
+    implementation 'com.drewnoakes:metadata-extractor:2.18.0'
 }
 
 tasks.named('test') {

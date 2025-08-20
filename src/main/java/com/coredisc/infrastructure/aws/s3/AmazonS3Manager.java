@@ -8,6 +8,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.coredisc.common.apiPayload.status.ErrorStatus;
 import com.coredisc.common.exception.handler.PostHandler;
 import com.coredisc.config.S3Config;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +35,6 @@ import java.util.regex.Pattern;
 public class AmazonS3Manager {
 
     private final AmazonS3 amazonS3;
-
     private final S3Config s3Config;
 
     public ImageUploadResult uploadFile(MultipartFile file, Long memberId) {
@@ -40,15 +44,14 @@ public class AmazonS3Manager {
 
         try {
             // 파일 키 생성
-            String fileKey =generateFileKey(memberId);
+            String fileKey = generateFileKey(memberId);
 
             // 1. Original 이미지 업로드
-            String originalKey =  "original/" + fileKey + ".jpg";
+            String originalKey = "original/" + fileKey + ".jpg";
             String originalUrl = uploadToS3(file, originalKey);
 
-
-            // 2. Thumbnail 이미지 생성 및 업로드
-            String thumbnailKey =  "thumbnail/" + fileKey + ".jpg";
+            // 2. Thumbnail 이미지 생성 및 업로드 (EXIF 처리 포함)
+            String thumbnailKey = "thumbnail/" + fileKey + ".jpg";
             String thumbnailUrl = uploadThumbnailToS3(file, thumbnailKey);
 
             log.info("이미지 업로드 완료 - 사용자: {}, 파일키: {}", memberId, fileKey);
@@ -73,19 +76,18 @@ public class AmazonS3Manager {
             String originalKey = "original/" + key + ".jpg";
             deleteFromS3(originalKey);
             // Thumbnail 삭제
-            String thumbnailKey =  "thumbnail/" + key + ".jpg";
+            String thumbnailKey = "thumbnail/" + key + ".jpg";
             deleteFromS3(thumbnailKey);
         } catch(Exception e) {
             log.error("이미지 삭제 실패 - 파일키: {}", key, e);
         }
     }
+
     /**
-     * URL 기반 이미지 삭제 (새로 추가)
-     * @param imageUrl S3 전체 URL (예: https://bucket.s3.region.amazonaws.com/original/user_1_abc123.jpg)
+     * URL 기반 이미지 삭제
      */
     public void deleteImageByUrl(String imageUrl) {
         try {
-            // URL에서 파일키 추출
             String fileKey = extractFileKeyFromUrl(imageUrl);
 
             if (fileKey == null) {
@@ -93,7 +95,6 @@ public class AmazonS3Manager {
                 return;
             }
 
-            // 파일키로 이미지 삭제
             deleteImage(fileKey);
 
         } catch (Exception e) {
@@ -117,8 +118,6 @@ public class AmazonS3Manager {
 
     /**
      * URL에서 파일키 추출
-     * URL 형식: https://bucket.s3.region.amazonaws.com/original/user_1_abc123.jpg
-     * 추출 결과: user_1_abc123
      */
     public String extractFileKeyFromUrl(String imageUrl) {
         if (imageUrl == null || imageUrl.isEmpty()) {
@@ -126,8 +125,6 @@ public class AmazonS3Manager {
         }
 
         try {
-            // 정규식으로 파일키 패턴 추출
-            // original/ 또는 thumbnail/ 다음의 user_숫자_문자열 부분을 추출
             Pattern pattern = Pattern.compile("(?:original|thumbnail|profiles)/(user_\\d+_[a-zA-Z0-9]+)\\.jpg");
             Matcher matcher = pattern.matcher(imageUrl);
 
@@ -137,7 +134,6 @@ public class AmazonS3Manager {
                 return fileKey;
             }
 
-            // 정규식 실패 시 수동 파싱 시도
             return extractFileKeyManually(imageUrl);
 
         } catch (Exception e) {
@@ -151,15 +147,12 @@ public class AmazonS3Manager {
      */
     private String extractFileKeyManually(String imageUrl) {
         try {
-            // URL에서 경로 부분만 추출
             String path = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
 
-            // .jpg 제거
             if (path.endsWith(".jpg")) {
                 path = path.substring(0, path.length() - 4);
             }
 
-            // user_로 시작하는지 확인
             if (path.startsWith("user_")) {
                 log.debug("수동 파일키 추출 성공 - 파일키: {}", path);
                 return path;
@@ -238,7 +231,6 @@ public class AmazonS3Manager {
         }
     }
 
-
     /**
      * 파일키 생성 (user_memberId_uuid)
      */
@@ -247,17 +239,13 @@ public class AmazonS3Manager {
         return String.format("user_%d_%s", memberId, uuid);
     }
 
-
     /**
      * S3에 원본 이미지 업로드
-     * @return 원본 이미지 url
      */
     public String uploadToS3(MultipartFile file, String s3Key) throws IOException {
-        // 메타데이터 설정
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
 
-        // 버켓에 저장
         try {
             amazonS3.putObject(new PutObjectRequest(s3Config.getBucket(), s3Key, file.getInputStream(), metadata));
         } catch (IOException e) {
@@ -267,14 +255,12 @@ public class AmazonS3Manager {
         return generateS3Url(s3Key);
     }
 
-
     /**
-     * S3에 썸네일 이미지 업로드
-     * @return 썸네일 url
+     * S3에 썸네일 이미지 업로드 (EXIF orientation 처리 포함) 🔥 핵심 수정
      */
     private String uploadThumbnailToS3(MultipartFile file, String s3Key) throws IOException {
-        // 1) 썸네일 생성
-        BufferedImage thumbnail = createThumbnail(file, 800, 800);
+        // 1) EXIF orientation을 고려한 썸네일 생성
+        BufferedImage thumbnail = createThumbnailWithOrientation(file, 800, 800);
 
         // 2) BufferedImage → byte[]
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -300,11 +286,109 @@ public class AmazonS3Manager {
     }
 
     /**
-     * 썸네일 생성 (비율 유지)
+     * EXIF orientation을 고려한 썸네일 생성 🔥 핵심 로직
      */
-    private BufferedImage createThumbnail(MultipartFile file, int maxWidth, int maxHeight) throws IOException {
+    private BufferedImage createThumbnailWithOrientation(MultipartFile file, int maxWidth, int maxHeight) throws IOException {
+        // 1. 원본 이미지 읽기
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
 
+        // 2. EXIF orientation 정보 읽기
+        int orientation = getImageOrientation(file);
+
+        log.debug("이미지 orientation 감지: {} - 파일: {}", orientation, file.getOriginalFilename());
+
+        // 3. Orientation에 따라 이미지 회전
+        BufferedImage rotatedImage = rotateImageByOrientation(originalImage, orientation);
+
+        // 4. 회전된 이미지로 썸네일 생성
+        return createThumbnail(rotatedImage, maxWidth, maxHeight);
+    }
+
+    /**
+     * EXIF에서 orientation 정보 읽기 (metadata-extractor 사용) 🔥 핵심 기능
+     */
+    private int getImageOrientation(MultipartFile file) {
+        try {
+            // metadata-extractor 라이브러리 사용
+            Metadata metadata = ImageMetadataReader.readMetadata(file.getInputStream());
+
+            Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+
+            if (directory != null && directory.hasTagName(ExifIFD0Directory.TAG_ORIENTATION)) {
+                int orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+                log.debug("EXIF orientation 읽기 성공: {} - 파일: {}", orientation, file.getOriginalFilename());
+                return orientation;
+            }
+
+        } catch (Exception e) {
+            log.warn("EXIF orientation 읽기 실패, 기본값 사용 - 파일: {}, 에러: {}",
+                    file.getOriginalFilename(), e.getMessage());
+        }
+
+        return 1; // 기본값 (회전 없음)
+    }
+
+    /**
+     * Orientation에 따라 이미지 회전 🔥 핵심 회전 로직
+     */
+    private BufferedImage rotateImageByOrientation(BufferedImage image, int orientation) {
+        if (orientation == 1) {
+            // 회전 필요 없음
+            return image;
+        }
+
+        AffineTransform transform = new AffineTransform();
+        int newWidth = image.getWidth();
+        int newHeight = image.getHeight();
+
+        switch (orientation) {
+            case 3:
+                // 180도 회전
+                transform.translate(image.getWidth(), image.getHeight());
+                transform.rotate(Math.PI);
+                log.debug("이미지 180도 회전 적용");
+                break;
+            case 6:
+                // 시계방향 90도 회전 (가장 흔한 케이스 - 세로로 찍은 사진)
+                transform.translate(image.getHeight(), 0);
+                transform.rotate(Math.PI / 2);
+                newWidth = image.getHeight();
+                newHeight = image.getWidth();
+                log.debug("이미지 시계방향 90도 회전 적용");
+                break;
+            case 8:
+                // 반시계방향 90도 회전
+                transform.translate(0, image.getWidth());
+                transform.rotate(-Math.PI / 2);
+                newWidth = image.getHeight();
+                newHeight = image.getWidth();
+                log.debug("이미지 반시계방향 90도 회전 적용");
+                break;
+            default:
+                log.debug("지원하지 않는 orientation: {}, 회전 없이 처리", orientation);
+                return image;
+        }
+
+        // 새 이미지 생성 및 변환 적용
+        BufferedImage rotatedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = rotatedImage.createGraphics();
+
+        // 고품질 렌더링 설정
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setTransform(transform);
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        return rotatedImage;
+    }
+
+    /**
+     * 썸네일 생성 (비율 유지)
+     */
+    private BufferedImage createThumbnail(BufferedImage originalImage, int maxWidth, int maxHeight) {
         // 비율 계산
         int originalWidth = originalImage.getWidth();
         int originalHeight = originalImage.getHeight();
@@ -315,6 +399,9 @@ public class AmazonS3Manager {
 
         int newWidth = (int) (originalWidth * ratio);
         int newHeight = (int) (originalHeight * ratio);
+
+        log.debug("썸네일 생성: {}x{} → {}x{} (비율: {})",
+                originalWidth, originalHeight, newWidth, newHeight, ratio);
 
         // 썸네일 생성
         BufferedImage thumbnail = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
@@ -335,10 +422,9 @@ public class AmazonS3Manager {
      * S3에서 파일 삭제
      */
     private void deleteFromS3(String s3Key) {
-        DeleteObjectRequest request = new  DeleteObjectRequest(
+        DeleteObjectRequest request = new DeleteObjectRequest(
                 s3Config.getBucket(), s3Key
-                );
-
+        );
         amazonS3.deleteObject(request);
     }
 
