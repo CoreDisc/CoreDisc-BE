@@ -13,6 +13,7 @@ import com.querydsl.core.Tuple;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,7 +119,7 @@ public class QuestionConverter {
     public static TodayQuestion toRandomTodayQuestionByOfficial(QuestionType questionType, OfficialQuestion officialQuestion, Member member){
 
         return TodayQuestion.builder()
-                .selectedDate(LocalDate.now())
+                .selectedDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .questionType(questionType)
                 .questionOrder(4)
                 .member(member)
@@ -129,7 +130,7 @@ public class QuestionConverter {
     public static TodayQuestion toRandomTodayQuestionByPersonal(QuestionType questionType, PersonalQuestion personalQuestion, Member member){
 
         return TodayQuestion.builder()
-                .selectedDate(LocalDate.now())
+                .selectedDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .questionType(questionType)
                 .questionOrder(4)
                 .member(member)
