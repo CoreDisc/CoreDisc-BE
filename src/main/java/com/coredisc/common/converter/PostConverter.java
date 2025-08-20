@@ -9,6 +9,7 @@ import com.coredisc.presentation.dto.post.PostResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import static com.coredisc.presentation.dto.post.PostResponseDTO.*;
 
 @Slf4j
 public class PostConverter {
+
+    private static final DateTimeFormatter TEMP_POST_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private PostConverter() {
         throw new UnsupportedOperationException("Utility class");
@@ -245,7 +248,7 @@ public class PostConverter {
 
 
     /**
-     * ✅ 안전한 이미지 답변 변환
+     *  안전한 이미지 답변 변환
      */
     private static PostFeedResponseDTO.PostSummary.Answer.ImageAnswer toSafeImageAnswer(PostAnswerImage image) {
         if (image == null) {
@@ -258,7 +261,7 @@ public class PostConverter {
     }
 
     /**
-     * ✅ 안전한 텍스트 답변 변환
+     *  안전한 텍스트 답변 변환
      */
     private static PostFeedResponseDTO.PostSummary.Answer.TextAnswer toSafeTextAnswer(String textContent) {
         if (textContent == null || textContent.trim().isEmpty()) {
@@ -394,12 +397,20 @@ public class PostConverter {
                 .build();
     }
 
+    /**
+     * 임시저장된 게시글 목록을 TempAnswerPostDto로 변환
+     */
     public static TempAnswerPostDto toTempAnswerPostDto(List<Post> tempPosts) {
 
+        List<PostResponseDTO.TempAnswerPostDto.TempPostSummary> tempPostSummaries = tempPosts.stream()
+                .map(post -> PostResponseDTO.TempAnswerPostDto.TempPostSummary.builder()
+                        .postId(post.getId())
+                        .lastModified(post.getUpdatedAt().format(TEMP_POST_DATE_FORMATTER))
+                        .build())
+                .collect(Collectors.toList());
+
         return PostResponseDTO.TempAnswerPostDto.builder()
-                .PostIds(tempPosts.stream()
-                        .map(Post::getId)
-                        .toList())
+                .tempPosts(tempPostSummaries)
                 .build();
     }
 
