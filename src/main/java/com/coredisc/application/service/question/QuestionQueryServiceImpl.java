@@ -348,7 +348,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     // 메소드 - 선택된 고정 & 랜덤 질문 목록 조회
     private List<TodayQuestion> getMyTodayQuestionList(Member member) {
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
 
