@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -242,7 +243,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     @Override
     public List<QuestionResponseDTO.SelectedTodayQuestionResultDTO> getMyTodayQuestion(Member member) {
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
 
