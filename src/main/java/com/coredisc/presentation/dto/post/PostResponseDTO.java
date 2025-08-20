@@ -106,15 +106,6 @@ public class PostResponseDTO {
         private Boolean isAnswered;        // 답변 완료 여부
         private LocalDateTime updatedAt;   // 마지막 수정 시간
     }
-    /**
-     *  오늘 날짜 기준 임시저잔된 게시글 들만 조회 - 응답
-     */
-
-    @Builder
-    @Getter
-    public static class TempAnswerPostDto {
-        private List<Long> PostIds;
-    }
 
     @Getter
     @Builder
@@ -224,6 +215,22 @@ public class PostResponseDTO {
             private Integer likeCount;
             private Integer commentCount;
             private Integer viewCount;
+        }
+    }
+
+    /**
+     * 오늘 날짜 기준 임시저장된 게시글들만 조회 - 응답
+     */
+    @Builder
+    @Getter
+    public static class TempAnswerPostDto {
+        private List<TempPostSummary> tempPosts;
+
+        @Getter
+        @Builder
+        public static class TempPostSummary {
+            private Long postId;
+            private String lastModified;  // "2025-07-07 13:10" 형식으로 포맷된 날짜
         }
     }
 
