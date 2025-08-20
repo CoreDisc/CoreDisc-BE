@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +146,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     public TodayQuestion saveRandomTodayQuestion(QuestionRequestDTO.SaveRandomTodayQuestionDTO request, Member member) {
 
         // 오늘 해당 번호 이미 있는지 여부
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         int questionOrder = 4;
 
         todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(member, questionOrder, today)
