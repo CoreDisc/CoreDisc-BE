@@ -7,6 +7,7 @@ import com.coredisc.common.converter.QuestionCategoryConverter;
 import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.common.enums.NotificationType;
+import com.coredisc.domain.common.enums.QuestionScope;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.domain.device.Device;
 import com.coredisc.domain.device.DeviceRepository;
@@ -36,6 +37,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -231,7 +233,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         if (todayQuestionRepository.existsByPersonalQuestion(existPersonalQuestion)) {
             throw new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_USED_IN_TODAY_QUESTION);
         }
-        
+
         // 선택된 카테고리 삭제
         questionCategoryRepository.deleteByPersonalQuestion(existPersonalQuestion);
 
@@ -242,82 +244,103 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     // 타사용자가 작성한 공유 질문 저장
     @Override
     @Transactional
-    public MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId) {
+    public MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId, QuestionRequestDTO.SaveMemberOfficialQuestionDTO request) {
 
-        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+        OfficialQuestion selectedOfficialQuestion = null;
 
-        // 기본 제공 질문인 경우
-        if (!selectedOfficialQuestion.isShared())
-            throw new QuestionHandler(ErrorStatus.CANNOT_SAVE_BASIC_QUESTION);
+        MemberOfficialQuestion memberOfficialQuestion = null;
 
-        // 이미 저장 여부
-        if(memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion).isPresent())
-            throw new QuestionHandler(ErrorStatus.ALREADY_SAVED_OFFICIAL_QUESTION);
+        // 기본 or 공유 질문
+        if ((request.getSelectedQuestionType() == QuestionScope.OFFICIAL) || (request.getSelectedQuestionType() == QuestionScope.DEFAULT)) {
 
-        // 본인이 작성헀는지 여부
-        if (selectedOfficialQuestion.getMember().equals(member))
-            throw new QuestionHandler(ErrorStatus.CANNOT_SELECT_OWN_OFFICIAL_QUESTION);
+            selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
+                    .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
 
-        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion));
+            // 이미 저장 여부
+            if (memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion).isPresent())
+                throw new QuestionHandler(ErrorStatus.ALREADY_SAVED_OFFICIAL_QUESTION);
 
-        notificationCommandService.createNotification(
-                new NotificationRequestDTO(
-                        NotificationType.SHARED_SAVED, // 알림 타입(공유질문 저장)
-                        member, // 알림 sender
-                        selectedOfficialQuestion.getMember(), // 알림 receiver (공유 질문 작성자)
-                        member.getNickname()+"님이 질문을 저장했어요.",
-                        selectedOfficialQuestion.getId() // 공유질문 id 전달
-                )
-        );
+            memberOfficialQuestion = memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion, request));
+        } else if (request.getSelectedQuestionType() == QuestionScope.PERSONAL) {   // 개인 질문
 
-        List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(selectedOfficialQuestion.getMember());
+            PersonalQuestion selectedPersonalQuestion = personalQuestionRepository.findById(questionId)
+                    .orElseThrow(() -> new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_NOT_FOUND));
 
-        // 푸시 알림 내용 설정
-        String title = "CoreDisc";
-        String body = member.getNickname()+"님이 질문을 저장했어요.";
+            // 이미 저장 여부
+            if (memberOfficialQuestionRepository.findByMemberAndPersonalQuestion(member, selectedPersonalQuestion).isPresent())
+                throw new QuestionHandler(ErrorStatus.ALREADY_SAVED_PERSONAL_QUESTION);
 
-        // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
-        Map<String, String> data = new HashMap<>();
-        data.put("notificationType", NotificationType.SHARED_SAVED.name());
-        data.put("targetId", String.valueOf(selectedOfficialQuestion.getId()));
-
-        for (Device device : devices) {
-            String token = device.getToken();
-            if (fcmService.isTokenValid(token)) {
-                fcmService.sendNotificationToToken(token, title, body, data);
-                log.info("공유질문 저장 알림 발송됨: memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
-            } else {
-                log.warn("공유질문 저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
-            }
+            memberOfficialQuestion = memberOfficialQuestionRepository.save(QuestionConverter.toMemberPersonalQuestion(member, selectedPersonalQuestion, request));
+        } else {
+            throw new QuestionHandler(ErrorStatus.QUESTION_TYPE_NOT_FOUND);
         }
 
-        // 공유질문 저장 100회 단위 저장 알림
-        Long saveCount = memberOfficialQuestionRepository.countByOfficialQuestion(selectedOfficialQuestion);
-        if (saveCount % 100 == 0) {
+        
+        // 알림 관련
+        if ((request.getSelectedQuestionType() == QuestionScope.OFFICIAL)       // 기본 질문 여부 & 작성자 본인 여부 확인
+                && selectedOfficialQuestion != null
+                && selectedOfficialQuestion.isShared()
+                && !(Objects.equals(selectedOfficialQuestion.getMember(), member))) {  
+
             notificationCommandService.createNotification(
                     new NotificationRequestDTO(
-                            NotificationType.SHARED_SAVED,
-                            member,
-                            selectedOfficialQuestion.getMember(),
-                            saveCount + "명의 사용자가 질문을 저장했어요.",
-                            selectedOfficialQuestion.getId()
+                            NotificationType.SHARED_SAVED, // 알림 타입(공유질문 저장)
+                            member, // 알림 sender
+                            selectedOfficialQuestion.getMember(), // 알림 receiver (공유 질문 작성자)
+                            member.getNickname() + "님이 질문을 저장했어요.",
+                            selectedOfficialQuestion.getId() // 공유질문 id 전달
                     )
             );
 
-            // 공유질문 100회 단위 저장 푸시 알림 내용 설정
-            title = "CoreDisc";
-            body = saveCount+"명의 사용자가 질문을 저장했어요.";
+            List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(selectedOfficialQuestion.getMember());
+
+            // 푸시 알림 내용 설정
+            String title = "CoreDisc";
+            String body = member.getNickname()+"님이 질문을 저장했어요.";
+
+            // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.SHARED_SAVED.name());
+            data.put("targetId", String.valueOf(selectedOfficialQuestion.getId()));
 
             for (Device device : devices) {
                 String token = device.getToken();
                 if (fcmService.isTokenValid(token)) {
                     fcmService.sendNotificationToToken(token, title, body, data);
-                    log.info("공유질문 100회 단위 저장 알림 발송됨: memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+                    log.info("공유질문 저장 알림 발송됨: memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
                 } else {
-                    log.warn("공유질문 100회 단위 저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+                    log.warn("공유질문 저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
                 }
             }
+
+            // 공유질문 저장 100회 단위 저장 알림
+            Long saveCount = memberOfficialQuestionRepository.countByOfficialQuestion(selectedOfficialQuestion);
+            if (saveCount % 100 == 0) {
+                notificationCommandService.createNotification(
+                        new NotificationRequestDTO(
+                                NotificationType.SHARED_SAVED,
+                                member,
+                                selectedOfficialQuestion.getMember(),
+                                saveCount + "명의 사용자가 질문을 저장했어요.",
+                                selectedOfficialQuestion.getId()
+                        )
+                );
+
+                // 공유질문 100회 단위 저장 푸시 알림 내용 설정
+                title = "CoreDisc";
+                body = saveCount+"명의 사용자가 질문을 저장했어요.";
+
+                for (Device device : devices) {
+                    String token = device.getToken();
+                    if (fcmService.isTokenValid(token)) {
+                        fcmService.sendNotificationToToken(token, title, body, data);
+                        log.info("공유질문 100회 단위 저장 알림 발송됨: memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+                    } else {
+                        log.warn("공유질문 100회 단위 저장 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", selectedOfficialQuestion.getMember().getId(), token);
+                    }
+                }
+            }
+
         }
 
         return memberOfficialQuestion;
@@ -326,12 +349,9 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     // 저장헀던 공유 질문을 삭제
     @Override
     @Transactional
-    public void deleteMemberOfficialQuestion(Member member, Long questionId) {
+    public void deleteMemberOfficialQuestion(Member member, Long savedId) {
 
-        OfficialQuestion officialQuestion = officialQuestionRepository.findById(questionId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
-
-        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, officialQuestion)
+        MemberOfficialQuestion memberOfficialQuestion = memberOfficialQuestionRepository.findByMemberAndId(member, savedId)
                 .orElseThrow(() -> new QuestionHandler(ErrorStatus.MEMBER_OFFICIAL_QUESTION_NOT_FOUND));
 
         memberOfficialQuestionRepository.delete(memberOfficialQuestion);

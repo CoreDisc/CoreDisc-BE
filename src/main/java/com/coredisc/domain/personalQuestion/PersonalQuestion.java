@@ -1,5 +1,6 @@
 package com.coredisc.domain.personalQuestion;
 
+import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
 import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.mapping.questionCategory.QuestionCategory;
@@ -33,6 +34,9 @@ public class PersonalQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "personalQuestion")
     private List<TodayQuestion> todayQuestionList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "personalQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberOfficialQuestion> memberOfficialQuestionList = new ArrayList<>();
 
     public void updatePersonalQuestion(String content) {
         this.content = content;

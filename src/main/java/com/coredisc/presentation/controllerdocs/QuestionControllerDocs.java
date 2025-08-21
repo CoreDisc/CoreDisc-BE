@@ -108,18 +108,18 @@ public interface QuestionControllerDocs {
     @Parameters({
             @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
     })
-    ApiResponse<QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO> saveMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
+    ApiResponse<QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO> saveMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @Valid @RequestBody QuestionRequestDTO.SaveMemberOfficialQuestionDTO request);
 
     @Operation(summary = "저장했던 공유 질문 삭제", description = "타사용자가 발행하여 저장헀던 공유 질문을 삭제하는 기능입니다.")
     @Parameters({
-            @Parameter(name = "questionId", description = "질문ID pathVariable입니다."),
+            @Parameter(name = "savedId", description = "저장 ID pathVariable입니다."),
     })
-    ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId);
+    ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "savedId") Long savedId);
 
     @Operation(summary = "내가 저장한 공유질문 리스트 조회", description = "사용자가 저장한 타사용자의 공유질문 리스트를 조회하는 기능입니다.")
     @Parameters({
             @Parameter(name = "categoryId", description = "카테고리ID입니다. (0 또는 생략 시 전체 조회)"),
-            @Parameter(name = "cursorId", description = "커서 - 마지막 질문 ID, 첫 요청 때는 null"),
+            @Parameter(name = "cursorId", description = "커서 - 저장 목록 ID, 첫 요청 때는 null"),
             @Parameter(name = "size", description = "한 페이지당 조회할 질문 수, 기본값 10"),
     })
     ApiResponse<CursorDTO<QuestionResponseDTO.SavedSharedQuestionResultDTO>> getSavedSharedQuestionList(

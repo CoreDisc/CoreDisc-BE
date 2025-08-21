@@ -152,16 +152,16 @@ public class QuestionController implements QuestionControllerDocs {
 
     // 타사용자가 작성한 공유 질문 저장
     @PostMapping("/official/{questionId}")
-    public ApiResponse<QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO> saveMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+    public ApiResponse<QuestionResponseDTO.SaveMemberOfficialQuestionResultDTO> saveMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId, @Valid @RequestBody QuestionRequestDTO.SaveMemberOfficialQuestionDTO request) {
 
-        return ApiResponse.onSuccess(QuestionConverter.toSaveMemberOfficialQuestionResultDTO(questionCommandService.saveMemberOfficialQuestion(member, questionId)));
+        return ApiResponse.onSuccess(QuestionConverter.toSaveMemberOfficialQuestionResultDTO(questionCommandService.saveMemberOfficialQuestion(member, questionId, request)));
     }
 
     // 저장헀던 공유 질문을 삭제
-    @DeleteMapping("/official/saved/{questionId}")
-    public ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "questionId") Long questionId) {
+    @DeleteMapping("/official/saved/{savedId}")
+    public ApiResponse<String> deleteMemberOfficialQuestion(@CurrentMember Member member, @PathVariable(name = "savedId") Long savedId) {
 
-        questionCommandService.deleteMemberOfficialQuestion(member, questionId);
+        questionCommandService.deleteMemberOfficialQuestion(member, savedId);
 
         return ApiResponse.onSuccess("질문이 삭제되었습니다.");
     }

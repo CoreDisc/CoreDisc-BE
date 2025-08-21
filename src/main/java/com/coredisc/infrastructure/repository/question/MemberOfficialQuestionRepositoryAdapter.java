@@ -5,6 +5,7 @@ import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
+import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.infrastructure.repository.question.querydsl.QueryMemberOfficialQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,11 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
     }
 
     @Override
+    public Optional<MemberOfficialQuestion> findByMemberAndPersonalQuestion(Member member, PersonalQuestion personalQuestion) {
+        return jpaMemberOfficialQuestionRepository.findByMemberAndPersonalQuestion(member, personalQuestion);
+    }
+
+    @Override
     public long countByOfficialQuestion(OfficialQuestion officialQuestion) {
         return jpaMemberOfficialQuestionRepository.countByOfficialQuestion(officialQuestion);
     }
@@ -57,5 +63,10 @@ public class MemberOfficialQuestionRepositoryAdapter implements MemberOfficialQu
     @Override
     public boolean existsByMemberIdAndOfficialQuestionId(Long memberId, Long officialQuestionId) {
         return jpaMemberOfficialQuestionRepository.existsByMemberIdAndOfficialQuestionId(memberId, officialQuestionId);
+    }
+
+    @Override
+    public boolean existsByMemberIdAndPersonalQuestionId(Long memberId, Long personalQuestionId) {
+        return jpaMemberOfficialQuestionRepository.existsByMemberIdAndPersonalQuestionId(memberId, personalQuestionId);
     }
 }

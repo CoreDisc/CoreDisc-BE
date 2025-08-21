@@ -1,5 +1,6 @@
 package com.coredisc.presentation.dto.question;
 
+import com.coredisc.domain.common.enums.QuestionScope;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -63,5 +64,13 @@ public class QuestionRequestDTO {
         @NotNull
         @Schema(description = "questionId", example = "1")
         Long questionId;
+    }
+
+    @Getter
+    public static class SaveMemberOfficialQuestionDTO {
+
+        @NotNull
+        @Schema(description = "질문 타입 (DEFAULT / OFFICIAL / PERSONAL)", example = "PERSONAL")
+        QuestionScope selectedQuestionType;
     }
 }

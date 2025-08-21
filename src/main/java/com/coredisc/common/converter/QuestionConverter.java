@@ -162,10 +162,20 @@ public class QuestionConverter {
                         .build());
     }
 
-    public static MemberOfficialQuestion toMemberOfficialQuestion(Member member, OfficialQuestion officialQuestion){
+    public static MemberOfficialQuestion toMemberOfficialQuestion(Member member, OfficialQuestion officialQuestion, QuestionRequestDTO.SaveMemberOfficialQuestionDTO request){
 
         return MemberOfficialQuestion.builder()
                 .officialQuestion(officialQuestion)
+                .questionScope(request.getSelectedQuestionType())
+                .member(member)
+                .build();
+    }
+
+    public static MemberOfficialQuestion toMemberPersonalQuestion(Member member, PersonalQuestion personalQuestion, QuestionRequestDTO.SaveMemberOfficialQuestionDTO request){
+
+        return MemberOfficialQuestion.builder()
+                .personalQuestion(personalQuestion)
+                .questionScope(request.getSelectedQuestionType())
                 .member(member)
                 .build();
     }
@@ -178,7 +188,7 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDTO.SavedSharedQuestionResultDTO toSavedSharedQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion, long sharedCount, Boolean isSelected) {
+    public static QuestionResponseDTO.SavedSharedQuestionResultDTO toSavedSharedOfficialQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion, long sharedCount, Boolean isSelected) {
         OfficialQuestion officialQuestion = memberOfficialQuestion.getOfficialQuestion();
 
         List<CategoryResponseDTO.CategoryInfoDTO> categories = officialQuestion.getQuestionCategoryList().stream()
@@ -189,12 +199,37 @@ public class QuestionConverter {
                 .toList();
 
         return QuestionResponseDTO.SavedSharedQuestionResultDTO.builder()
-                .id(officialQuestion.getId())
+                .savedId(memberOfficialQuestion.getId())
+                .questionId(officialQuestion.getId())
                 .question(officialQuestion.getContents())
                 .categories(categories)
+                .questionType(memberOfficialQuestion.getQuestionScope())
                 .sharedCount(sharedCount)
                 .isSelected(isSelected)
                 .createdAt(officialQuestion.getCreatedAt())
+                .build();
+    }
+
+
+    public static QuestionResponseDTO.SavedSharedQuestionResultDTO toSavedSharedPersonalQuestionResultDTO(MemberOfficialQuestion memberOfficialQuestion, long sharedCount, Boolean isSelected) {
+        PersonalQuestion personalQuestion = memberOfficialQuestion.getPersonalQuestion();
+
+        List<CategoryResponseDTO.CategoryInfoDTO> categories = personalQuestion.getQuestionCategoryList().stream()
+                .map(qc -> CategoryResponseDTO.CategoryInfoDTO.builder()
+                        .categoryId(qc.getCategory().getId())
+                        .categoryName(qc.getCategory().getName())
+                        .build())
+                .toList();
+
+        return QuestionResponseDTO.SavedSharedQuestionResultDTO.builder()
+                .savedId(memberOfficialQuestion.getId())
+                .questionId(personalQuestion.getId())
+                .question(personalQuestion.getContent())
+                .categories(categories)
+                .questionType(memberOfficialQuestion.getQuestionScope())
+                .sharedCount(sharedCount)
+                .isSelected(isSelected)
+                .createdAt(personalQuestion.getCreatedAt())
                 .build();
     }
 
