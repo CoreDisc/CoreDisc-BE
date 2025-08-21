@@ -64,7 +64,7 @@ public class FollowConverter {
                 .followingId(follow.getFollowing().getId())
                 .nickname(follow.getFollowing().getNickname())
                 .username(follow.getFollowing().getUsername())
-                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollower().getProfileImg()))
+                .profileImgDTO(ProfileImgConverter.toProfileImgDTO(follow.getFollowing().getProfileImg()))
                 .build();
     }
 
