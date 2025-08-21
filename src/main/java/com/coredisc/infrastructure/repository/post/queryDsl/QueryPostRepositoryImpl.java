@@ -8,6 +8,7 @@ import com.coredisc.domain.common.enums.PublicityType;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.post.*;
 import com.coredisc.domain.todayQuestion.TodayQuestion;
+import com.coredisc.domain.todayQuestion.TodayQuestionRepository;
 import com.coredisc.presentation.dto.post.PostResponseDTO;
 import com.querydsl.core.BooleanBuilder;
 import com.coredisc.domain.post.Post;
@@ -42,6 +43,7 @@ import static com.coredisc.domain.todayQuestion.QTodayQuestion.*;
 public class QueryPostRepositoryImpl implements QueryPostRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final TodayQuestionRepository todayQuestionRepository;
 
     @Override
     public List<Post> findMyPostsWithAnswers(Member member, Long cursorId, Pageable pageable) {
@@ -219,49 +221,25 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
         Map<Long, LocalDate> postDateMap = posts.stream()
                 .collect(Collectors.toMap(Post::getId, p -> p.getCreatedAt().toLocalDate()));
 
-        //  모든 게시글의 답변을 한 번에 조회 (N+1 방지)
+        //  모든 게시글의 답변을 한 번에 조회 (N+1 방지) - answerOrder로 정렬
         List<com.coredisc.domain.post.PostAnswer> allAnswers = jpaQueryFactory
                 .selectFrom(postAnswer)
                 .leftJoin(postAnswer.postAnswerImage, postAnswerImage).fetchJoin()
                 .where(postAnswer.post.id.in(postIds))
-                .orderBy(postAnswer.post.id.asc(), postAnswer.id.asc())
+                .orderBy(postAnswer.post.id.asc(), postAnswer.answerOrder.asc()) // answerOrder로 정렬 추가
                 .fetch();
 
-        // 모든 게시글의 답변을 한 번에 조회
-        Set<Member> postMembers = posts.stream().map(Post::getMember).collect(Collectors.toSet());
-        Set<LocalDate> postDates = new HashSet<>(postDateMap.values());
-
-        List<TodayQuestion> allTodayQuestions = jpaQueryFactory
-                .selectFrom(todayQuestion)
-                .leftJoin(todayQuestion.officialQuestion).fetchJoin()
-                .leftJoin(todayQuestion.personalQuestion).fetchJoin()
-                .where(
-                        todayQuestion.member.in(postMembers)
-                                .and(todayQuestion.selectedDate.in(postDates))
-                )
-                .orderBy(todayQuestion.member.id.asc(),
-                        todayQuestion.selectedDate.asc(),
-                        todayQuestion.questionOrder.asc())
-                .fetch();
-
-
-        // 게시글별로 답변 그룹핑
+        // 게시글별로 답변 그룹핑 (answerOrder 순서대로)
         Map<Long, List<PostAnswer>> answersMap = allAnswers.stream()
-                .collect(Collectors.groupingBy(answer -> answer.getPost().getId()));
-
-        // 회원+날짜별로 질문 그룹핑 (questionOrder 순서대로 정렬)
-        Map<String, List<TodayQuestion>> questionsMap = allTodayQuestions.stream()
                 .collect(Collectors.groupingBy(
-                        tq -> tq.getMember().getId() + "_" + tq.getSelectedDate(),
+                        answer -> answer.getPost().getId(),
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 list -> list.stream()
-                                        .sorted(Comparator.comparing(TodayQuestion::getQuestionOrder))
+                                        .sorted(Comparator.comparing(PostAnswer::getAnswerOrder))
                                         .collect(Collectors.toList())
                         )
                 ));
-
-
 
         // PostSummary DTO로 변환
         return posts.stream()
@@ -269,17 +247,36 @@ public class QueryPostRepositoryImpl implements QueryPostRepository {
                 .map(postEntity -> {
                     List<PostAnswer> postAnswers = answersMap.getOrDefault(postEntity.getId(), List.of());
 
-                    // 해당 게시글의 질문들 조회
-                    LocalDate postDate = postDateMap.get(postEntity.getId());
-                    String questionKey = postEntity.getMember().getId() + "_" + postDate;
-                    List<TodayQuestion> postQuestions = questionsMap.getOrDefault(questionKey, List.of());
+                    // 첫 번째 답변 가져오기 (answerOrder가 가장 작은 값)
+                    PostAnswer firstAnswer = postAnswers.isEmpty() ? null : postAnswers.get(0);
 
-                    // 질문 내용을 String 리스트로 변환 (questionOrder 순서대로)
-                    List<String> questionContents = postQuestions.stream()
-                            .map(TodayQuestion::getQuestionContent)
-                            .collect(Collectors.toList());
+                    // 첫 번째 답변에 매칭되는 질문 찾기
+                    String firstQuestion = null;
+                    if (firstAnswer != null) {
+                        LocalDate postDate = postDateMap.get(postEntity.getId());
+                        int answerOrder = firstAnswer.getAnswerOrder();
 
-                    return PostConverter.toPostSummary(postEntity, postAnswers.isEmpty() ? null : postAnswers.get(0), questionContents.isEmpty() ? null :questionContents.get(0));
+                        Optional<TodayQuestion> targetQuestion = Optional.empty();
+
+                        if (answerOrder <= 3) {
+                            // 한달질문 (1,2,3): 해당 월에서 questionOrder=answerOrder인 질문 찾기
+                            LocalDate startOfMonth = postDate.withDayOfMonth(1);
+                            LocalDate endOfMonth = postDate.withDayOfMonth(postDate.lengthOfMonth());
+
+                            targetQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDateBetween(
+                                    postEntity.getMember(), answerOrder, startOfMonth, endOfMonth);
+                        } else {
+                            // 하루질문 (4): 해당 게시글 날짜에서 questionOrder=4인 질문 찾기
+                            targetQuestion = todayQuestionRepository.findByMemberAndQuestionOrderAndSelectedDate(
+                                    postEntity.getMember(), answerOrder, postDate);
+                        }
+
+                        if (targetQuestion.isPresent()) {
+                            firstQuestion = targetQuestion.get().getQuestionContent();
+                        }
+                    }
+
+                    return PostConverter.toPostSummary(postEntity, firstAnswer, firstQuestion);
                 })
                 .collect(Collectors.toList());
     }
