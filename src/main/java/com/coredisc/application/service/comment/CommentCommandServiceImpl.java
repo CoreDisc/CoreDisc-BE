@@ -112,35 +112,40 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         parentComment.addReply(reply);
 
-        notificationCommandService.createNotification(
-                new NotificationRequestDTO(
-                        NotificationType.COMMENT_REPLY, // 알림 타입 (대댓글)
-                        member, // sender
-                        parentComment.getMember(), // receiver
-                        member.getNickname()+"님이 댓글에 답글을 남겼어요.",
-                        parentComment.getPost().getId() // 클릭 시 댓글 달렸던 게시글로 이동
-                )
-        );
+        // 부모 댓글 작성자와 대댓글 작성자가 다를 때만 알림 생성
+        if (!parentComment.getMember().getId().equals(member.getId())) {
+            notificationCommandService.createNotification(
+                    new NotificationRequestDTO(
+                            NotificationType.COMMENT_REPLY, // 알림 타입 (대댓글)
+                            member, // sender
+                            parentComment.getMember(), // receiver
+                            member.getNickname() + "님이 댓글에 답글을 남겼어요.",
+                            parentComment.getPost().getId() // 클릭 시 댓글 달렸던 게시글로 이동
+                    )
+            );
 
-        List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(parentComment.getPost().getMember());
+            List<Device> devices = deviceRepository.findByMemberAndIsActiveTrue(parentComment.getMember());
 
-        // 푸시 알림 내용 설정
-        String title = "CoreDisc";
-        String body = member.getNickname()+"님이 댓글에 답글을 남겼어요.";
+            // 푸시 알림 내용 설정
+            String title = "CoreDisc";
+            String body = member.getNickname() + "님이 댓글에 답글을 남겼어요.";
 
-        // 푸시 알림에 보낼 데이터 설정 (알림 타입 및 알림 클릭 -> 이동할 targetId)
-        Map<String, String> data = new HashMap<>();
-        data.put("notificationType", NotificationType.COMMENT.name());
-        data.put("targetId", String.valueOf(parentComment.getPost().getId()));
+            // 푸시 알림에 보낼 데이터 설정
+            Map<String, String> data = new HashMap<>();
+            data.put("notificationType", NotificationType.COMMENT_REPLY.name());
+            data.put("targetId", String.valueOf(parentComment.getPost().getId()));
 
-        for (Device device : devices) {
-            String token = device.getToken();
-            if (fcmService.isTokenValid(token)) {
-                fcmService.sendNotificationToToken(token, title, body, data);
-                log.info("대댓글 알림 발송됨: memberId={}, token={}", parentComment.getPost().getMember().getId(), token);
-            } else {
-                log.warn("대댓글 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", parentComment.getPost().getMember().getId(), token);
+            for (Device device : devices) {
+                String token = device.getToken();
+                if (fcmService.isTokenValid(token)) {
+                    fcmService.sendNotificationToToken(token, title, body, data);
+                    log.info("대댓글 알림 발송됨: memberId={}, token={}", parentComment.getMember().getId(), token);
+                } else {
+                    log.warn("대댓글 알림 발송 안됨: 유효하지 않은 토큰 발견. memberId={}, token={}", parentComment.getMember().getId(), token);
+                }
             }
+        } else {
+            log.info("자신의 댓글에 대댓글 작성: memberId={}이므로 알림 미발송", member.getId());
         }
 
         return commentRepository.save(reply);
