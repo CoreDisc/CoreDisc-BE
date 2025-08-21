@@ -6,7 +6,6 @@ import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import com.coredisc.domain.member.Member;
 import com.coredisc.presentation.dto.question.QuestionRequestDTO;
-import com.coredisc.presentation.dto.question.QuestionResponseDTO;
 
 public interface QuestionCommandService {
 
@@ -30,8 +29,8 @@ public interface QuestionCommandService {
     void deletePersonalQuestion(Member member, Long questionId);
 
     // 타사용자가 작성한 공유 질문 저장
-    MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId);
+    MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId, QuestionRequestDTO.SaveMemberOfficialQuestionDTO request);
 
     // 저장헀던 공유 질문을 삭제
-    void deleteMemberOfficialQuestion(Member member, Long questionId);
+    void deleteMemberOfficialQuestion(Member member, Long savedId);
 }

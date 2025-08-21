@@ -25,9 +25,9 @@ public class QueryMemberOfficialQuestionRepositoryImpl implements QueryMemberOff
                 .selectFrom(qMemberOfficialQuestion)
                 .where(
                         qMemberOfficialQuestion.member.eq(member),
-                        cursorId != null ? qMemberOfficialQuestion.officialQuestion.id.lt(cursorId) : null
+                        cursorId != null ? qMemberOfficialQuestion.id.lt(cursorId) : null
                 )
-                .orderBy(qMemberOfficialQuestion.officialQuestion.id.desc())
+                .orderBy(qMemberOfficialQuestion.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
     }
@@ -39,9 +39,9 @@ public class QueryMemberOfficialQuestionRepositoryImpl implements QueryMemberOff
                 .where(
                         qMemberOfficialQuestion.member.eq(member),
                         qMemberOfficialQuestion.officialQuestion.questionCategoryList.any().category.eq(category),
-                        cursorId != null ? qMemberOfficialQuestion.officialQuestion.id.lt(cursorId) : null
+                        cursorId != null ? qMemberOfficialQuestion.id.lt(cursorId) : null
                 )
-                .orderBy(qMemberOfficialQuestion.officialQuestion.id.desc())
+                .orderBy(qMemberOfficialQuestion.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
     }

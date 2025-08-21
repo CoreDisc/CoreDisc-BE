@@ -1,6 +1,7 @@
 package com.coredisc.domain.mapping.memberOfficialQuestion;
 
 import com.coredisc.domain.common.BaseEntity;
+import com.coredisc.domain.common.enums.QuestionScope;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
 import jakarta.persistence.*;
@@ -16,6 +17,10 @@ public class MemberOfficialQuestion extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
+    private QuestionScope questionScope;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

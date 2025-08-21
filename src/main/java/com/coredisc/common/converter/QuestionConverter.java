@@ -162,10 +162,11 @@ public class QuestionConverter {
                         .build());
     }
 
-    public static MemberOfficialQuestion toMemberOfficialQuestion(Member member, OfficialQuestion officialQuestion){
+    public static MemberOfficialQuestion toMemberOfficialQuestion(Member member, OfficialQuestion officialQuestion, QuestionRequestDTO.SaveMemberOfficialQuestionDTO request){
 
         return MemberOfficialQuestion.builder()
                 .officialQuestion(officialQuestion)
+                .questionScope(request.getSelectedQuestionType())
                 .member(member)
                 .build();
     }
@@ -189,9 +190,11 @@ public class QuestionConverter {
                 .toList();
 
         return QuestionResponseDTO.SavedSharedQuestionResultDTO.builder()
-                .id(officialQuestion.getId())
+                .savedId(memberOfficialQuestion.getId())
+                .questionId(officialQuestion.getId())
                 .question(officialQuestion.getContents())
                 .categories(categories)
+                .questionType(memberOfficialQuestion.getQuestionScope())
                 .sharedCount(sharedCount)
                 .isSelected(isSelected)
                 .createdAt(officialQuestion.getCreatedAt())

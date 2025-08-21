@@ -1,5 +1,6 @@
 package com.coredisc.presentation.dto.question;
 
+import com.coredisc.domain.common.enums.QuestionScope;
 import com.coredisc.domain.common.enums.QuestionType;
 import com.coredisc.presentation.dto.category.CategoryResponseDTO;
 import com.coredisc.presentation.dto.cursor.CursorDTO;
@@ -154,9 +155,13 @@ public class QuestionResponseDTO {
     @Builder
     public static class SavedSharedQuestionResultDTO {
 
-        private Long id;
+        private Long savedId;
+
+        private Long questionId;
 
         private List<CategoryResponseDTO.CategoryInfoDTO> categories;
+
+        private QuestionScope questionType;
 
         private String question;
 
