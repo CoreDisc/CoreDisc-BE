@@ -228,7 +228,12 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         // 작성자 일치 여부
         if (!existPersonalQuestion.getMember().equals(member))
             throw new QuestionHandler(ErrorStatus.UNAUTHORIZED_PERSONAL_QUESTION_ACCESS);
-        
+
+        // 고정 또는 랜덤 질문으로 사용되었으면 삭제 불가
+        if (todayQuestionRepository.existsByPersonalQuestion(existPersonalQuestion)) {
+            throw new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_USED_IN_TODAY_QUESTION);
+        }
+
         // 선택된 카테고리 삭제
         questionCategoryRepository.deleteByPersonalQuestion(existPersonalQuestion);
 
