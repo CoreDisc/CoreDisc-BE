@@ -4,6 +4,7 @@ import com.coredisc.domain.common.BaseEntity;
 import com.coredisc.domain.common.enums.QuestionScope;
 import com.coredisc.domain.member.Member;
 import com.coredisc.domain.officialQuestion.OfficialQuestion;
+import com.coredisc.domain.personalQuestion.PersonalQuestion;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,5 +30,9 @@ public class MemberOfficialQuestion extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "official_question_id")
     private OfficialQuestion officialQuestion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "personal_question_id")
+    private PersonalQuestion personalQuestion;
 
 }

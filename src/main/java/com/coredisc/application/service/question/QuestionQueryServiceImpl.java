@@ -5,6 +5,7 @@ import com.coredisc.common.converter.QuestionConverter;
 import com.coredisc.common.exception.handler.QuestionHandler;
 import com.coredisc.domain.category.Category;
 import com.coredisc.domain.category.CategoryRepository;
+import com.coredisc.domain.common.enums.QuestionScope;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestion;
 import com.coredisc.domain.mapping.memberOfficialQuestion.MemberOfficialQuestionRepository;
 import com.coredisc.domain.member.Member;
@@ -86,6 +87,12 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                         if (isSaved) {
                             savedStatus = "SAVED";
                         }
+                    } else if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
+                        boolean isSaved = memberOfficialQuestionRepository
+                                .existsByMemberIdAndPersonalQuestionId(member.getId(), basicQuestionResultDTO.getId());
+                        if (isSaved) {
+                            savedStatus = "SAVED";
+                        }
                     }
                     
                     return QuestionConverter.toBasicQuestionResultDTO(basicQuestionResultDTO, isSelected, savedStatus);
@@ -138,6 +145,12 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
                     if ("OFFICIAL".equals(basicQuestionResultDTO.getQuestionType()) || "DEFAULT".equals(basicQuestionResultDTO.getQuestionType())) {
                         boolean isSaved = memberOfficialQuestionRepository
                                 .existsByMemberIdAndOfficialQuestionId(member.getId(), basicQuestionResultDTO.getId());
+                        if (isSaved) {
+                            savedStatus = "SAVED";
+                        }
+                    } else if ("PERSONAL".equals(basicQuestionResultDTO.getQuestionType())) {
+                        boolean isSaved = memberOfficialQuestionRepository
+                                .existsByMemberIdAndPersonalQuestionId(member.getId(), basicQuestionResultDTO.getId());
                         if (isSaved) {
                             savedStatus = "SAVED";
                         }
@@ -275,12 +288,21 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
         List<QuestionResponseDTO.SavedSharedQuestionResultDTO> mySavedSharedQuestionDTOList = mySavedSharedQuestionList.stream()
                 .map(question -> {
-                    long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question.getOfficialQuestion());
-                    // isSelected 체크
-                    boolean isSelected = myTodayQuestionList.stream()
-                            .anyMatch(todayQuestion -> todayQuestion.getOfficialQuestion() != null
-                                    && todayQuestion.getOfficialQuestion().equals(question.getOfficialQuestion()));
-                    return QuestionConverter.toSavedSharedQuestionResultDTO(question, sharedCount, isSelected);
+                    if (question.getQuestionScope() == QuestionScope.PERSONAL) {
+                        long sharedCount = 0;
+                        // isSelected 체크
+                        boolean isSelected = myTodayQuestionList.stream()
+                                .anyMatch(todayQuestion -> todayQuestion.getPersonalQuestion() != null
+                                        && todayQuestion.getPersonalQuestion().equals(question.getPersonalQuestion()));
+                        return QuestionConverter.toSavedSharedPersonalQuestionResultDTO(question, sharedCount, isSelected);
+                    } else {
+                        long sharedCount = memberOfficialQuestionRepository.countByOfficialQuestion(question.getOfficialQuestion());
+                        // isSelected 체크
+                        boolean isSelected = myTodayQuestionList.stream()
+                                .anyMatch(todayQuestion -> todayQuestion.getOfficialQuestion() != null
+                                        && todayQuestion.getOfficialQuestion().equals(question.getOfficialQuestion()));
+                        return QuestionConverter.toSavedSharedOfficialQuestionResultDTO(question, sharedCount, isSelected);
+                    }
                 }).toList();
 
         return new CursorDTO<>(mySavedSharedQuestionDTOList, hasNext);

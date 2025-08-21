@@ -229,9 +229,9 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         if (!existPersonalQuestion.getMember().equals(member))
             throw new QuestionHandler(ErrorStatus.UNAUTHORIZED_PERSONAL_QUESTION_ACCESS);
 
-        // 고정 또는 랜덤 질문으로 사용되었으면 삭제 불가
-        if (todayQuestionRepository.existsByPersonalQuestion(existPersonalQuestion)) {
-            throw new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_USED_IN_TODAY_QUESTION);
+        // member_official_question에 추가 여부
+        if (memberOfficialQuestionRepository.existsByMemberIdAndPersonalQuestionId(member.getId(), questionId)) {
+
         }
         
         // 선택된 카테고리 삭제
@@ -246,21 +246,39 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Transactional
     public MemberOfficialQuestion saveMemberOfficialQuestion(Member member, Long questionId, QuestionRequestDTO.SaveMemberOfficialQuestionDTO request) {
 
-        OfficialQuestion selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
-                .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+        OfficialQuestion selectedOfficialQuestion = null;
 
         MemberOfficialQuestion memberOfficialQuestion = null;
 
         // 기본 or 공유 질문
         if ((request.getSelectedQuestionType() == QuestionScope.OFFICIAL) || (request.getSelectedQuestionType() == QuestionScope.DEFAULT)) {
+
+            selectedOfficialQuestion = officialQuestionRepository.findById(questionId)
+                    .orElseThrow(() -> new QuestionHandler(ErrorStatus.OFFICIAL_QUESTION_NOT_FOUND));
+
             // 이미 저장 여부
             if (memberOfficialQuestionRepository.findByMemberAndOfficialQuestion(member, selectedOfficialQuestion).isPresent())
                 throw new QuestionHandler(ErrorStatus.ALREADY_SAVED_OFFICIAL_QUESTION);
 
             memberOfficialQuestion = memberOfficialQuestionRepository.save(QuestionConverter.toMemberOfficialQuestion(member, selectedOfficialQuestion, request));
+        } else if (request.getSelectedQuestionType() == QuestionScope.PERSONAL) {   // 개인 질문
+
+            PersonalQuestion selectedPersonalQuestion = personalQuestionRepository.findById(questionId)
+                    .orElseThrow(() -> new QuestionHandler(ErrorStatus.PERSONAL_QUESTION_NOT_FOUND));
+
+            // 이미 저장 여부
+            if (memberOfficialQuestionRepository.findByMemberAndPersonalQuestion(member, selectedPersonalQuestion).isPresent())
+                throw new QuestionHandler(ErrorStatus.ALREADY_SAVED_PERSONAL_QUESTION);
+
+            memberOfficialQuestion = memberOfficialQuestionRepository.save(QuestionConverter.toMemberPersonalQuestion(member, selectedPersonalQuestion, request));
+        } else {
+            throw new QuestionHandler(ErrorStatus.QUESTION_TYPE_NOT_FOUND);
         }
 
+        
+        // 알림 관련
         if ((request.getSelectedQuestionType() == QuestionScope.OFFICIAL)       // 기본 질문 여부 & 작성자 본인 여부 확인
+                && selectedOfficialQuestion != null
                 && selectedOfficialQuestion.isShared()
                 && !(Objects.equals(selectedOfficialQuestion.getMember(), member))) {  
 
