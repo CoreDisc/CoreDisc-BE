@@ -228,11 +228,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         // 작성자 일치 여부
         if (!existPersonalQuestion.getMember().equals(member))
             throw new QuestionHandler(ErrorStatus.UNAUTHORIZED_PERSONAL_QUESTION_ACCESS);
-
-        // member_official_question에 추가 여부
-        if (memberOfficialQuestionRepository.existsByMemberIdAndPersonalQuestionId(member.getId(), questionId)) {
-
-        }
         
         // 선택된 카테고리 삭제
         questionCategoryRepository.deleteByPersonalQuestion(existPersonalQuestion);
